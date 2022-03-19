@@ -36,7 +36,7 @@ GUI:Notification{
 
 Maintab:Button{
     Name = "Modified Car",
-    Description = "Reenter vechicle after press",
+    Description = "Reenter vehicle after press",
     Callback = function()
         modcar()
     end

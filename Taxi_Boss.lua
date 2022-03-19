@@ -111,8 +111,8 @@ function modcar()
     for i, v in pairs(getgc(true)) do
         if typeof(v) == "table" and rawget(v, "maxSpeed") then
             v.maxSpeed = 9999
-            v.redline = 60000   
-            v.idleRPM = 30000
+            v.redline = 40000   
+            v.idleRPM = 40000
             v.peakPower = 3000
             v.peakTorque = 3000
             v.peakPowerRPM = 15000
@@ -142,7 +142,7 @@ spawn(function()
                 for i, v in pairs(workspace.Vehicles:GetChildren()) do
                     if v:FindFirstChild("Server") and tostring(v.Server.Player.Value) == lplr.Name then
                         if workspace.ParkingMarkers:FindFirstChild("ParkingMarker") and lplr:DistanceFromCharacter(park.Part.Position) < 30 then
-                            v:SetPrimaryPartCFrame(park.Part.CFrame * CFrame.new(0, 0.85, 0))
+                            v:SetPrimaryPartCFrame(park.Part.CFrame * CFrame.new(0, 1, 0))
                         end
                     end
                 end

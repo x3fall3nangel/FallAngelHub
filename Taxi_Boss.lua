@@ -1,8 +1,24 @@
 repeat
     wait()
 until game:IsLoaded()
+
 local plr = game:GetService("Players")
 local lplr = plr.LocalPlayer
+local rate = nil
+getgenv().autopark = false
+local rating = {
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+}
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeeity/mercury-lib/master/src.lua"))()
 
 local GUI = Library:Create{
@@ -41,6 +57,32 @@ Maintab:Button{
     end
 }
 
+Maintab:Dropdown{
+    Name = "Choose Rating",
+    StartingText = "Number",
+    Items = rating,
+    Callback = function(v)
+        rate = v
+    end
+}
+
+Maintab:Keybind{
+    Name = "Tp to Customer",
+    Description = "Choose Rating first",
+    Keybind = Enum.KeyCode.C,
+    Callback = function()
+        if tpcustomer() then
+            tp()
+        else
+            GUI:Notification{
+                Title = "Alert",
+                Text = "Didnt find " .. rate.. " Rating Customer Please Move Around",
+                Duration = 3,
+            }
+        end
+    end
+}
+
 Maintab:Toggle{
     Name = "Auto pick customer",
     Description = "Auto get customer while near",
@@ -49,6 +91,7 @@ Maintab:Toggle{
         getgenv().autopick = state
     end
 }
+
 
 Maintab:Toggle{
     Name = "Auto pick event customer",
@@ -59,12 +102,12 @@ Maintab:Toggle{
     end
 }
 
-Maintab:Toggle{
+Maintab:Keybind{
     Name = "Auto Park",
     Description = "Work while 0 MPH",
-    StartingState = false,
-    Callback = function(state)
-        getgenv().autopark = state
+    Keybind = Enum.KeyCode.X,
+    Callback = function()
+        autopark = not autopark
     end
 }
 
@@ -115,6 +158,26 @@ function getclosestcustomer()
     return target
 end
 
+function tpcustomer()
+    local target = nil
+    local distance = math.huge
+    for _, d in pairs(workspace.NewCustomers:GetChildren()) do
+        for _ , v in pairs(d:GetChildren()) do 
+            if v and v.Client:FindFirstChild("PromptPart") and v.Client:FindFirstChild("Model") and rate then
+                local customerating = tonumber(v.Client.PromptPart.Rating.Frame.Rating.Text)
+                if customerating >= rate and customerating <= lplr.variables.vehicleRating.Value then
+                    local magnitude = (lplr.Character.HumanoidRootPart.Position - v.Client.PromptPart.Position).magnitude
+                    if magnitude < distance then
+                        target = v
+                        distance = magnitude
+                    end
+                end
+            end
+        end
+    end
+    return target
+end
+
 function getclosesteventcustomer()
     local target = nil
     local distance = 20
@@ -151,6 +214,14 @@ function modcar()
             if v.REAL.SEAT.EnterPrompt.ClassName == "ProximityPrompt" then
                 v.REAL.SEAT.EnterPrompt.HoldDuration = 0
             end
+        end
+    end
+end
+
+function tp()
+    for i, v in pairs(workspace.Vehicles:GetChildren()) do
+        if v:FindFirstChild("Server") and tostring(v.Server.Player.Value) == lplr.Name and rate then
+            v:SetPrimaryPartCFrame(tpcustomer().CFrame)
         end
     end
 end
@@ -204,3 +275,5 @@ spawn(function()
         end
     end
 end)
+
+GUI:set_status("Status | Active")

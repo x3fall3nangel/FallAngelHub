@@ -52,6 +52,15 @@ Maintab:Toggle{
 }
 
 Maintab:Toggle{
+    Name = "Auto pick event customer",
+    Description = "Auto get customer when near",
+    StartingState = false,
+    Callback = function(state)
+        getgenv().autopickevent = state
+    end
+}
+
+Maintab:Toggle{
     Name = "Auto Park",
     StartingState = false,
     Callback = function(state)
@@ -93,7 +102,26 @@ function getclosestcustomer()
     for _, d in pairs(workspace.NewCustomers:GetChildren()) do
         for _ , v in pairs(d:GetChildren()) do 
             if v and v.Client:FindFirstChild("PromptPart") and v.Client:FindFirstChild("Model") then
-                if tonumber(v.Client.PromptPart.Rating.Frame.Rating.Text) <= lplr.variables.vehicleRating.Value or v.Client.PromptPart:FindFirstChild("Event") then
+                if tonumber(v.Client.PromptPart.Rating.Frame.Rating.Text) <= lplr.variables.vehicleRating.Value then
+                    local magnitude = (lplr.Character.HumanoidRootPart.Position - v.Client.PromptPart.Position).magnitude
+                    if magnitude < distance then
+                        target = v
+                        distance = magnitude
+                    end
+                end
+            end
+        end
+    end
+    return target
+end
+
+function getclosesteventcustomer()
+    local target = nil
+    local distance = 20
+    for _, d in pairs(workspace.NewCustomers:GetChildren()) do
+        for _ , v in pairs(d:GetChildren()) do 
+            if v and v.Client:FindFirstChild("PromptPart") and v.Client:FindFirstChild("Model") then
+                if v.Client.PromptPart:FindFirstChild("Event") then
                     local magnitude = (lplr.Character.HumanoidRootPart.Position - v.Client.PromptPart.Position).magnitude
                     if magnitude < distance then
                         target = v
@@ -129,6 +157,16 @@ spawn(function()
         if autopick then
             pcall(function()
                 fireproximityprompt(getclosestcustomer().Client.PromptPart.CustomerPrompt, 1, true)
+            end)
+        end
+    end
+end)
+
+spawn(function()
+    while wait(.1) do
+        if autopickevent then
+            pcall(function()
+                fireproximityprompt(getclosesteventcustomer().Client.PromptPart.CustomerPrompt, 1, true)
             end)
         end
     end

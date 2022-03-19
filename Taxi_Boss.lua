@@ -3,7 +3,6 @@ repeat
 until game:IsLoaded()
 local plr = game:GetService("Players")
 local lplr = plr.LocalPlayer
-
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeeity/mercury-lib/master/src.lua"))()
 
 local GUI = Library:Create{
@@ -15,7 +14,7 @@ local GUI = Library:Create{
 
 local Maintab = GUI:tab{
     Name = "Main",
-    Icon = "rbxassetid://2174510075" -- rbxassetid://2174510075 home icon
+    Icon = "rbxassetid://2174510075"
 }
 
 GUI:Credit{
@@ -44,7 +43,7 @@ Maintab:Button{
 
 Maintab:Toggle{
     Name = "Auto pick customer",
-    Description = "Auto get customer when near",
+    Description = "Auto get customer while near",
     StartingState = false,
     Callback = function(state)
         getgenv().autopick = state
@@ -53,7 +52,7 @@ Maintab:Toggle{
 
 Maintab:Toggle{
     Name = "Auto pick event customer",
-    Description = "Auto get customer when near",
+    Description = "Auto get customer while near",
     StartingState = false,
     Callback = function(state)
         getgenv().autopickevent = state
@@ -137,18 +136,21 @@ end
 
 
 function modcar()
-    for i, v in pairs(getgc(true)) do
-        if typeof(v) == "table" and rawget(v, "maxSpeed") then
-            v.maxSpeed = 9999
-            v.redline = 40000   
-            v.idleRPM = 40000
-            v.peakPower = 3000
-            v.peakTorque = 3000
-            v.peakPowerRPM = 15000
-            v.peakTorqueRPM = 99999
-            v.maxPitchTorque = 999
-        elseif typeof(v) == "table" and rawget(v, "baseTorque") then
-            v.baseTorque = 9999
+    for i, v in pairs(workspace.Vehicles:GetChildren()) do
+        if v:FindFirstChild("Server") and tostring(v.Server.Player.Value) == game.Players.LocalPlayer.Name then
+            local modcar = require(v.Configuration.VehicleConfig)
+            modcar.maxSpeed = 9999
+            modcar.redline = 40000   
+            modcar.idleRPM = 40000
+            modcar.peakPower = 3000
+            modcar.peakTorque = 3000
+            modcar.peakPowerRPM = 15000
+            modcar.peakTorqueRPM = 99999
+            modcar.maxPitchTorque = 999
+            modcar.baseTorque = 9999
+            if v.REAL.SEAT.EnterPrompt.ClassName == "ProximityPrompt" then
+                v.REAL.SEAT.EnterPrompt.HoldDuration = 0
+            end
         end
     end
 end
@@ -180,7 +182,7 @@ spawn(function()
                 local park = workspace.ParkingMarkers:FindFirstChild("ParkingMarker")
                 for i, v in pairs(workspace.Vehicles:GetChildren()) do
                     if v:FindFirstChild("Server") and tostring(v.Server.Player.Value) == lplr.Name then
-                        if workspace.ParkingMarkers:FindFirstChild("ParkingMarker") and lplr:DistanceFromCharacter(park.Part.Position) < 30 then
+                        if workspace.ParkingMarkers:FindFirstChild("ParkingMarker") and lplr:DistanceFromCharacter(park.Part.Position) < 50 then
                             v:SetPrimaryPartCFrame(park.Part.CFrame * CFrame.new(0, 1, 0))
                         end
                     end

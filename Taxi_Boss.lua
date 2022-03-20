@@ -183,7 +183,7 @@ function tpcustomer()
 	local distance = math.huge
 	for _, d in pairs(workspace.NewCustomers:GetChildren()) do
 		for _ , v in pairs(d:GetChildren()) do
-			if v and v.Client:FindFirstChild("PromptPart") and v.Client:FindFirstChild("Model") then
+			if v and v.Client:FindFirstChild("PromptPart") and v.Client:FindFirstChild("Model") and v.Client.PromptPart:FindFirstChild("Rating") then
 				local customerating = tonumber(v.Client.PromptPart.Rating.Frame.Rating.Text)
 				if customerating >= rate and customerating <= lplr.variables.vehicleRating.Value then
 					local magnitude = (lplr.Character.HumanoidRootPart.Position - v.Client.PromptPart.Position).magnitude

@@ -5,6 +5,7 @@ until game:IsLoaded()
 local plr = game:GetService("Players")
 local lplr = plr.LocalPlayer
 local rate = nil
+local carheight = nil
 getgenv().autopark = false
 local rating = {
 	0,
@@ -18,6 +19,15 @@ local rating = {
 	8,
 	9,
 	"Event",
+}
+local height = {
+	0.7,
+	0.8,
+	0.9,
+	1,
+	1.1,
+	1.2,
+	1.3,
 }
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeeity/mercury-lib/master/src.lua"))()
@@ -67,6 +77,7 @@ Maintab:Dropdown{
 	end
 }
 
+
 Maintab:Keybind{
 	Name = "Tp to Customer",
 	Description = "Choose Rating first",
@@ -103,6 +114,25 @@ Maintab:Keybind{
 	end
 }
 
+Maintab:Dropdown{
+	Name = "Choose Height for Auto Park",
+	StartingText = "Number",
+	Items = height,
+	Callback = function(v)
+		carheight = v 
+		carheight = carheight or 1
+	end
+}
+
+Maintab:Keybind{
+	Name = "Auto Park",
+	Description = "Work while 0 MPH",
+	Keybind = Enum.KeyCode.X,
+	Callback = function()
+		autopark = not autopark
+	end
+}
+
 Maintab:Toggle{
 	Name = "Auto pick customer",
 	Description = "Auto get customer while near",
@@ -119,15 +149,6 @@ Maintab:Toggle{
 	StartingState = false,
 	Callback = function(state)
 		getgenv().autopickevent = state
-	end
-}
-
-Maintab:Keybind{
-	Name = "Auto Park",
-	Description = "Work while 0 MPH",
-	Keybind = Enum.KeyCode.X,
-	Callback = function()
-		autopark = not autopark
 	end
 }
 
@@ -257,7 +278,7 @@ function modcar()
 end
 
 function tp()
-	for i, v in pairs(workspace.Vehicles:GetChildren()) do
+	for _, v in pairs(workspace.Vehicles:GetChildren()) do
 		if v:FindFirstChild("Server") and tostring(v.Server.Player.Value) == lplr.Name then
 			v:SetPrimaryPartCFrame(tpcustomer().CFrame)
 		end
@@ -265,7 +286,7 @@ function tp()
 end
 
 function tpevent()
-	for i, v in pairs(workspace.Vehicles:GetChildren()) do
+	for _, v in pairs(workspace.Vehicles:GetChildren()) do
 		if v:FindFirstChild("Server") and tostring(v.Server.Player.Value) == lplr.Name then
 			v:SetPrimaryPartCFrame(tpeventcustomer().CFrame)
 		end
@@ -294,13 +315,13 @@ end)
 
 spawn(function()
 	while task.wait() do
-		if autopark then
+		if autopark and carheight then
 			pcall(function()
 				local park = workspace.ParkingMarkers:FindFirstChild("ParkingMarker")
-				for i, v in pairs(workspace.Vehicles:GetChildren()) do
+				for _, v in pairs(workspace.Vehicles:GetChildren()) do
 					if v:FindFirstChild("Server") and tostring(v.Server.Player.Value) == lplr.Name then
 						if workspace.ParkingMarkers:FindFirstChild("ParkingMarker") and lplr:DistanceFromCharacter(park.Part.Position) < 50 then
-							v:SetPrimaryPartCFrame(park.Part.CFrame * CFrame.new(0, 1, 0))
+							v:SetPrimaryPartCFrame(park.Part.CFrame * CFrame.new(0, carheight, 0))
 						end
 					end
 				end
@@ -314,7 +335,7 @@ spawn(function()
 	while task.wait() do
 		if removecar then
 			pcall(function()
-				for i, v in pairs(workspace.Tracks:GetChildren()) do
+				for _, v in pairs(workspace.Tracks:GetChildren()) do
 					v:Destroy()
 				end
 			end)

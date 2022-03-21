@@ -1,112 +1,132 @@
-repeat wait() until game:IsLoaded()
+--discord.gg/boronide, code generated using luamin.js™
+
+
+
+
+repeat
+	wait()
+until game:IsLoaded()
 local plr = game:GetService("Players")
 local lplr = plr.LocalPlayer
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeeity/mercury-lib/master/src.lua"))()
 
 local GUI = Library:Create{
-    Name = "FallAngel Hub",
-    Size = UDim2.fromOffset(600, 400),
-    Theme = Library.Themes.Serika,
-    Link = "https://discord.gg/b9QX5rnkT5"
+	Name = "FallAngel Hub",
+	Size = UDim2.fromOffset(600, 400),
+	Theme = Library.Themes.Serika,
+	Link = "https://discord.gg/b9QX5rnkT5"
 }
 
 local Maintab = GUI:tab{
-    Name = "Main",
-    Icon = "rbxassetid://2174510075" -- rbxassetid://2174510075 home icon
+	Name = "Main",
+	Icon = "rbxassetid://2174510075" -- rbxassetid://2174510075 home icon
 }
 
 GUI:Credit{
-    Name = "x3Fall3nAngel",
-    Description = "Made the script",
-    V3rm = "https://v3rmillion.net/member.php?action=profile&uid=2270329",
-    Discord = "https://discord.gg/b9QX5rnkT5"
+	Name = "x3Fall3nAngel",
+	Description = "Made the script",
+	V3rm = "https://v3rmillion.net/member.php?action=profile&uid=2270329",
+	Discord = "https://discord.gg/b9QX5rnkT5"
 }
 
 GUI:Notification{
-    Title = "Hey!",
-    Text = "Join our discord server! discord.gg/b9QX5rnkT5",
-    Duration = 20,
-    Callback = function() 
-        game:IsLoaded()
-    end
+	Title = "Hey!",
+	Text = "Join our discord server! discord.gg/b9QX5rnkT5",
+	Duration = 20,
+	Callback = function()
+		game:IsLoaded()
+	end
 }
 
 
 Maintab:Toggle{
-    Name = "Insta Kill Zombie", 
-    Description = "Please Hold A Weapon",
-    StartingState = false,
-    Callback = function(state)
-        getgenv().instant = state
-    end
+	Name = "Insta Kill Zombie",
+	Description = "Please Hold A Weapon",
+	StartingState = false,
+	Callback = function(state)
+		getgenv().instant = state
+	end
 }
 
 Maintab:Toggle{
-    Name = "Kill Player",
-    Description = "Please Hold A Weapon when u are zombie",
-    StartingState = false,
-    Callback = function(state)
-        getgenv().kill = state
-    end
+	Name = "Kill Player",
+	Description = "Please Hold A Weapon when u are zombie",
+	StartingState = false,
+	Callback = function(state)
+		getgenv().kill = state
+	end
 }
 
-spawn(function()
-    while task.wait() do
-        if instant then
-            for _,v in pairs(game:GetService("Workspace")["Zombie Storage"]:GetChildren()) do
-                if v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and lplr.Character:FindFirstChildOfClass("Tool") and instant then
-                    local ohTable1 = {
-                        ["LaserProperties"] = {
-                            [1] = {
-                                [1] = "Neon",
-                                [2] = BrickColor.new("New Yeller"),
-                                [3] = 0.944736659526825, -0.041680123656988144, -0.32516974210739136,
-                                [4] = CFrame.new(-10.8079777, 157.458374, -4544.34863, 0.325475544, 0.0394168422, -0.944728494, -0, 0.999130785, 0.0416866578, 0.945550561, -0.0135679878, 0.325192571),
-                                [5] = 16.561748504638672, 156.25086975097656, -4553.76904296875,
-                                [6] = 90,
-                                [7] = true,
-                                [8] = -0.6978146433830261, 0.18433848023414612, 0.6921517848968506
-                            }
-                        },
-                        ["RealTool"] = lplr.Character:FindFirstChildOfClass("Tool"),
-                        ["Tool"] = lplr.Character:FindFirstChildOfClass("Tool"),
-                        ["HumanoidTables"] = {
-                            [1] = {
-                                ["HeadHits"] = 50,
-                                ["THumanoid"] = v.Humanoid,
-                                ["BodyHits"] = 0
-                            }
-                        }
-                    }
-                    game:GetService("ReplicatedStorage").Remotes.WeaponEvent:FireServer(ohTable1)
-                    task.wait()
+Maintab:Button{
+	Name = "Become Zombie",
+	StartingState = false,
+	Callback = function()
+		becomezombie()
+	end
+}
+
+function becomezombie()
+	game:GetService("ReplicatedStorage").Remotes.PlayerZombie:FireServer(lplr.Character)
+end
+
+function getclosestplayer()
+    local target = nil
+    local distance = math.huge
+    for _, v in pairs(plr:GetPlayers()) do
+        if v ~= lplr and lplr.Character then
+            if v.Character and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 and v.Character:FindFirstChild("HumanoidRootPart") then
+                local magnitude = (lplr.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude
+                if magnitude < distance then
+                    target = v
+                    distance = magnitude
                 end
             end
         end
     end
+    return target
+end
+
+spawn(function()
+	while wait(.1) do
+		if instant then
+			for _, v in pairs(game:GetService("Workspace")["Zombie Storage"]:GetChildren()) do
+				if v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and lplr.Character:FindFirstChildOfClass("Tool") and instant then
+                    if lplr.Character and lplr.Character:FindFirstChild("Alive") then
+                        local ohTable1 = {
+                            ["RealTool"] = lplr.Character:FindFirstChildOfClass("Tool"),
+                            ["Tool"] = lplr.Character:FindFirstChildOfClass("Tool"),
+                            ["HumanoidTables"] = {
+                                [1] = {
+                                    ["HeadHits"] = 100,
+                                    ["THumanoid"] = v.Humanoid,
+                                    ["BodyHits"] = 0
+                                }
+                            }
+                        }
+                        game:GetService("ReplicatedStorage").Remotes.WeaponEvent:FireServer(ohTable1)
+                        wait(.1)
+                    end
+				end
+			end
+		end
+	end
 end)
 
 spawn(function()
-    while task.wait() do
-        if kill then
-            for _,v in pairs(plr:GetPlayers()) do
-                if v ~= lplr then
-                    if v.Character and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 and kill then
-                        if lplr.Character:FindFirstChildOfClass("Tool") then
-                            local ohTable1 = {
-                                ["Direction"] = 0.9752705693244934, 6.744693248350586e-09, 0.22101430594921112,
-                                ["Name"] = lplr.Character:FindFirstChildOfClass("Tool").Name,
-                                ["HumanoidsFound"] = {
-                                    [1] = v.Humanoid
-                                }
-                            }
-                            
-                            lplr.Character:FindFirstChildOfClass("Tool").MeleeController.RemoteFunction:InvokeServer(ohTable1)
-                        end
-                    end
-                end
+	while task.wait() do
+		if kill then
+            if lplr.Character:FindFirstChildOfClass("Tool") and lplr.Character and lplr.Character:FindFirstChild("Enemy") then
+                local ohTable1 = {
+                    ["Direction"] = Vector3.new(-0.8823290467262268, -2.219525363500452e-08, -0.47063305974006653),
+                    ["Name"] = lplr.Character:FindFirstChildOfClass("Tool").Name,
+                    ["HumanoidsFound"] = {
+                        [1] = getclosestplayer().Character.Humanoid
+                    }
+                }
+                
+                lplr.Character:FindFirstChildWhichIsA("Tool").MeleeController.RemoteFunction:InvokeServer(ohTable1)
             end
         end
-    end     
+	end     
 end)

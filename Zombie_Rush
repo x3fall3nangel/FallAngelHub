@@ -1,8 +1,3 @@
---discord.gg/boronide, code generated using luamin.js™
-
-
-
-
 repeat
 	wait()
 until game:IsLoaded()
@@ -49,15 +44,6 @@ Maintab:Toggle{
 	end
 }
 
-Maintab:Toggle{
-	Name = "Kill Player",
-	Description = "Please Hold A Weapon when u are zombie",
-	StartingState = false,
-	Callback = function(state)
-		getgenv().kill = state
-	end
-}
-
 Maintab:Button{
 	Name = "Become Zombie",
 	StartingState = false,
@@ -70,17 +56,15 @@ function becomezombie()
 	game:GetService("ReplicatedStorage").Remotes.PlayerZombie:FireServer(lplr.Character)
 end
 
-function getclosestplayer()
+function closestzombie()
     local target = nil
     local distance = math.huge
-    for _, v in pairs(plr:GetPlayers()) do
-        if v ~= lplr and lplr.Character then
-            if v.Character and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 and v.Character:FindFirstChild("HumanoidRootPart") then
-                local magnitude = (lplr.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude
-                if magnitude < distance then
-                    target = v
-                    distance = magnitude
-                end
+    for _, v in pairs(game:GetService("Workspace")["Zombie Storage"]:GetChildren()) do
+        if v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") then
+            local magnitude = (lplr.Character.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude
+            if magnitude < distance then
+                target = v
+                distance = magnitude
             end
         end
     end
@@ -89,44 +73,22 @@ end
 
 spawn(function()
 	while wait(.1) do
-		if instant then
-			for _, v in pairs(game:GetService("Workspace")["Zombie Storage"]:GetChildren()) do
-				if v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and lplr.Character:FindFirstChildOfClass("Tool") and instant then
-                    if lplr.Character and lplr.Character:FindFirstChild("Alive") then
-                        local ohTable1 = {
-                            ["RealTool"] = lplr.Character:FindFirstChildOfClass("Tool"),
-                            ["Tool"] = lplr.Character:FindFirstChildOfClass("Tool"),
-                            ["HumanoidTables"] = {
-                                [1] = {
-                                    ["HeadHits"] = 100,
-                                    ["THumanoid"] = v.Humanoid,
-                                    ["BodyHits"] = 0
-                                }
-                            }
-                        }
-                        game:GetService("ReplicatedStorage").Remotes.WeaponEvent:FireServer(ohTable1)
-                        wait(.1)
-                    end
-				end
-			end
-		end
-	end
-end)
-
-spawn(function()
-	while task.wait() do
-		if kill then
-            if lplr.Character:FindFirstChildOfClass("Tool") and lplr.Character and lplr.Character:FindFirstChild("Enemy") then
+		if instant and closestzombie() then
+            if lplr.Character and lplr.Character:FindFirstChild("Alive") and lplr.Character:FindFirstChildOfClass("Tool") then
                 local ohTable1 = {
-                    ["Direction"] = Vector3.new(-0.8823290467262268, -2.219525363500452e-08, -0.47063305974006653),
-                    ["Name"] = lplr.Character:FindFirstChildOfClass("Tool").Name,
-                    ["HumanoidsFound"] = {
-                        [1] = getclosestplayer().Character.Humanoid
+                    ["RealTool"] = lplr.Character:FindFirstChildOfClass("Tool"),
+                    ["Tool"] = lplr.Character:FindFirstChildOfClass("Tool"),
+                    ["HumanoidTables"] = {
+                        [1] = {
+                            ["HeadHits"] = 1000,
+                            ["THumanoid"] = closestzombie().Humanoid,
+                            ["BodyHits"] = 0
+                        }
                     }
                 }
-                
-                lplr.Character:FindFirstChildWhichIsA("Tool").MeleeController.RemoteFunction:InvokeServer(ohTable1)
+                game:GetService("ReplicatedStorage").Remotes.WeaponEvent:FireServer(ohTable1)
+                wait(.1)
             end
         end
-	end     
+	end
 end)

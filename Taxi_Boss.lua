@@ -2,6 +2,33 @@ repeat
 	wait()
 until game:IsLoaded()
 
+local Library1 = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeeity/mercury-lib/master/src.lua"))()
+
+local gu = Library1:Create{
+    Name = "FallAngel Hub",
+    Size = UDim2.fromOffset(600, 400),
+    Theme = Library1.Themes.Dark,
+    Link = "https://discord.gg/b9QX5rnkT5"
+}
+
+local bigui = false
+local smallui = false
+gu:Prompt{
+    Followup = false,
+    Title = "Gui Size",
+    Text = "Big or Small",
+    Buttons = {
+        big_gui = function()
+            bigui = true
+            return bigui
+        end,
+        small_gui = function()
+            smallui = true
+            return smallui
+        end
+    }
+}
+
 local plr = game:GetService("Players")
 local lplr = plr.LocalPlayer
 local rate = nil
@@ -33,15 +60,25 @@ local height = {
 	1.4,
 	1.5,
 }
-
+repeat wait() until bigui == true or smallui == true
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeeity/mercury-lib/master/src.lua"))()
 
-local GUI = Library:Create{
-	Name = "FallAngel Hub",
-	Size = UDim2.fromOffset(600, 400),
-	Theme = Library.Themes.Serika,
-	Link = "https://discord.gg/b9QX5rnkT5"
-}
+local GUI = nil
+if bigui then
+    GUI = Library:Create{
+        Name = "FallAngel Hub",
+        Size = UDim2.fromOffset(700, 600),
+        Theme = Library.Themes.Serika,
+        Link = "https://discord.gg/b9QX5rnkT5"
+    }
+else
+    GUI = Library:Create{
+        Name = "FallAngel Hub",
+        Size = UDim2.fromOffset(450, 400),
+        Theme = Library.Themes.Serika,
+        Link = "https://discord.gg/b9QX5rnkT5"
+    }
+end
 
 local Maintab = GUI:tab{
 	Name = "Main",
@@ -99,16 +136,16 @@ Maintab:Keybind{
 					}
 				end
 			else
+				if lplr.PlayerGui.MissionGui.MissionGui.Visible == true then
+					GUI:Notification{
+						Title = "Alert",
+						Text = "Your taxi already has customer",
+						Duration = 3,
+					}
+					return
+				end
 				if tpcustomer() then
-					if lplr.PlayerGui.MissionGui.MissionGui.Visible == false then
-						tp()
-					else
-						GUI:Notification{
-							Title = "Alert",
-							Text = "Your taxi already has customer",
-							Duration = 3,
-						}
-					end
+					tp()
 				else
 					GUI:Notification{
 						Title = "Alert",
@@ -141,6 +178,15 @@ Maintab:Keybind{
 	Keybind = Enum.KeyCode.X,
 	Callback = function()
 		autopark = not autopark
+	end
+}
+
+Maintab:Toggle{
+	Name = "Auto Park",
+	Description = "Work while 0 MPH",
+	StartingState = false,
+	Callback = function(state)
+		getgenv().autop = state
 	end
 }
 
@@ -326,7 +372,7 @@ end)
 
 spawn(function()
 	while task.wait() do
-		if autopark and carheight then
+		if autopark and carheight or autop and carheight then
 			pcall(function()
 				local park = workspace.ParkingMarkers:FindFirstChild("ParkingMarker")
 				for _, v in pairs(workspace.Vehicles:GetChildren()) do

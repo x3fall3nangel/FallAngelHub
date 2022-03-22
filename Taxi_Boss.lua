@@ -96,9 +96,6 @@ GUI:Notification{
 	Title = "Hey!",
 	Text = "Join our discord server! discord.gg/b9QX5rnkT5",
 	Duration = 20,
-	Callback = function()
-		game:IsLoaded()
-	end
 }
 
 Maintab:Button{
@@ -135,24 +132,23 @@ Maintab:Keybind{
 						Duration = 3,
 					}
 				end
+			end
+			if lplr.PlayerGui.MissionGui.MissionGui.Visible == true then
+				GUI:Notification{
+					Title = "Alert",
+					Text = "Your taxi already has customer",
+					Duration = 3,
+				}
+				return
+			end
+			if tpcustomer() then
+				tp()
 			else
-				if lplr.PlayerGui.MissionGui.MissionGui.Visible == true then
-					GUI:Notification{
-						Title = "Alert",
-						Text = "Your taxi already has customer",
-						Duration = 3,
-					}
-					return
-				end
-				if tpcustomer() then
-					tp()
-				else
-					GUI:Notification{
-						Title = "Alert",
-						Text = "Didnt find " .. rate .. " - " .. lplr.variables.vehicleRating.Value .. " Rating Customer Please Move Around",
-						Duration = 3,
-					}
-				end
+				GUI:Notification{
+					Title = "Alert",
+					Text = "Didnt find " .. rate .. " - " .. lplr.variables.vehicleRating.Value .. " Rating Customer Please Move Around",
+					Duration = 3,
+				}
 			end
 		else
 			GUI:Prompt{
@@ -315,8 +311,8 @@ function tpeventcustomer()
 end
 
 function modcar()
-	for i, v in pairs(workspace.Vehicles:GetChildren()) do
-		if v:FindFirstChild("Server") and tostring(v.Server.Player.Value) == game.Players.LocalPlayer.Name then
+	for _, v in pairs(workspace.Vehicles:GetChildren()) do
+		if v:FindFirstChild("Server") and tostring(v.Server.Player.Value) == lplr.Name then
 			local modcar = require(v.Configuration.VehicleConfig)
 			modcar.maxSpeed = 9999
 			modcar.redline = 40000
@@ -332,6 +328,9 @@ function modcar()
 			end
 		end
 	end
+	game:GetService("ReplicatedStorage").Vehicles.ExitVehicleEvent:InvokeServer()
+	wait(.1)
+	game:GetService('VirtualInputManager'):SendKeyEvent(true, "F", false, game)
 end
 
 function tp()
@@ -372,7 +371,7 @@ end)
 
 spawn(function()
 	while task.wait() do
-		if autopark and carheight or autop and carheight then
+		if autopark or autop then
 			pcall(function()
 				local park = workspace.ParkingMarkers:FindFirstChild("ParkingMarker")
 				for _, v in pairs(workspace.Vehicles:GetChildren()) do

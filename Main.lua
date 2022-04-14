@@ -10,6 +10,6 @@ elseif game.PlaceId == 8288069630 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/GSstarGamer/Scripts/main/Stone%20Mining%20sim.lua"))()
 elseif game.PlaceId == 7107498084 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/GSstarGamer/Scripts/main/Anime%20Battle%20Tycoon.lua"))()
-elseif game.PlaceId == 2685347741 then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/GSstarGamer/Scripts/main/Ghost%20Sim.lua"))()
+elseif game.PlaceId == 8781849572 then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/GSstarGamer/Scripts/main/Star%20Sim.lua"))()
 end

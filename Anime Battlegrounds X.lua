@@ -163,11 +163,7 @@ Maintab:Dropdown{
     Items = arenaepic,
     Callback = function(v)
         if farm then
-            local args = {
-                [1] = checkfarm(farm),
-                [2] = false
-            }
-            game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(unpack(args))
+            game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(checkfarm(farm), false)
         end
         farm = v
     end
@@ -254,19 +250,9 @@ Maintab:Toggle{
     Callback = function(state)
         getgenv().block = state
         if block then
-            local args = {
-                [1] = "Block",
-                [2] = true
-            }
-
-            game:GetService("ReplicatedStorage").Remotes.Melee:FireServer(unpack(args))
+            game:GetService("ReplicatedStorage").Remotes.Melee:FireServer("Block", true)
         else
-            local args = {
-                [1] = "Block",
-                [2] = false
-            }
-
-            game:GetService("ReplicatedStorage").Remotes.Melee:FireServer(unpack(args))
+            game:GetService("ReplicatedStorage").Remotes.Melee:FireServer("Block", false)
         end
     end
 }
@@ -707,17 +693,9 @@ spawn(function()
                 if farm == "End Valley" and farmarena or farm == "Court of Death" and farmarena then
                     repeat
                         if not lplr.PlayerGui:FindFirstChild("Spawn") then
-                            local args = {
-                                [1] = "Tree Village"
-                            }
-                            
-                            game:GetService("ReplicatedStorage").Remotes.UsePortal:InvokeServer(unpack(args))
+                            game:GetService("ReplicatedStorage").Remotes.UsePortal:InvokeServer("Tree Village")
                             wait(1)
-                            local args = {
-                                [1] = farm
-                            }
-                            
-                            game:GetService("ReplicatedStorage").Remotes.CreateWeeklyArena:InvokeServer(unpack(args))
+                            game:GetService("ReplicatedStorage").Remotes.CreateWeeklyArena:InvokeServer(farm)
                         end
                         for _, v in next, getarena():GetChildren() do
                             if v:FindFirstChild("HumanoidRootPart") and farmarena and lplr.PlayerGui:FindFirstChild("Spawn") then
@@ -734,11 +712,7 @@ spawn(function()
                     repeat
                         if not lplr.PlayerGui:FindFirstChild("Spawn") then
                             lplr.Character.HumanoidRootPart.CFrame = checkarena(farm).CFrame * CFrame.new(0, 0, -5)
-                            local args = {
-                                [1] = checkfarm(farm),
-                                [2] = true
-                            }
-                            game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(unpack(args))    
+                            game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(checkfarm(farm), true)    
                         end
                         mobs = 0
                         for _, v in next, getarena():GetChildren() do
@@ -758,11 +732,7 @@ end)
 spawn(function()
     while task.wait() do
         if auto then
-            local args = {
-                [1] = "Melee"
-            }
-
-            game:GetService("ReplicatedStorage").Remotes.Melee:FireServer(unpack(args))
+            game:GetService("ReplicatedStorage").Remotes.Melee:FireServer("Melee")
         end
     end
 end)
@@ -847,11 +817,7 @@ spawn(function()
             if autofighters then
                 for i, v in next, lplr.PlayerGui.UI.FighterUI.SlotFrame:GetChildren() do
                     if v:IsA("Frame") and v.Name == "Fighter" and lplr.PlayerGui:FindFirstChild("Spawn") then
-                        local args = {
-                            [1] = v.FighterName.Text
-                        }
-
-                        game:GetService("ReplicatedStorage").Remotes.SpawnFighter:InvokeServer(unpack(args))
+                        game:GetService("ReplicatedStorage").Remotes.SpawnFighter:InvokeServer(v.FighterName.Text)
                     end
                 end
             end
@@ -866,11 +832,7 @@ spawn(function()
                 repeat wait()
                     if not lplr.PlayerGui:FindFirstChild("Spawn") then
                         lplr.Character.HumanoidRootPart.CFrame = checkarena(farm).CFrame * CFrame.new(0, 0, -5)
-                        local args = {
-                            [1] = checkfarm(farm),
-                            [2] = true
-                        }
-                        game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(unpack(args))
+                        game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(checkfarm(farm), true)
                     end
                     task.wait(1)
                     for _, v in next, getarena():GetChildren() do
@@ -878,11 +840,7 @@ spawn(function()
                             lplr.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
                         end
                         if not v.Parent:FindFirstChild(checkarenaboss()) then
-                            local args = {  
-                                [1] = checkfarm(farm),
-                                [2] = false
-                            }
-                            game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(unpack(args))  
+                            game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(checkfarm(farm), false)  
                         end 
                     end 
                 until farmboss == false

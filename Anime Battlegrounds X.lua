@@ -64,8 +64,15 @@ local Misctab = GUI:tab{
     Icon = "rbxassetid://3340612861"
 }
 
-local plr = game:GetService("Players")
-local lplr = plr.LocalPlayer
+-- Services
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
+local HttpService = game:GetService("HttpService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local Players = game:GetService("Players")
+
+
+local LocalPlayer = Players.LocalPlayer
 local PlaceID = game.PlaceId
 local AllIDs = {}
 local foundAnything = ""
@@ -73,13 +80,14 @@ local actualHour = os.date("!*t").hour
 local Deleted = false
 local mobs = 0
 local eventmobs = 0
-local tp = nil
-local dash = nil
-local farm = nil
-local amount = nil
-local amount1 = nil
-LPH_JIT_ULTRA = LPH_JIT_ULTRA or function(...) return ... end
+local tp
+local dash
+local farm
+local amount
+local amount1
+
 getgenv().ability = false
+
 local arenaepic = {
     "Tree Village Arena (Lvl 0)",
     "Ninja War Battlefield Arena (Lvl 10)",
@@ -163,7 +171,7 @@ Maintab:Dropdown{
     Items = arenaepic,
     Callback = function(v)
         if farm then
-            game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(checkfarm(farm), false)
+            ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(farm), false)
         end
         farm = v
     end
@@ -249,11 +257,6 @@ Maintab:Toggle{
     StartingState = false,
     Callback = function(state)
         getgenv().block = state
-        if block then
-            game:GetService("ReplicatedStorage").Remotes.Melee:FireServer("Block", true)
-        else
-            game:GetService("ReplicatedStorage").Remotes.Melee:FireServer("Block", false)
-        end
     end
 }
 
@@ -286,22 +289,20 @@ Abilitytab:Button{
     Callback = function()
         if amount then
             if hookmetamethod then
-                LPH_JIT_ULTRA(function()
-                    local __namecall
-                    __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
-                        local method = getnamecallmethod()
-                        local args = {
-                            ...
-                        }
-                        local self = args[1]
-                        if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Point" then
-                            for i = 1, amount do
-                                __namecall(...)
-                            end
+                local __namecall
+                __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
+                    local method = getnamecallmethod()
+                    local args = {
+                        ...
+                    }
+                    local self = args[1]
+                    if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Point" then
+                        for i = 1, amount do
+                            __namecall(...)
                         end
-                        return __namecall(...)
-                    end))
-                end)()
+                    end
+                    return __namecall(...)
+                end))
             else
                 local mt = getrawmetatable(game)
                 setreadonly(mt, false)
@@ -321,119 +322,112 @@ Abilitytab:Button{
                     end
                     return __namecall(...)
                 end)
-            end
-        else
-            Maintab:Prompt{
-                Title = "PLEASE",
-                Text = "Please Insert number On Ability boost Amount"
-            }
         end
+    else
+        Maintab:Prompt{
+            Title = "PLEASE",
+            Text = "Please Insert number On Ability boost Amount"
+        }
     end
+end
 }
 
 Abilitytab:Button{
-    Name = "Ability List For Hitbox",
-    Description = "",
-    Callback = function()
-        GUI:Notification{
-            Title = "Only these ability will work",
-            Text = [[Tornado, Masenko, Red Hawk, Ice Time, Whirlwind, Wood Dragon, Sand Wave, Bubble Gust, Sea Quake, Double Beam, Air Cannon, Feather Slash, Flying Fist, Flame Wall, Ikoku, Hard Punch, Fireball, Flashfreeze, Santoryu, Destructo Disk, Electro Pistol, Fang Spin, Bug Attack, Susanoo, Galick Gun, Twin Lions, Kamehameha, Wood Prison, Beam Cannon, Water Pump, Black Hole, Amaterasu, Razor Wind]],
-            Duration = 20,
-            Callback = function()
-            end
-        }
-    end
+Name = "Ability List For Hitbox",
+Description = "",
+Callback = function()
+    GUI:Notification{
+        Title = "Only these ability will work",
+        Text = [[Tornado, Masenko, Red Hawk, Ice Time, Whirlwind, Wood Dragon, Sand Wave, Bubble Gust, Sea Quake, Double Beam, Air Cannon, Feather Slash, Flying Fist, Flame Wall, Ikoku, Hard Punch, Fireball, Flashfreeze, Santoryu, Destructo Disk, Electro Pistol, Fang Spin, Bug Attack, Susanoo, Galick Gun, Twin Lions, Kamehameha, Wood Prison, Beam Cannon, Water Pump, Black Hole, Amaterasu, Razor Wind]],
+        Duration = 20,
+        Callback = function()
+        end
+    }
+end
 }
 
 Abilitytab:Textbox{
-    Name = "Ability Damage Hitbox Amount",
-    Description = "Dont go too high with this or u will crash(recommend 100)",
-    Callback = function(Text)
-        amount1 = tonumber(Text)
-    end
+Name = "Ability Damage Hitbox Amount",
+Description = "Dont go too high with this or u will crash(recommend 100)",
+Callback = function(Text)
+    amount1 = tonumber(Text)
+end
 }
 
 Abilitytab:Button{
-    Name = "Ability Damage For Hitbox",
-    Description = "Work On some Ability only | Press 1 time only or u will crash",
-    StartingState = false,
-    Callback = function()
-        if amount1 then
-            if hookmetamethod then
-                LPH_JIT_ULTRA(function()
-                    local __namecall
-                    __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
-                        local method = getnamecallmethod()
-                        local args = {
-                            ...
-                        }
-                        local self = args[1]
-                        if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Hitbox" then
-                            args[3]["DamageRate"] = 0
-                            args[3]["LifeTime"] = 100
-                        end
-                        return __namecall(...)
-                    end))
-                end)()
-
-                LPH_JIT_ULTRA(function()
-                    local __namecall 
-                    __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
-                        local method = getnamecallmethod()
-                        local args = {
-                            ...
-                        }
-                        local self = args[1]
-                        if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "HitboxUpdate" then
-                            for i = 1, amount1 do
-                                __namecall(...)
-                            end
-                        end
-                        return __namecall(...)
-                    end))
-                end)()
-
-            else
-
-                local mt = getrawmetatable(game)
-                setreadonly(mt, false)
-
-                local __namecall = mt.__namecall
-                mt.__namecall = newcclosure(function(...)
-                    local args = {
-                        ...
-                    }
-                    local self = args[1]
-                    local method = getnamecallmethod()
-                    if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Hitbox" then
-                        args[3]["DamageRate"] = 0
-                        args[3]["LifeTime"] = 100
+Name = "Ability Damage For Hitbox",
+Description = "Work On some Ability only | Press 1 time only or u will crash",
+StartingState = false,
+Callback = function()
+    if amount1 then
+        if hookmetamethod then
+            local __namecall
+            __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
+                local method = getnamecallmethod()
+                local args = {
+                    ...
+                }
+                local self = args[1]
+                if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Hitbox" then
+                    args[3]["DamageRate"] = 0
+                    args[3]["LifeTime"] = 100
+                end
+                return __namecall(...)
+            end))
+            local __namecall 
+            __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
+                local method = getnamecallmethod()
+                local args = {
+                    ...
+                }
+                local self = args[1]
+                if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "HitboxUpdate" then
+                    for i = 1, amount1 do
+                        __namecall(...)
                     end
-                    return __namecall(...)
-                end)
-
-                local __namecall = mt.__namecall
-                mt.__namecall = newcclosure(function(...)
-                    local method = getnamecallmethod()
-                    local args = {
-                        ...
-                    }
-                    local self = args[1]
-                    if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "HitboxUpdate" then
-                        for i = 1, amount1 do
-                            __namecall(...)
-                        end
-                    end
-                    return __namecall(...)
-                end)
-            end
+                end
+                return __namecall(...)
+            end))
         else
-            Maintab:Prompt{
-                Title = "PLEASE",
-                Text = "Please Insert number On Ability boost Amount"
-            }
+            local mt = getrawmetatable(game)
+            setreadonly(mt, false)
+
+            local __namecall = mt.__namecall
+            mt.__namecall = newcclosure(function(...)
+                local args = {
+                    ...
+                }
+                local self = args[1]
+                local method = getnamecallmethod()
+                if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Hitbox" then
+                    args[3]["DamageRate"] = 0
+                    args[3]["LifeTime"] = 100
+                end
+                return __namecall(...)
+            end)
+
+            local __namecall = mt.__namecall
+            mt.__namecall = newcclosure(function(...)
+                local method = getnamecallmethod()
+                local args = {
+                    ...
+                }
+                local self = args[1]
+                if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "HitboxUpdate" then
+                    for i = 1, amount1 do
+                        __namecall(...)
+                    end
+                end
+                return __namecall(...)
+            end)
         end
+    else
+        Maintab:Prompt{
+            Title = "PLEASE",
+            Text = "Please Insert number On Ability boost Amount"
+        }
     end
+end
 }
 
 
@@ -470,7 +464,7 @@ Maintab:Button{
     Name = "Mod Dash Distance",
     Callback = function()
         if dash then
-            local dashs = require(game:GetService("ReplicatedFirst").Classes.MovementHandler)
+            local dashs = require(ReplicatedFirst.Classes.MovementHandler)
             local old = dashs.Update
             dashs.Update = function(...)
                 local args = {
@@ -537,7 +531,7 @@ Teleporttab:Button{
     Name = "Teleport",
     Callback = function()
         if tp then
-            lplr.Character.HumanoidRootPart.CFrame = checkarena(tp).CFrame * CFrame.new(0, 5, 0)
+            LocalPlayer.Character.HumanoidRootPart.CFrame = checkarena(tp).CFrame * CFrame.new(0, 5, 0)
         end
     end
 }
@@ -550,12 +544,14 @@ Misctab:Button{
 }
 
 local File = pcall(function()
-    AllIDs = game:GetService('HttpService'):JSONDecode(readfile("NotSameServers.json"))
+    AllIDs = HttpService:JSONDecode(readfile("NotSameServers.json"))
 end)
+
 if not File then
     table.insert(AllIDs, actualHour)
-    writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+    writefile("NotSameServers.json", HttpService:JSONEncode(AllIDs))
 end
+
 function TPReturner()
     local Site;
     if foundAnything == "" then
@@ -627,7 +623,7 @@ function checkfarm(arena)
     local a = nil
     for i, v in next, arenacframe do
         if arena == "End Valley" or arena == "Court of Death" then
-            a = lplr.DisplayName .. "'s Arena" 
+            a = LocalPlayer.DisplayName .. "'s Arena" 
             return a
         end
         if string.find(arena, i) then
@@ -642,7 +638,7 @@ function getchest()
     local target = nil
     for i, v in next, workspace["SPAWNED_CHESTS"]:GetChildren() do
         if v:FindFirstChild("Center") or v:FindFirstChild("Part") then
-            local magnitude = (v.Center.Position - lplr.Character.HumanoidRootPart.Position).magnitude
+            local magnitude = (v.Center.Position - LocalPlayer.Character.HumanoidRootPart.Position).magnitude
             if magnitude < distance then
                 distance = magnitude
                 target = v
@@ -656,7 +652,7 @@ function getarena()
     local wow = nil
     if farm == "End Valley" or farm == "Court of Death" then
         for  _, arenaname in next, workspace["ACTIVE_WEEKLY_ARENAS"]:GetChildren() do
-            if arenaname.Name == lplr.DisplayName .. "'s Arena" and arenaname:FindFirstChild("JoinSpawn") then
+            if arenaname.Name == LocalPlayer.DisplayName .. "'s Arena" and arenaname:FindFirstChild("JoinSpawn") then
                 wow = arenaname.Enemies
                 return wow
             end
@@ -686,20 +682,20 @@ function checkarenaboss()
     return epicbos
 end
 
-spawn(function()
-    while wait() do
+task.spawn(function()
+    while task.wait() do
         pcall(function()
             if farm then
                 if farm == "End Valley" and farmarena or farm == "Court of Death" and farmarena then
                     repeat
-                        if not lplr.PlayerGui:FindFirstChild("Spawn") then
-                            game:GetService("ReplicatedStorage").Remotes.UsePortal:InvokeServer("Tree Village")
+                        if not LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
+                            ReplicatedStorage.Remotes.UsePortal:InvokeServer("Tree Village")
                             wait(1)
-                            game:GetService("ReplicatedStorage").Remotes.CreateWeeklyArena:InvokeServer(farm)
+                            ReplicatedStorage.Remotes.CreateWeeklyArena:InvokeServer(farm)
                         end
                         for _, v in next, getarena():GetChildren() do
-                            if v:FindFirstChild("HumanoidRootPart") and farmarena and lplr.PlayerGui:FindFirstChild("Spawn") then
-                                lplr.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
+                            if v:FindFirstChild("HumanoidRootPart") and farmarena and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
+                                LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
                                 eventmobs = eventmobs + 1
                             end
                         end
@@ -710,14 +706,14 @@ spawn(function()
             if farm and farmarena then   
                 if farm ~= "End Valley" or farm ~= "Court of Death" then
                     repeat
-                        if not lplr.PlayerGui:FindFirstChild("Spawn") then
-                            lplr.Character.HumanoidRootPart.CFrame = checkarena(farm).CFrame * CFrame.new(0, 0, -5)
-                            game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(checkfarm(farm), true)    
+                        if not LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
+                            LocalPlayer.Character.HumanoidRootPart.CFrame = checkarena(farm).CFrame * CFrame.new(0, 0, -5)
+                            ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(farm), true)    
                         end
                         mobs = 0
                         for _, v in next, getarena():GetChildren() do
-                            if v:FindFirstChild("HumanoidRootPart") and farmarena and lplr.PlayerGui:FindFirstChild("Spawn") then
-                                lplr.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
+                            if v:FindFirstChild("HumanoidRootPart") and farmarena and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
+                                LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
                                 mobs = mobs + 1
                             end
                         end
@@ -729,29 +725,29 @@ spawn(function()
     end
 end)
 
-spawn(function()
+task.spawn(function()
     while task.wait() do
         if auto then
-            game:GetService("ReplicatedStorage").Remotes.Melee:FireServer("Melee")
+            ReplicatedStorage.Remotes.Melee:FireServer("Melee")
         end
     end
 end)
 
-spawn(function()
+task.spawn(function()
     while task.wait(.5) do
         if autorebirth then
-            game:GetService("ReplicatedStorage").Remotes.Rebirth:InvokeServer()
+            ReplicatedStorage.Remotes.Rebirth:InvokeServer()
         end
     end
 end)
 
-spawn(function()
+task.spawn(function()
     while task.wait(.1) do
         pcall(function()
             if ability or autoability then
-                for i, v in pairs(lplr.PlayerGui.UI.HotbarArea.Hotbar.AbilityButtons:GetChildren()) do
+                for i, v in pairs(LocalPlayer.PlayerGui.UI.HotbarArea.Hotbar.AbilityButtons:GetChildren()) do
                     if v:IsA("Frame") then
-                        game:GetService("VirtualInputManager"):SendKeyEvent(true, v:FindFirstChild("Number").Text, false, game)
+                        VirtualInputManager:SendKeyEvent(true, v:FindFirstChild("Number").Text, false, game)
                     end
                 end
             end
@@ -759,14 +755,14 @@ spawn(function()
     end
 end)
 
-spawn(function()
+task.spawn(function()
     while task.wait() do
         pcall(function()
             if collect then
                 pcall(function()
-                    for i, v in next, game:GetService("Workspace").FX:GetChildren() do
+                    for i, v in next, workspace.FX:GetChildren() do
                         if string.len(v.Name) > 20 and collect then
-                            v.CFrame = lplr.Character.HumanoidRootPart.CFrame
+                            v.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
                         end
                     end
                 end)
@@ -775,34 +771,32 @@ spawn(function()
     end
 end)
 
-spawn(function()
-    LPH_JIT_ULTRA(function()
-        local __namecall
-        __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
-            local method = getnamecallmethod()
-            local args = {
-                ...
-            }
-            local self = args[1]
-            if not checkcaller() and method == "FireServer" and tostring(self) == "Movement" then
-                return
-            end
-            return __namecall(...)
-        end))
-    end)()
-    local gay = require(game:GetService("ReplicatedStorage").Modules.Bins.AbilityData)
-    for i, v in next, gay do
-        gay[i].Duration = 0
+task.spawn(function()
+    local __namecall
+    __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
+        local method = getnamecallmethod()
+        local args = {
+            ...
+        }
+        local self = args[1]
+        if not checkcaller() and method == "FireServer" and tostring(self) == "Movement" then
+            return
+        end
+        return __namecall(...)
+    end))
+    local dashduration = require(ReplicatedStorage.Modules.Bins.AbilityData)
+    for i, v in next, dashduration do
+        dashduration[i].Duration = 0
     end
 end)
 
-spawn(function()
+task.spawn(function()
     while wait(.1) do
         pcall(function()
             if farmchest then
                 pcall(function()
                     repeat
-                        lplr.Character.HumanoidRootPart.CFrame = getchest().Center.CFrame * CFrame.new(0, 1.8, 0)
+                        LocalPlayer.Character.HumanoidRootPart.CFrame = getchest().Center.CFrame * CFrame.new(0, 1.8, 0)
                         task.wait(4)
                     until getchest == nil or farmchest == false
                 end)
@@ -811,13 +805,13 @@ spawn(function()
     end
 end)
 
-spawn(function()
+task.spawn(function()
     while task.wait() do
         pcall(function()
             if autofighters then
-                for i, v in next, lplr.PlayerGui.UI.FighterUI.SlotFrame:GetChildren() do
-                    if v:IsA("Frame") and v.Name == "Fighter" and lplr.PlayerGui:FindFirstChild("Spawn") then
-                        game:GetService("ReplicatedStorage").Remotes.SpawnFighter:InvokeServer(v.FighterName.Text)
+                for i, v in next, LocalPlayer.PlayerGui.UI.FighterUI.SlotFrame:GetChildren() do
+                    if v:IsA("Frame") and v.Name == "Fighter" and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
+                        ReplicatedStorage.Remotes.SpawnFighter:InvokeServer(v.FighterName.Text)
                     end
                 end
             end
@@ -825,26 +819,36 @@ spawn(function()
     end
 end)
 
-spawn(function()
+task.spawn(function()
     while wait(.5) do
         pcall(function()
             if farmboss and farm then
                 repeat wait()
-                    if not lplr.PlayerGui:FindFirstChild("Spawn") then
-                        lplr.Character.HumanoidRootPart.CFrame = checkarena(farm).CFrame * CFrame.new(0, 0, -5)
-                        game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(checkfarm(farm), true)
+                    if not LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
+                        LocalPlayer.Character.HumanoidRootPart.CFrame = checkarena(farm).CFrame * CFrame.new(0, 0, -5)
+                        ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(farm), true)
                     end
                     task.wait(1)
                     for _, v in next, getarena():GetChildren() do
-                        if v.Name == checkarenaboss() and v:FindFirstChild("HumanoidRootPart") and farmboss and lplr.PlayerGui:FindFirstChild("Spawn") then
-                            lplr.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
+                        if v.Name == checkarenaboss() and v:FindFirstChild("HumanoidRootPart") and farmboss and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
+                            LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
                         end
                         if not v.Parent:FindFirstChild(checkarenaboss()) then
-                            game:GetService("ReplicatedStorage").Remotes.JoinLeaveArena:FireServer(checkfarm(farm), false)  
+                            ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(farm), false)  
                         end 
                     end 
                 until farmboss == false
             end
         end)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(1) do
+        if block then
+            ReplicatedStorage.Remotes.Melee:FireServer("Block", true)
+        else
+            ReplicatedStorage.Remotes.Melee:FireServer("Block", false)
+        end
     end
 end)

@@ -807,15 +807,15 @@ end)
 
 task.spawn(function()
     while task.wait() do
-        pcall(function()
+        -- pcall(function()
             if autofighters then
-                for i, v in next, LocalPlayer.PlayerGui.UI.FighterUI.SlotFrame:GetChildren() do
-                    if v:IsA("Frame") and v.Name == "Fighter" and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
-                        ReplicatedStorage.Remotes.SpawnFighter:InvokeServer(v.FighterName.Text)
+                for i, v in next, LocalPlayer.PlayerGui.UI.InventoryUI.FightersWindow.Equipped:GetChildren() do
+                    if v:IsA("Frame") and v:FindFirstChild("ItemDisplay") and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
+                        ReplicatedStorage.Remotes.SpawnFighter:InvokeServer(v.ItemDisplay.ItemName.Text)           
                     end
                 end
             end
-        end)
+        -- end)
     end
 end)
 

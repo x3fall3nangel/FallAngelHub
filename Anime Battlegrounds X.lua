@@ -1,6 +1,4 @@
-repeat
-    task.wait()
-until game:IsLoaded()
+repeat task.wait() until game:IsLoaded()
 local Library1 = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeeity/mercury-lib/master/src.lua"))()
 local gu = Library1:Create{
     Name = "FallAngel Hub",
@@ -26,7 +24,7 @@ gu:Prompt{
     }
 }
 
-repeat wait() until bigui == true or smallui == true
+repeat task.wait() until bigui == true or smallui == true
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeeity/mercury-lib/master/src.lua"))()
 local GUI = nil
 if bigui then
@@ -165,6 +163,269 @@ local boss = {
     "Kanai"
 }
 
+local File = pcall(function()
+    AllIDs = HttpService:JSONDecode(readfile("NotSameServers.json"))
+end)
+
+if not File then
+    table.insert(AllIDs, actualHour)
+    writefile("NotSameServers.json", HttpService:JSONEncode(AllIDs))
+end
+
+local function TPReturner()
+    local Site;
+    if foundAnything == "" then
+        Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100'))
+    else
+        Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. foundAnything))
+    end
+    local ID = ""
+    if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
+        foundAnything = Site.nextPageCursor
+    end
+    local num = 0;
+    for i,v in pairs(Site.data) do
+        local Possible = true
+        ID = tostring(v.id)
+        if tonumber(v.maxPlayers) > tonumber(v.playing) then
+            for _,Existing in pairs(AllIDs) do
+                if num ~= 0 then
+                    if ID == tostring(Existing) then
+                        Possible = false
+                    end
+                else
+                    if tonumber(actualHour) ~= tonumber(Existing) then
+                        local delFile = pcall(function()
+                            delfile("NotSameServers.json")
+                            AllIDs = {}
+                            table.insert(AllIDs, actualHour)
+                        end)
+                    end
+                end
+                num = num + 1
+            end
+            if Possible == true then
+                table.insert(AllIDs, ID)
+                task.wait()
+                pcall(function()
+                    writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+                    task.wait()
+                    game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, game.Players.LocalPlayer)
+                end)
+            end
+        end
+    end
+end
+
+local function Rejoin()
+    while task.wait() do
+        pcall(function()
+            TPReturner()
+            if foundAnything ~= "" then
+                TPReturner()
+            end
+        end)
+    end
+end
+
+
+local function checkarena(arena)
+    local c = nil
+    for i, v in next, arenacframe do
+        if string.find(arena, i) then
+            c = arenacframe[i]
+        end
+    end
+    return c
+end
+
+local function checkfarm(arena)
+    local a = nil
+    for i, v in next, arenacframe do
+        if arena == "End Valley" or arena == "Court of Death" then
+            a = LocalPlayer.DisplayName .. "'s Arena" 
+            return a
+        end
+        if string.find(arena, i) then
+            a = i
+        end
+    end
+    return a
+end
+
+local function getchest()
+    local distance = math.huge
+    local target = nil
+    for i, v in next, workspace["SPAWNED_CHESTS"]:GetChildren() do
+        if v:FindFirstChild("Center") or v:FindFirstChild("Part") then
+            local magnitude = (v.Center.Position - LocalPlayer.Character.HumanoidRootPart.Position).magnitude
+            if magnitude < distance then
+                distance = magnitude
+                target = v
+            end
+        end
+    end
+    return target
+end
+
+local function getarena()
+    local wow = nil
+    if farm == "End Valley" or farm == "Court of Death" then
+        for  _, arenaname in next, workspace["ACTIVE_WEEKLY_ARENAS"]:GetChildren() do
+            if arenaname.Name == LocalPlayer.DisplayName .. "'s Arena" and arenaname:FindFirstChild("JoinSpawn") then
+                wow = arenaname.Enemies
+                return wow
+            end
+        end
+    end
+    if farm then
+        for i, arenaname in next, workspace.WORLD:GetChildren() do
+            if arenaname.Arenas:FindFirstChild(checkfarm(farm)) then
+                wow = arenaname.Arenas:FindFirstChild(checkfarm(farm)).Enemies
+            end
+        end
+    end
+    return wow
+end
+
+local function checkarenaboss()
+    local epicbos = nil
+    if farm then
+        for i, bossreal in next, boss do
+            for i2, v in next, arenaepic do
+                if i == i2 then
+                    epicbos = bossreal
+                end
+            end
+        end
+    end
+    return epicbos
+end
+
+local function dmgpoint()
+    if hookmetamethod then
+            local __namecall
+        __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
+            local method = getnamecallmethod()
+            local args = {
+                ...
+            }
+            local self = args[1]
+            if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Point" then
+                for i = 1, amount do
+                    __namecall(...)
+                end
+            end
+            return __namecall(...)
+        end))
+    else
+        local mt = getrawmetatable(game)
+        setreadonly(mt, false)
+
+        local __namecall = mt.__namecall
+
+        mt.__namecall = newcclosure(function(...)
+            local args = {
+                ...
+            }
+            local self = args[1]
+            local method = getnamecallmethod()
+            if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Point" then
+                for i = 1, amount do
+                    __namecall(...)
+                end
+            end
+            return __namecall(...)
+        end)
+    end
+end
+
+local function dmghitbox()
+    if hookmetamethod then
+        local __namecall
+        __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
+            local method = getnamecallmethod()
+            local args = {
+                ...
+            }
+            local self = args[1]
+            if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Hitbox" then
+                args[3]["DamageRate"] = 0
+                args[3]["LifeTime"] = 100
+            end
+            return __namecall(...)
+        end))
+        local __namecall 
+        __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
+            local method = getnamecallmethod()
+            local args = {
+                ...
+            }
+            local self = args[1]
+            if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "HitboxUpdate" then
+                for i = 1, amount1 do
+                    __namecall(...)
+                end
+            end
+            return __namecall(...)
+        end))
+    else
+        local mt = getrawmetatable(game)
+        setreadonly(mt, false)
+
+        local __namecall = mt.__namecall
+        mt.__namecall = newcclosure(function(...)
+            local args = {
+                ...
+            }
+            local self = args[1]
+            local method = getnamecallmethod()
+            if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Hitbox" then
+                args[3]["DamageRate"] = 0
+                args[3]["LifeTime"] = 100
+            end
+            return __namecall(...)
+        end)
+
+        local __namecall = mt.__namecall
+        mt.__namecall = newcclosure(function(...)
+            local method = getnamecallmethod()
+            local args = {
+                ...
+            }
+            local self = args[1]
+            if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "HitboxUpdate" then
+                for i = 1, amount1 do
+                    __namecall(...)
+                end
+            end
+            return __namecall(...)
+        end)
+    end
+end
+
+local function modash()
+    local dashs = require(ReplicatedFirst.Classes.MovementHandler)
+    local old = dashs.Update
+    dashs.Update = function(...)
+        local args = {
+            ...
+        }
+        for i, v in next, args do
+            if type(v) == "table" then
+                for i2, v2 in next, v do
+                    v.DashStamina = 0
+                    v.DashDistance = tonumber(dash)
+                    v.DashCooldown = 0
+                    v.UsedDoubleJump = false
+                    v.ReadyForDoubleJump = true
+                end
+            end
+        end
+        return old(...)
+    end
+end
+
 Maintab:Dropdown{
     Name = "Choose Arena for Auto Farm",
     StartingText = "Select...",
@@ -283,46 +544,12 @@ Abilitytab:Textbox{
 }
 
 Abilitytab:Button{
-    Name = "Ability Damage For Point",
-    Description = "Work On some Ability only | Press 1 time only or u will crash",
-    StartingState = false,
-    Callback = function()
-        if amount then
-            if hookmetamethod then
-                local __namecall
-                __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
-                    local method = getnamecallmethod()
-                    local args = {
-                        ...
-                    }
-                    local self = args[1]
-                    if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Point" then
-                        for i = 1, amount do
-                            __namecall(...)
-                        end
-                    end
-                    return __namecall(...)
-                end))
-            else
-                local mt = getrawmetatable(game)
-                setreadonly(mt, false)
-
-                local __namecall = mt.__namecall
-
-                mt.__namecall = newcclosure(function(...)
-                    local args = {
-                        ...
-                    }
-                    local self = args[1]
-                    local method = getnamecallmethod()
-                    if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Point" then
-                        for i = 1, amount do
-                            __namecall(...)
-                        end
-                    end
-                    return __namecall(...)
-                end)
-        end
+Name = "Ability Damage For Point",
+Description = "Work On some Ability only | Press 1 time only or u will crash",
+StartingState = false,
+Callback = function()
+    if amount then
+        dmgpoint()
     else
         Maintab:Prompt{
             Title = "PLEASE",
@@ -360,67 +587,7 @@ Description = "Work On some Ability only | Press 1 time only or u will crash",
 StartingState = false,
 Callback = function()
     if amount1 then
-        if hookmetamethod then
-            local __namecall
-            __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
-                local method = getnamecallmethod()
-                local args = {
-                    ...
-                }
-                local self = args[1]
-                if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Hitbox" then
-                    args[3]["DamageRate"] = 0
-                    args[3]["LifeTime"] = 100
-                end
-                return __namecall(...)
-            end))
-            local __namecall 
-            __namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
-                local method = getnamecallmethod()
-                local args = {
-                    ...
-                }
-                local self = args[1]
-                if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "HitboxUpdate" then
-                    for i = 1, amount1 do
-                        __namecall(...)
-                    end
-                end
-                return __namecall(...)
-            end))
-        else
-            local mt = getrawmetatable(game)
-            setreadonly(mt, false)
-
-            local __namecall = mt.__namecall
-            mt.__namecall = newcclosure(function(...)
-                local args = {
-                    ...
-                }
-                local self = args[1]
-                local method = getnamecallmethod()
-                if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Hitbox" then
-                    args[3]["DamageRate"] = 0
-                    args[3]["LifeTime"] = 100
-                end
-                return __namecall(...)
-            end)
-
-            local __namecall = mt.__namecall
-            mt.__namecall = newcclosure(function(...)
-                local method = getnamecallmethod()
-                local args = {
-                    ...
-                }
-                local self = args[1]
-                if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "HitboxUpdate" then
-                    for i = 1, amount1 do
-                        __namecall(...)
-                    end
-                end
-                return __namecall(...)
-            end)
-        end
+        dmghitbox()
     else
         Maintab:Prompt{
             Title = "PLEASE",
@@ -464,25 +631,7 @@ Maintab:Button{
     Name = "Mod Dash Distance",
     Callback = function()
         if dash then
-            local dashs = require(ReplicatedFirst.Classes.MovementHandler)
-            local old = dashs.Update
-            dashs.Update = function(...)
-                local args = {
-                    ...
-                }
-                for i, v in next, args do
-                    if type(v) == "table" then
-                        for i2, v2 in next, v do
-                            v.DashStamina = 0
-                            v.DashDistance = tonumber(dash)
-                            v.DashCooldown = 0
-                            v.UsedDoubleJump = false
-                            v.ReadyForDoubleJump = true
-                        end
-                    end
-                end
-                return old(...)
-            end
+            modash()
         else
             Maintab:Prompt{
                 Title = "PLEASE",
@@ -542,145 +691,6 @@ Misctab:Button{
         Rejoin()
     end
 }
-
-local File = pcall(function()
-    AllIDs = HttpService:JSONDecode(readfile("NotSameServers.json"))
-end)
-
-if not File then
-    table.insert(AllIDs, actualHour)
-    writefile("NotSameServers.json", HttpService:JSONEncode(AllIDs))
-end
-
-function TPReturner()
-    local Site;
-    if foundAnything == "" then
-        Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100'))
-    else
-        Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. foundAnything))
-    end
-    local ID = ""
-    if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
-        foundAnything = Site.nextPageCursor
-    end
-    local num = 0;
-    for i,v in pairs(Site.data) do
-        local Possible = true
-        ID = tostring(v.id)
-        if tonumber(v.maxPlayers) > tonumber(v.playing) then
-            for _,Existing in pairs(AllIDs) do
-                if num ~= 0 then
-                    if ID == tostring(Existing) then
-                        Possible = false
-                    end
-                else
-                    if tonumber(actualHour) ~= tonumber(Existing) then
-                        local delFile = pcall(function()
-                            delfile("NotSameServers.json")
-                            AllIDs = {}
-                            table.insert(AllIDs, actualHour)
-                        end)
-                    end
-                end
-                num = num + 1
-            end
-            if Possible == true then
-                table.insert(AllIDs, ID)
-                wait()
-                pcall(function()
-                    writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
-                    wait()
-                    game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, game.Players.LocalPlayer)
-                end)
-            end
-        end
-    end
-end
-
-function Rejoin()
-    while wait() do
-        pcall(function()
-            TPReturner()
-            if foundAnything ~= "" then
-                TPReturner()
-            end
-        end)
-    end
-end
-
-
-function checkarena(arena)
-    local c = nil
-    for i, v in next, arenacframe do
-        if string.find(arena, i) then
-            c = arenacframe[i]
-        end
-    end
-    return c
-end
-
-function checkfarm(arena)
-    local a = nil
-    for i, v in next, arenacframe do
-        if arena == "End Valley" or arena == "Court of Death" then
-            a = LocalPlayer.DisplayName .. "'s Arena" 
-            return a
-        end
-        if string.find(arena, i) then
-            a = i
-        end
-    end
-    return a
-end
-
-function getchest()
-    local distance = math.huge
-    local target = nil
-    for i, v in next, workspace["SPAWNED_CHESTS"]:GetChildren() do
-        if v:FindFirstChild("Center") or v:FindFirstChild("Part") then
-            local magnitude = (v.Center.Position - LocalPlayer.Character.HumanoidRootPart.Position).magnitude
-            if magnitude < distance then
-                distance = magnitude
-                target = v
-            end
-        end
-    end
-    return target
-end
-
-function getarena()
-    local wow = nil
-    if farm == "End Valley" or farm == "Court of Death" then
-        for  _, arenaname in next, workspace["ACTIVE_WEEKLY_ARENAS"]:GetChildren() do
-            if arenaname.Name == LocalPlayer.DisplayName .. "'s Arena" and arenaname:FindFirstChild("JoinSpawn") then
-                wow = arenaname.Enemies
-                return wow
-            end
-        end
-    end
-    if farm then
-        for i, arenaname in next, workspace.WORLD:GetChildren() do
-            if arenaname.Arenas:FindFirstChild(checkfarm(farm)) then
-                wow = arenaname.Arenas:FindFirstChild(checkfarm(farm)).Enemies
-            end
-        end
-    end
-    return wow
-end
-
-function checkarenaboss()
-    local epicbos = nil
-    if farm then
-        for i, bossreal in next, boss do
-            for i2, v in next, arenaepic do
-                if i == i2 then
-                    epicbos = bossreal
-                end
-            end
-        end
-    end
-    return epicbos
-end
 
 task.spawn(function()
     while task.wait() do

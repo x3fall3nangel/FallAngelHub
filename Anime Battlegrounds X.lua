@@ -81,8 +81,6 @@ local mobs = 0
 local eventmobs = 0
 local tp
 local dash
-local amount
-local amount1
 
 local shared = {
     autoability = false,
@@ -94,7 +92,9 @@ local shared = {
     farmchest = false,
     autofighters = false,
     autorebirth = false,
-    farm = nil
+    farm = nil,
+    amount = nil,
+    amount1 = nil
 }
 
 local arenaepic = {
@@ -339,7 +339,7 @@ local function dmgpoint()
             }
             local self = args[1]
             if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Point" then
-                for i = 1, amount do
+                for i = 1, shared.amount do
                     __namecall(...)
                 end
             end
@@ -358,7 +358,7 @@ local function dmgpoint()
             local self = args[1]
             local method = getnamecallmethod()
             if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "Point" then
-                for i = 1, amount do
+                for i = 1, shared.amount do
                     __namecall(...)
                 end
             end
@@ -390,7 +390,7 @@ local function dmghitbox()
             }
             local self = args[1]
             if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "HitboxUpdate" then
-                for i = 1, amount1 do
+                for i = 1, shared.amount1 do
                     __namecall(...)
                 end
             end
@@ -422,7 +422,7 @@ local function dmghitbox()
             }
             local self = args[1]
             if not checkcaller() and method == "FireServer" and tostring(self) == "DamageTrigger" and args[2] == "HitboxUpdate" then
-                for i = 1, amount1 do
+                for i = 1, shared.amount1 do
                     __namecall(...)
                 end
             end
@@ -569,9 +569,11 @@ Abilitytab:Button{
 
 Abilitytab:Textbox{
     Name = "Ability Damage Point Amount",
-    Description = "Please insert any numbers(recommend use 1000)",
+    Placeholder = shared.amount or 0,
+    Description = "Please insert any numbers(recommend use 500)",
     Callback = function(Text)
-        amount = tonumber(Text)
+        shared.amount = tonumber(Text)
+        SaveSettings()
     end
 }
 
@@ -580,7 +582,7 @@ Name = "Ability Damage For Point",
 Description = "Work On some Ability only | Press 1 time only or u will crash",
 StartingState = false,
 Callback = function()
-    if amount then
+    if shared.amount then
         dmgpoint()
     else
         Maintab:Prompt{
@@ -607,9 +609,11 @@ end
 
 Abilitytab:Textbox{
 Name = "Ability Damage Hitbox Amount",
+Placeholder = shared.amount1 or 0,
 Description = "Dont go too high with this or u will crash(recommend 100)",
 Callback = function(Text)
-    amount1 = tonumber(Text)
+    shared.amount1 = tonumber(Text)
+    SaveSettings()
 end
 }
 
@@ -618,7 +622,7 @@ Name = "Ability Damage For Hitbox",
 Description = "Work On some Ability only | Press 1 time only or u will crash",
 StartingState = false,
 Callback = function()
-    if amount1 then
+    if shared.amount1 then
         dmghitbox()
     else
         Maintab:Prompt{
@@ -724,6 +728,15 @@ Misctab:Button{
     end
 }
 
+Misctab:Color_Picker{
+    Name = "Theme Color",
+    Style = Library.ColorPickerStyles.Legacy,
+    Description = "Click to adjust color...",
+    Callback = function(color)
+        
+    end
+}
+
 task.spawn(function()
     while task.wait() do
         pcall(function()
@@ -790,7 +803,7 @@ task.spawn(function()
                 for i, v in pairs(LocalPlayer.PlayerGui.UI.HotbarArea.Hotbar.AbilityButtons:GetChildren()) do
                     if v:IsA("Frame") then
                         VirtualInputManager:SendKeyEvent(true, v:FindFirstChild("Number").Text, false, game)
-                        task.wait(.1)
+                        task.wait(1)
                     end
                 end
             end

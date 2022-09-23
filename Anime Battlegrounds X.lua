@@ -75,16 +75,27 @@ local PlaceID = game.PlaceId
 local AllIDs = {}
 local foundAnything = ""
 local actualHour = os.date("!*t").hour
+local FileName = "FallAngelHub/Anime_BattleGroundX_Settings.txt"
 local Deleted = false
 local mobs = 0
 local eventmobs = 0
 local tp
 local dash
-local farm
 local amount
 local amount1
 
-getgenv().ability = false
+local shared = {
+    autoability = false,
+    auto = false,
+    collect = false,
+    block = false,
+    farmarena = false,
+    farmboss = false,
+    farmchest = false,
+    autofighters = false,
+    autorebirth = false,
+    farm = nil
+}
 
 local arenaepic = {
     "Tree Village Arena (Lvl 0)",
@@ -162,6 +173,9 @@ local boss = {
     "Fluffy",
     "Kanai"
 }
+if not isfolder("FallAngelHub") then
+    makefolder("FallAngelHub")
+end
 
 local File = pcall(function()
     AllIDs = HttpService:JSONDecode(readfile("NotSameServers.json"))
@@ -228,6 +242,19 @@ local function Rejoin()
     end
 end
 
+local function LoadSettings()
+    if (readfile and isfile and isfile(FileName)) then
+        shared = HttpService:JSONDecode(readfile(FileName))
+    end
+end
+
+local function SaveSettings()
+    local json 
+    json = HttpService:JSONEncode(shared)
+    if (writefile) then
+        writefile(FileName,json)
+    end
+end
 
 local function checkarena(arena)
     local c = nil
@@ -270,7 +297,7 @@ end
 
 local function getarena()
     local wow = nil
-    if farm == "End Valley" or farm == "Court of Death" then
+    if shared.farm == "End Valley" or shared.farm == "Court of Death" then
         for  _, arenaname in next, workspace["ACTIVE_WEEKLY_ARENAS"]:GetChildren() do
             if arenaname.Name == LocalPlayer.DisplayName .. "'s Arena" and arenaname:FindFirstChild("JoinSpawn") then
                 wow = arenaname.Enemies
@@ -278,10 +305,10 @@ local function getarena()
             end
         end
     end
-    if farm then
+    if shared.farm then
         for i, arenaname in next, workspace.WORLD:GetChildren() do
-            if arenaname.Arenas:FindFirstChild(checkfarm(farm)) then
-                wow = arenaname.Arenas:FindFirstChild(checkfarm(farm)).Enemies
+            if arenaname.Arenas:FindFirstChild(checkfarm(shared.farm)) then
+                wow = arenaname.Arenas:FindFirstChild(checkfarm(shared.farm)).Enemies
             end
         end
     end
@@ -290,7 +317,7 @@ end
 
 local function checkarenaboss()
     local epicbos = nil
-    if farm then
+    if shared.farm then
         for i, bossreal in next, boss do
             for i2, v in next, arenaepic do
                 if i == i2 then
@@ -426,98 +453,103 @@ local function modash()
     end
 end
 
+LoadSettings()
+
 Maintab:Dropdown{
     Name = "Choose Arena for Auto Farm",
-    StartingText = "Select...",
+    StartingText = shared.farm,
     Items = arenaepic,
     Callback = function(v)
-        if farm then
-            ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(farm), false)
+        if shared.farm then
+            ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(shared.farm), false)
         end
-        farm = v
+        shared.farm = v
+        SaveSettings()
     end
 }
 
 Maintab:Toggle{
     Name = "Auto Farm Arena",
     Description = "This take a bit to load",
-    StartingState = false,
+    StartingState = shared.farmarena,
     Callback = function(state)
-        getgenv().farmarena = state
+        shared.farmarena = state
+        SaveSettings()
     end
 }
 
 Maintab:Toggle{
     Name = "Auto Farm Arena Boss",
     Description = "Choose Arena",
-    StartingState = false,
+    StartingState = shared.farmboss,
     Callback = function(state)
-        getgenv().farmboss = state
+        shared.farmboss = state
+        SaveSettings()
     end
 }
 
 Maintab:Toggle{
     Name = "Auto Farm Chest",
-    StartingState = false,
+    StartingState = shared.farmchest,
     Callback = function(state)
-        getgenv().farmchest = state
+        shared.farmchest = state
+        SaveSettings()
     end
 }
 
 Maintab:Toggle{
     Name = "Auto spawn Fighters",
-    StartingState = false,
+    StartingState = shared.autofighters,
     Callback = function(state)
-        getgenv().autofighters = state
-    end
-}
-
-Abilitytab:Keybind{
-    Name = "Auto Ability",
-    Keybind = Enum.KeyCode.R,
-    Callback = function()
-        ability = not ability
+        shared.autofighters = state
+        SaveSettings()
     end
 }
 
 Abilitytab:Toggle{
     Name = "Auto Ability",
-    Description = "For who dont want use keybind",
-    StartingState = false,
+    Description = "",
+    StartingState = shared.autoability,
     Callback = function(state)
-        getgenv().autoability = state
+        shared.autoability = state
+        SaveSettings()
     end
 }
 
 Maintab:Toggle{
     Name = "Punch Aura",
-    StartingState = false,
+    StartingState = shared.auto,
     Callback = function(state)
-        getgenv().auto = state
+        shared.auto = state
+        SaveSettings()
     end
 }
 
 Maintab:Toggle{
     Name = "Auto Rebirth",
     Description = "idk it work or not",
+    StartingState = shared.autorebirth,
     Callback = function(state) 
-        getgenv().autorebirth = state
+        shared.autorebirth = state
+        SaveSettings()
     end
 }
 
 Maintab:Toggle{
     Name = "Instant Collect",
-    StartingState = false,
+    StartingState = shared.collect,
     Callback = function(state)
-        getgenv().collect = state
+        shared.collect = state
+        SaveSettings()
     end
 }
 
 Maintab:Toggle{
     Name = "Auto Block",
-    StartingState = false,
+    StartingState = shared.block,
     Callback = function(state)
-        getgenv().block = state
+        shared.block = state
+        SaveSettings()
     end
 }
 
@@ -695,40 +727,40 @@ Misctab:Button{
 task.spawn(function()
     while task.wait() do
         pcall(function()
-            if farm then
-                if farm == "End Valley" and farmarena or farm == "Court of Death" and farmarena then
+            if shared.farm then
+                if shared.farm == "End Valley" and shared.farmarena or shared.farm == "Court of Death" and shared.farmarena then
                     repeat
                         if not LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
                             ReplicatedStorage.Remotes.UsePortal:InvokeServer("Tree Village")
                             wait(1)
-                            ReplicatedStorage.Remotes.CreateWeeklyArena:InvokeServer(farm)
+                            ReplicatedStorage.Remotes.CreateWeeklyArena:InvokeServer(shared.farm)
                         end
                         for _, v in next, getarena():GetChildren() do
-                            if v:FindFirstChild("HumanoidRootPart") and farmarena and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
+                            if v:FindFirstChild("HumanoidRootPart") and shared.farmarena and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
                                 LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
                                 eventmobs = eventmobs + 1
                             end
                         end
-                        wait(.1)
-                    until eventmobs == 0 or farmarena == false
+                        task.wait(.5)
+                    until eventmobs == 0 or shared.farmarena == false
                 end
             end
-            if farm and farmarena then   
-                if farm ~= "End Valley" or farm ~= "Court of Death" then
+            if shared.farm and shared.farmarena then   
+                if shared.farm ~= "End Valley" or shared.farm ~= "Court of Death" then
                     repeat
                         if not LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
-                            LocalPlayer.Character.HumanoidRootPart.CFrame = checkarena(farm).CFrame * CFrame.new(0, 0, -5)
-                            ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(farm), true)    
+                            LocalPlayer.Character.HumanoidRootPart.CFrame = checkarena(shared.farm).CFrame * CFrame.new(0, 0, -5)
+                            ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(shared.farm), true)    
                         end
                         mobs = 0
                         for _, v in next, getarena():GetChildren() do
-                            if v:FindFirstChild("HumanoidRootPart") and farmarena and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
+                            if v:FindFirstChild("HumanoidRootPart") and shared.farmarena and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
                                 LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
                                 mobs = mobs + 1
                             end
                         end
-                        wait(.1)
-                    until mobs == 0 or farmarena == false
+                        task.wait(.5)
+                    until mobs == 0 or shared.farmarena == false
                 end
             end
         end)
@@ -737,7 +769,7 @@ end)
 
 task.spawn(function()
     while task.wait() do
-        if auto then
+        if shared.auto then
             ReplicatedStorage.Remotes.Melee:FireServer("Melee")
         end
     end
@@ -745,7 +777,7 @@ end)
 
 task.spawn(function()
     while task.wait(.5) do
-        if autorebirth then
+        if shared.autorebirth then
             ReplicatedStorage.Remotes.Rebirth:InvokeServer()
         end
     end
@@ -754,10 +786,11 @@ end)
 task.spawn(function()
     while task.wait(.1) do
         pcall(function()
-            if ability or autoability then
+            if shared.autoability then
                 for i, v in pairs(LocalPlayer.PlayerGui.UI.HotbarArea.Hotbar.AbilityButtons:GetChildren()) do
                     if v:IsA("Frame") then
                         VirtualInputManager:SendKeyEvent(true, v:FindFirstChild("Number").Text, false, game)
+                        task.wait(.1)
                     end
                 end
             end
@@ -768,10 +801,10 @@ end)
 task.spawn(function()
     while task.wait() do
         pcall(function()
-            if collect then
+            if shared.collect then
                 pcall(function()
                     for i, v in next, workspace.FX:GetChildren() do
-                        if string.len(v.Name) > 20 and collect then
+                        if string.len(v.Name) > 20 and shared.collect then
                             v.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
                         end
                     end
@@ -803,12 +836,12 @@ end)
 task.spawn(function()
     while wait(.1) do
         pcall(function()
-            if farmchest then
+            if shared.farmchest then
                 pcall(function()
                     repeat
                         LocalPlayer.Character.HumanoidRootPart.CFrame = getchest().Center.CFrame * CFrame.new(0, 1.8, 0)
                         task.wait(4)
-                    until getchest == nil or farmchest == false
+                    until getchest == nil or shared.farmchest == false
                 end)
             end
         end)
@@ -818,7 +851,7 @@ end)
 task.spawn(function()
     while task.wait() do
         pcall(function()
-            if autofighters then
+            if shared.autofighters then
                 for i, v in next, LocalPlayer.PlayerGui.UI.InventoryUI.FightersWindow.Equipped:GetChildren() do
                     if v:IsA("Frame") and v:FindFirstChild("ItemDisplay") and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
                         ReplicatedStorage.Remotes.SpawnFighter:InvokeServer(v.ItemDisplay.ItemName.Text)           
@@ -832,22 +865,22 @@ end)
 task.spawn(function()
     while wait(.5) do
         pcall(function()
-            if farmboss and farm then
+            if shared.farmboss and shared.farm then
                 repeat wait()
                     if not LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
-                        LocalPlayer.Character.HumanoidRootPart.CFrame = checkarena(farm).CFrame * CFrame.new(0, 0, -5)
-                        ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(farm), true)
+                        LocalPlayer.Character.HumanoidRootPart.CFrame = checkarena(shared.farm).CFrame * CFrame.new(0, 0, -5)
+                        ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(shared.farm), true)
                     end
                     task.wait(1)
                     for _, v in next, getarena():GetChildren() do
-                        if v.Name == checkarenaboss() and v:FindFirstChild("HumanoidRootPart") and farmboss and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
+                        if v.Name == checkarenaboss() and v:FindFirstChild("HumanoidRootPart") and shared.farmboss and LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
                             LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
                         end
                         if not v.Parent:FindFirstChild(checkarenaboss()) then
-                            ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(farm), false)  
+                            ReplicatedStorage.Remotes.JoinLeaveArena:FireServer(checkfarm(shared.farm), false)  
                         end 
                     end 
-                until farmboss == false
+                until shared.farmboss == false
             end
         end)
     end
@@ -855,7 +888,7 @@ end)
 
 task.spawn(function()
     while task.wait(1) do
-        if block then
+        if shared.block then
             ReplicatedStorage.Remotes.Melee:FireServer("Block", true)
         else
             ReplicatedStorage.Remotes.Melee:FireServer("Block", false)

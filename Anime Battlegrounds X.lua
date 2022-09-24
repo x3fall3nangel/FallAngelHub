@@ -82,7 +82,7 @@ local eventmobs = 0
 local tp
 local dash
 
-local shared = {
+getgenv().shared = {
     autoability = false,
     auto = false,
     collect = false,

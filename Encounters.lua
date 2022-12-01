@@ -181,13 +181,9 @@ Toggles.Killall:OnChanged(function()
     end)
 end)
 
-task.spawn(function()
-    LocalPlayer.OnTeleport:Connect(function(State)
-        if State == Enum.TeleportState.Started then
-            queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/Kelvinouo/Hub/master/skywars_autowin.lua", true))()]])
-        end
-    end)
-end)
+
+queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Encounters.lua", true))()]])
+
 
 -- UI Settings
 local MenuGroup = Tabs['UI Settings']:AddLeftGroupbox('Menu')

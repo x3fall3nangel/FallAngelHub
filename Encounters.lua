@@ -53,6 +53,8 @@ local skill = {
     "Basic"
 }
 
+queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Encounters.lua", true))()]])
+
 local Network = require(ReplicatedStorage.SharedModules.Network)
 
 Mainbox:AddToggle('infthing', {
@@ -180,10 +182,6 @@ Toggles.Killall:OnChanged(function()
         end
     end)
 end)
-
-
-queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Encounters.lua", true))()]])
-
 
 -- UI Settings
 local MenuGroup = Tabs['UI Settings']:AddLeftGroupbox('Menu')

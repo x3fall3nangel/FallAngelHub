@@ -53,8 +53,13 @@ local skill = {
     "Ultimate",
     "Basic"
 }
-
-queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Encounters.lua", true))()]])
+task.spawn(function()
+    LocalPlayer.OnTeleport:Connect(function(State)
+        if State == Enum.TeleportState.Started then
+            queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Encounters.lua", true))()]])
+        end
+    end)
+end)
 
 local Network = require(ReplicatedStorage.SharedModules.Network)
 

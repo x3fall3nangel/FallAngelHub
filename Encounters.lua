@@ -19,7 +19,7 @@ local Window = Library:CreateWindow({
     -- Set AutoShow to true if you want the menu to appear when it is created
     -- Position and Size are also valid options here
     -- but you do not need to define them unless you are changing them :)
-
+    
     Title = 'FallAngel Hub',
     Center = true, 
     AutoShow = true,
@@ -36,6 +36,7 @@ local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local queue = queue_on_teleport or syn.queue_on_teleport
 local queuecheck = false
 local skills
 
@@ -183,7 +184,7 @@ end)
 task.spawn(function()
     LocalPlayer.OnTeleport:Connect(function(State)
         if State == Enum.TeleportState.Started then
-            syn.queue_on_teleport("<script to execute after TP>")
+            queue([[loadstring(game:HttpGet("https://raw.githubusercontent.com/Kelvinouo/Hub/master/skywars_autowin.lua", true))()]])
         end
     end)
 end)

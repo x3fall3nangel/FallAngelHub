@@ -180,10 +180,12 @@ Toggles.Killall:OnChanged(function()
     end)
 end)
 
-game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
-    if State == Enum.TeleportState.Started then
-        syn.queue_on_teleport("<script to execute after TP>")
-    end
+task.spawn(function()
+    LocalPlayer.OnTeleport:Connect(function(State)
+        if State == Enum.TeleportState.Started then
+            syn.queue_on_teleport("<script to execute after TP>")
+        end
+    end)
 end)
 
 -- UI Settings

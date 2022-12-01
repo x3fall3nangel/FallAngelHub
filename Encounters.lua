@@ -7,6 +7,8 @@ if game.PlaceId == 7501699167 then
     repeat
         wait()
     until game:IsLoaded() and game.Players.LocalPlayer and game.Players.LocalPlayer.Character
+else
+    return
 end
 
 local repo = 'https://raw.githubusercontent.com/wally-rblx/LinoriaLib/main/'

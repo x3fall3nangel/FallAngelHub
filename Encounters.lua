@@ -1,5 +1,5 @@
 if game.PlaceId == 7499189111 then
-    game:GetService("ReplicatedStorage").RemoteFunctions.EnterQueue:InvokeServer("FFA", "Ryan", false)
+    game:GetService("ReplicatedStorage"):WaitForChild("RemoteFunctions").EnterQueue:InvokeServer("FFA", "Ryan", false)
     return
 end
 

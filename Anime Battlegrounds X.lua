@@ -111,7 +111,8 @@ local arenaepic = {
     "Giant Tree Island Arena (Lvl 300)",
     "Punk Danger Island Arena (Lvl400)",
     "End Valley",
-    "Court of Death"
+    "Court of Death",
+    "Sword Valley"
 }
 
 local arenacframe = {
@@ -155,6 +156,9 @@ local arenacframe = {
         CFrame = CFrame.new()
     },
     ["Court of Death"] = {
+        CFrame = CFrame.new()
+    },
+    ["Sword Valley"] = {
         CFrame = CFrame.new()
     }
 }
@@ -297,7 +301,7 @@ end
 
 local function getarena()
     local wow = nil
-    if shared.farm == "End Valley" or shared.farm == "Court of Death" then
+    if shared.farm == "End Valley" or shared.farm == "Court of Death" or shared.farm == "Sword Valley" then
         for  _, arenaname in next, workspace["ACTIVE_WEEKLY_ARENAS"]:GetChildren() do
             if arenaname.Name == LocalPlayer.DisplayName .. "'s Arena" and arenaname:FindFirstChild("JoinSpawn") then
                 wow = arenaname.Enemies
@@ -740,8 +744,8 @@ Misctab:Color_Picker{
 task.spawn(function()
     while task.wait() do
         pcall(function()
-            if shared.farm then
-                if shared.farm == "End Valley" and shared.farmarena or shared.farm == "Court of Death" and shared.farmarena then
+            if shared.farm and shared.farmarena then
+                if shared.farm == "End Valley" or shared.farm == "Court of Death" or shared.farm == "Sword Valley" then
                     repeat
                         if not LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
                             ReplicatedStorage.Remotes.UsePortal:InvokeServer("Tree Village")

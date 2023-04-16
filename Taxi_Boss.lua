@@ -7,7 +7,7 @@ local Library1 = loadstring(game:HttpGet("https://raw.githubusercontent.com/deee
 local gu = Library1:Create{
     Name = "FallAngel Hub",
     Size = UDim2.fromOffset(600, 400),
-    Theme = Library1.Themes.Dark,
+    Theme = Library1.Themes.Serika,
     Link = "https://discord.gg/b9QX5rnkT5"
 }
 

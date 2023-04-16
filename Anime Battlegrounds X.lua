@@ -333,6 +333,15 @@ local function checkarenaboss()
     return epicbos
 end
 
+local function autoskill()
+    for i, v in pairs(LocalPlayer.PlayerGui.UI.HotbarArea.Hotbar.AbilityButtons:GetChildren()) do
+        if v:IsA("Frame") and shared.autoability then
+            VirtualInputManager:SendKeyEvent(true, v:FindFirstChild("Number").Text, false, game)
+            task.wait(1)
+        end
+    end
+end
+
 local function dmgpoint()
     if hookmetamethod then
             local __namecall
@@ -746,6 +755,9 @@ task.spawn(function()
         pcall(function()
             if shared.farm and shared.farmarena then
                 if shared.farm == "End Valley" or shared.farm == "Court of Death" or shared.farm == "Sword Valley" then
+                    if shared.autoability then 
+                        autoskill()
+                    end
                     repeat
                         if not LocalPlayer.PlayerGui:FindFirstChild("Spawn") then
                             ReplicatedStorage.Remotes.UsePortal:InvokeServer("Tree Village")
@@ -776,6 +788,9 @@ task.spawn(function()
                                 mobs = mobs + 1
                             end
                         end
+                        if shared.autoability and mag < 10 then 
+                            autoskill()
+                        end
                         task.wait(.5)
                     until mobs == 0 or shared.farmarena == false
                 end
@@ -797,21 +812,6 @@ task.spawn(function()
         if shared.autorebirth then
             ReplicatedStorage.Remotes.Rebirth:InvokeServer()
         end
-    end
-end)
-
-task.spawn(function()
-    while task.wait(.1) do
-        pcall(function()
-            if shared.autoability then
-                for i, v in pairs(LocalPlayer.PlayerGui.UI.HotbarArea.Hotbar.AbilityButtons:GetChildren()) do
-                    if v:IsA("Frame") then
-                        VirtualInputManager:SendKeyEvent(true, v:FindFirstChild("Number").Text, false, game)
-                        task.wait(1)
-                    end
-                end
-            end
-        end)
     end
 end)
 

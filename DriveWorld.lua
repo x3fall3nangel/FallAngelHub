@@ -12,10 +12,12 @@ local Main = GUI:tab{
     Icon = "rbxassetid://8569322835" -- rbxassetid://2174510075 home icon
 }
 
+local Lighting = game:GetService("Lighting")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local runService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
+local Lighting = game:GetService("Lighting")
 
 local lp = Players.LocalPlayer
 local Systems = ReplicatedStorage:WaitForChild("Systems")
@@ -123,10 +125,14 @@ task.spawn(function()
                 end
                 task.wait(25)
                 Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
-                task.wait(1)
+                task.wait(.5)
                 Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
-                task.wait(1)
-                Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
+                task.wait(.5)
+                if lp.PlayerGui.Interface.JobComplete.Enabled == true then
+                    Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
+                    lp.PlayerGui.Interface.JobComplete.Enabled = false
+                    Lighting.BackgroundBlur.Enabled = false
+                end
                 print("Completed Job")  
             else
                 local Cars = ReplicatedStorage:WaitForChild("PlayerData"):WaitForChild(lp.Name):WaitForChild("Inventory"):WaitForChild("Cars")

@@ -87,6 +87,17 @@ Main:Toggle({
     end
 })
 
+Main:Button{
+    Name = "Instant Finish Race",
+    Description = "use when race is started",
+    Callback = function()
+        for i = 1, 45 do
+            Systems:WaitForChild("Races"):WaitForChild("CheckpointTouched"):FireServer(i)
+            task.wait()
+        end
+    end
+}
+
 task.spawn(function()
     while task.wait() do
         if Driveworld["autodelivery"] then

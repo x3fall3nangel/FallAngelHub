@@ -87,16 +87,31 @@ Main:Toggle({
     end
 })
 
-Main:Button{
-    Name = "Instant Finish Race",
-    Description = "use when race is started",
-    Callback = function()
-        for i = 1, 45 do
-            Systems:WaitForChild("Races"):WaitForChild("CheckpointTouched"):FireServer(i)
-            task.wait()
+Main:Toggle({
+    Name = "Auto Complete Race",
+	StartingState = false,
+    Description = "auto complete when u in race",
+	Callback = function(state)
+        Driveworld["autocomplete"] = state
+    end
+})
+
+task.spawn(function()
+    while task.wait() do
+        if Driveworld["autocomplete"] then
+            if isvehicle() then
+                for i,v in next, workspace.Races:GetChildren() do
+                    if v:FindFirstChild("Checkpoints") and v:FindFirstChild("Active").Value == true and v:FindFirstChild("Checkpoints"):GetChildren()[1]:FindFirstChild("Forcefield") then
+                        for i = 1, v.TotalCheckpoints.Value  do
+                            Systems:WaitForChild("Races"):WaitForChild("CheckpointTouched"):FireServer(i)
+                            task.wait()
+                        end
+                    end
+                end
+            end
         end
     end
-}
+end)
 
 task.spawn(function()
     while task.wait() do

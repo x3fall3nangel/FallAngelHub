@@ -133,8 +133,7 @@ task.spawn(function()
                 task.wait(.5)
                 if lp.PlayerGui.Interface.JobComplete.Enabled == true then
                     Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
-                    lp.PlayerGui.Interface.JobComplete.Enabled = false
-                    Lighting.BackgroundBlur.Enabled = false
+                    firesignal(lp.PlayerGui.Interface.JobComplete.Window.Content.Buttons.Close.MouseButton1Click)
                 end
                 print("Completed Job")  
             else

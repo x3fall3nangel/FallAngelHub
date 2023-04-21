@@ -59,7 +59,7 @@ end
 
 local function isvehicle()
     for i,v in next, workspace.Cars:GetChildren() do
-        if v:IsA("Model") and v:FindFirstChild("Owner") and v:FindFirstChild("Owner").Value == lp then
+        if (v:IsA("Model") and v:FindFirstChild("Owner") and v:FindFirstChild("Owner").Value == lp) then
             if v:FindFirstChild("CurrentDriver") and v:FindFirstChild("CurrentDriver").Value == lp then
                 return true
             end
@@ -101,7 +101,7 @@ task.spawn(function()
         if Driveworld["autocomplete"] then
             if isvehicle() then
                 for i,v in next, workspace.Races:GetChildren() do
-                    if v:FindFirstChild("Checkpoints") and v:FindFirstChild("Active").Value == true and v:FindFirstChild("Checkpoints"):GetChildren()[1]:FindFirstChild("Forcefield") then
+                    if (v:FindFirstChild("Checkpoints") and v:FindFirstChild("Active").Value == true and v:FindFirstChild("Checkpoints"):GetChildren()[1]:FindFirstChild("Forcefield")) then
                         for i = 1, v.TotalCheckpoints.Value  do
                             Systems:WaitForChild("Races"):WaitForChild("CheckpointTouched"):FireServer(i)
                             task.wait()
@@ -116,7 +116,7 @@ end)
 task.spawn(function()
     while task.wait() do
         if Driveworld["autodelivery"] then
-            if isvehicle() then
+            if isvehicle() and getchar() then
                 local completepos
                 local distance
                 local epic

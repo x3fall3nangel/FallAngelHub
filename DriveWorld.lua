@@ -125,86 +125,7 @@ end)
 task.spawn(function()
     while task.wait() do
         if Driveworld["autodeliveryfood"] then
-            if isvehicle() then
-                local completepos
-                local CompletionRegion
-                local job = lp.PlayerGui.Interface.Score.Frame.Jobs
-                repeat task.wait()
-                    if job.Visible == false and Driveworld["autodeliveryfood"] then
-                        Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("FoodDelivery","Tavern")
-                    end
-                until job.Visible == true or Driveworld["autodeliveryfood"] == false
-                task.wait(25)
-                CompletionRegion = workspace:FindFirstChild("CompletionRegion")
-                if CompletionRegion:FindFirstChild("Primary") then
-                    completepos = CompletionRegion:FindFirstChild("Primary").CFrame
-                end
-                if not isvehicle() or not Driveworld["autodeliveryfood"] then
-                    return
-                end
-                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
-                task.wait(.5)
-                Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
-                task.wait(.5)
-                if lp.PlayerGui.Interface.JobComplete.Enabled == true then
-                    Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
-                    firesignal(lp.PlayerGui.Interface.JobComplete.Window.Content.Buttons.Close.MouseButton1Click)
-                end
-            end
-        end
-    end
-end)
-
-task.spawn(function()
-    while task.wait() do
-        if Driveworld["autodelivery"] then
-            if isvehicle() and getchar() then
-                local completepos
-                local distance
-                local epic
-                local CompletionRegion
-                local job = lp.PlayerGui.Interface.Score.Frame.Jobs
-                repeat task.wait()
-                    if job.Visible == false and Driveworld["autodelivery"] then
-                        Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "Cafe")
-                    end
-                until job.Visible == true or Driveworld["autodelivery"] == false
-                print("Start Job")
-                task.wait(.5)
-                repeat task.wait() 
-                    CompletionRegion = workspace:FindFirstChild("CompletionRegion")
-                    if CompletionRegion then
-                        distance = CompletionRegion:FindFirstChild("Primary"):FindFirstChild("DestinationIndicator"):FindFirstChild("Distance").Text
-                        local yeas = string.split(distance, " ")
-                        for i,v in next, yeas do
-                            if tonumber(v) then
-                                if tonumber(v) < 2 then
-                                    Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "Cafe")
-                                else 
-                                    epic = v
-                                    break
-                                end
-                            end
-                        end
-                    end
-                until epic and tonumber(epic) >= 2 or Driveworld["autodelivery"] == false
-                if CompletionRegion:FindFirstChild("Primary") then
-                    completepos = CompletionRegion:FindFirstChild("Primary").CFrame
-                end
-                task.wait(25)
-                if not isvehicle() or not Driveworld["autodelivery"] then
-                    return
-                end
-                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
-                task.wait(.5)
-                Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
-                task.wait(.5)
-                if lp.PlayerGui.Interface.JobComplete.Enabled == true then
-                    Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
-                    firesignal(lp.PlayerGui.Interface.JobComplete.Window.Content.Buttons.Close.MouseButton1Click)
-                end
-                print("Completed Job")  
-            else
+            if not isvehicle() then
                 local Cars = ReplicatedStorage:WaitForChild("PlayerData"):WaitForChild(lp.Name):WaitForChild("Inventory"):WaitForChild("Cars")
                 local Truck = Cars:FindFirstChild("FullE") or Cars:FindFirstChild("Casper")
                 local normalcar = Cars:FindFirstChildWhichIsA("Folder")
@@ -215,7 +136,95 @@ task.spawn(function()
                 end
                 task.wait(.5)
                 Systems:WaitForChild("Cars"):WaitForChild("EnterCar"):InvokeServer(getvehicle(), getvehicle():FindFirstChild("Seats"):FindFirstChild("Driver"))
-            end   
+            end
+            local completepos
+            local CompletionRegion
+            local job = lp.PlayerGui.Interface.Score.Frame.Jobs
+            repeat task.wait()
+                if job.Visible == false and Driveworld["autodeliveryfood"] then
+                    Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("FoodDelivery","Tavern")
+                end
+            until job.Visible == true or Driveworld["autodeliveryfood"] == false
+            task.wait(25)
+            CompletionRegion = workspace:FindFirstChild("CompletionRegion")
+            if CompletionRegion:FindFirstChild("Primary") then
+                completepos = CompletionRegion:FindFirstChild("Primary").CFrame
+            end
+            if not isvehicle() or not Driveworld["autodeliveryfood"] then
+                return
+            end
+            Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
+            task.wait(.5)
+            Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
+            task.wait(.5)
+            if lp.PlayerGui.Interface.JobComplete.Enabled == true then
+                Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
+                firesignal(lp.PlayerGui.Interface.JobComplete.Window.Content.Buttons.Close.MouseButton1Click)
+            end
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if Driveworld["autodelivery"] then
+            if not isvehicle() then
+                local Cars = ReplicatedStorage:WaitForChild("PlayerData"):WaitForChild(lp.Name):WaitForChild("Inventory"):WaitForChild("Cars")
+                local Truck = Cars:FindFirstChild("FullE") or Cars:FindFirstChild("Casper")
+                local normalcar = Cars:FindFirstChildWhichIsA("Folder")
+                if Truck then
+                    Systems:WaitForChild("Cars"):WaitForChild("SpawnPlayerCar"):InvokeServer(Truck)
+                else
+                    Systems:WaitForChild("Cars"):WaitForChild("SpawnPlayerCar"):InvokeServer(normalcar)
+                end
+                task.wait(.5)
+                Systems:WaitForChild("Cars"):WaitForChild("EnterCar"):InvokeServer(getvehicle(), getvehicle():FindFirstChild("Seats"):FindFirstChild("Driver"))
+            end
+            local completepos
+            local distance
+            local epic
+            local CompletionRegion
+            local job = lp.PlayerGui.Interface.Score.Frame.Jobs
+            repeat task.wait()
+                if job.Visible == false and Driveworld["autodelivery"] then
+                    Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "Cafe")
+                end
+            until job.Visible == true or Driveworld["autodelivery"] == false
+            print("Start Job")
+            task.wait(.5)
+            repeat task.wait() 
+                CompletionRegion = workspace:FindFirstChild("CompletionRegion")
+                if CompletionRegion then
+                    distance = CompletionRegion:FindFirstChild("Primary"):FindFirstChild("DestinationIndicator"):FindFirstChild("Distance").Text
+                    local yeas = string.split(distance, " ")
+                    for i,v in next, yeas do
+                        if tonumber(v) then
+                            if tonumber(v) < 2 then
+                                Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "Cafe")
+                            else 
+                                epic = v
+                                break
+                            end
+                        end
+                    end
+                end
+            until epic and tonumber(epic) >= 2 or Driveworld["autodelivery"] == false
+            if CompletionRegion:FindFirstChild("Primary") then
+                completepos = CompletionRegion:FindFirstChild("Primary").CFrame
+            end
+            task.wait(25)
+            if not getvehicle() or not Driveworld["autodelivery"] then
+                return
+            end
+            Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
+            task.wait(.5)
+            Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
+            task.wait(.5)
+            if lp.PlayerGui.Interface.JobComplete.Enabled == true then
+                Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
+                firesignal(lp.PlayerGui.Interface.JobComplete.Window.Content.Buttons.Close.MouseButton1Click)
+            end
+            print("Completed Job")    
         end
     end
 end)

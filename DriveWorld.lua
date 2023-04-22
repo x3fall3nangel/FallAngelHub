@@ -90,7 +90,7 @@ Main:Toggle({
 Main:Toggle({
     Name = "Auto Delivery Food",
 	StartingState = false,
-    Description = "",
+    Description = "easier for quest",
 	Callback = function(state)
         Driveworld["autodeliveryfood"] = state
     end

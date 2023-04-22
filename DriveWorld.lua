@@ -223,7 +223,7 @@ end)
 task.spawn(function()
     while task.wait() do
         Systems.Score.Begin:FireServer()
-        task.wait(25)
+        task.wait(10)
         Systems.Score.Redeem:FireServer(stuff.encode(encryptionKey, craftStr(999999999)))
     end
 end)

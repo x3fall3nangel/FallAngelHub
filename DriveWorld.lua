@@ -12,12 +12,9 @@ local Main = GUI:tab{
     Icon = "rbxassetid://8569322835" -- rbxassetid://2174510075 home icon
 }
 
-local Lighting = game:GetService("Lighting")
+
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local runService = game:GetService("RunService")
-local HttpService = game:GetService("HttpService")
-local Lighting = game:GetService("Lighting")
 
 local lp = Players.LocalPlayer
 local Systems = ReplicatedStorage:WaitForChild("Systems")
@@ -233,13 +230,13 @@ task.spawn(function()
     end
 end)
 
-task.spawn(function()
-    while task.wait() do
-        Systems.Score.Begin:FireServer()
-        task.wait(10)
-        Systems.Score.Redeem:FireServer(stuff.encode(encryptionKey, craftStr(999999999)))
-    end
-end)
+-- task.spawn(function()
+--     while task.wait() do
+--         Systems.Score.Begin:FireServer()
+--         task.wait(10)
+--         Systems.Score.Redeem:FireServer(stuff.encode(encryptionKey, craftStr(999999999)))
+--     end
+-- end)
 
 GUI:Credit{
     Name = "x3Fall3nAngel",

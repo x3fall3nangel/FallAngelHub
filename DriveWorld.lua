@@ -21,7 +21,7 @@ local Systems = ReplicatedStorage:WaitForChild("Systems")
 
 local Driveworld = {}
 local xd = require(game:GetService("ReplicatedStorage").Systems.Score)
-local encryptionKey = debug.getupvalue(xd.Start, 4)/69
+-- local encryptionKey = debug.getupvalue(xd.Start, 4)
 local stuff = {}
 
 for i,v in pairs(getconnections(Players.LocalPlayer.Idled)) do

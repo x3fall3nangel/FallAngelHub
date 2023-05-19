@@ -21,7 +21,7 @@ local Systems = ReplicatedStorage:WaitForChild("Systems")
 
 local Driveworld = {}
 local xd = require(game:GetService("ReplicatedStorage").Systems.Score)
--- local encryptionKey = debug.getupvalue(xd.Start, 4)
+local encryptionKey = debug.getupvalue(xd.Start, 4)/69
 local stuff = {}
 
 for i,v in pairs(getconnections(Players.LocalPlayer.Idled)) do
@@ -148,10 +148,10 @@ task.spawn(function()
                 if CompletionRegion:FindFirstChild("Primary") then
                     completepos = CompletionRegion:FindFirstChild("Primary").CFrame
                 end
+                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
                 if not isvehicle() or not Driveworld["autodeliveryfood"] then
                     return
                 end
-                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
                 task.wait(.5)
                 Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
                 task.wait(.5)
@@ -213,10 +213,10 @@ task.spawn(function()
                     completepos = CompletionRegion:FindFirstChild("Primary").CFrame
                 end
                 task.wait(25)
+                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
                 if not getvehicle() or not Driveworld["autodelivery"] then
                     return
                 end
-                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
                 task.wait(.5)
                 Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
                 task.wait(.5)
@@ -230,13 +230,13 @@ task.spawn(function()
     end
 end)
 
--- task.spawn(function()
---     while task.wait() do
---         Systems.Score.Begin:FireServer()
---         task.wait(10)
---         Systems.Score.Redeem:FireServer(stuff.encode(encryptionKey, craftStr(999999999)))
---     end
--- end)
+task.spawn(function()
+    while task.wait() do
+        Systems.Score.Begin:FireServer()
+        task.wait(10)
+        Systems.Score.Redeem:FireServer(stuff.encode(encryptionKey, craftStr(999999999)))
+    end
+end)
 
 GUI:Credit{
     Name = "x3Fall3nAngel",

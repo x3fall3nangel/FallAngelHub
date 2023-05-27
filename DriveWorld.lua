@@ -148,10 +148,10 @@ task.spawn(function()
                 if CompletionRegion:FindFirstChild("Primary") then
                     completepos = CompletionRegion:FindFirstChild("Primary").CFrame
                 end
-                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
                 if not isvehicle() or not Driveworld["autodeliveryfood"] then
                     return
                 end
+                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
                 task.wait(.5)
                 Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
                 task.wait(.5)
@@ -187,7 +187,7 @@ task.spawn(function()
                 local job = lp.PlayerGui.Interface.Score.Frame.Jobs
                 repeat task.wait()
                     if job.Visible == false and Driveworld["autodelivery"] then
-                        Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "Cafe")
+                        Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "Waterfall")
                     end
                 until job.Visible == true or Driveworld["autodelivery"] == false
                 print("Start Job")
@@ -200,7 +200,7 @@ task.spawn(function()
                         for i,v in next, yeas do
                             if tonumber(v) then
                                 if tonumber(v) < 2 then
-                                    Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "Cafe")
+                                    Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "Waterfall")
                                 else 
                                     epic = v
                                     break

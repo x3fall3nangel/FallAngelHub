@@ -78,7 +78,7 @@ end
 Main:Toggle({
     Name = "Auto Delivery Trailer",
 	StartingState = false,
-    Description = "Use Full-E or Casper for more money",
+    Description = "Use Full-E or Casper for more money(work in USA map only)",
 	Callback = function(state)
         Driveworld["autodelivery"] = state
     end

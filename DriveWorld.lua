@@ -187,7 +187,7 @@ task.spawn(function()
                 local job = lp.PlayerGui.Interface.Score.Frame.Jobs
                 repeat task.wait()
                     if job.Visible == false and Driveworld["autodelivery"] then
-                        Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "9")
+                        Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "6")
                     end
                 until job.Visible == true or Driveworld["autodelivery"] == false
                 print("Start Job")
@@ -199,8 +199,8 @@ task.spawn(function()
                         local yeas = string.split(distance, " ")
                         for i,v in next, yeas do
                             if tonumber(v) then
-                                if tonumber(v) < 2 then
-                                    Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "9")
+                                if tonumber(v) < 2.1 or tonumber(epic) > 3 then
+                                    Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "6")
                                 else 
                                     epic = v
                                     break
@@ -208,13 +208,16 @@ task.spawn(function()
                             end
                         end
                     end
-                until epic and tonumber(epic) >= 2 or Driveworld["autodelivery"] == false
+                until epic and tonumber(epic) > 2 and tonumber(epic) <= 3 or Driveworld["autodelivery"] == false
                 if CompletionRegion:FindFirstChild("Primary") then
                     completepos = CompletionRegion:FindFirstChild("Primary").CFrame
                 end
                 task.wait(25)
+                if not Driveworld["autodelivery"] then
+                    return
+                end
                 Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
-                if not getvehicle() or not Driveworld["autodelivery"] then
+                if not getvehicle() then
                     return
                 end
                 task.wait(.5)

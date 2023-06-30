@@ -108,7 +108,7 @@ task.spawn(function()
             if isvehicle() then
                 for i,v in next, workspace.Races:GetChildren() do
                     if (v:FindFirstChild("Checkpoints") and v:FindFirstChild("Active").Value == true and v:FindFirstChild("Checkpoints"):GetChildren()[1]:FindFirstChild("Forcefield")) then
-                        for i = 1, v.TotalCheckpoints.Value  do
+                        for i = 1, #v.Checkpoints:GetChildren()  do
                             Systems:WaitForChild("Races"):WaitForChild("CheckpointTouched"):FireServer(i)
                             task.wait()
                         end

@@ -199,16 +199,17 @@ task.spawn(function()
                         local yeas = string.split(distance, " ")
                         for i,v in next, yeas do
                             if tonumber(v) then
-                                if tonumber(v) < 2.1 or tonumber(epic) > 3 then
+                                if tonumber(v) < 2.1 and table.find(yeas, "mi") then
                                     Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "6")
                                 else 
                                     epic = v
+                                    print("Distance : " .. epic)
                                     break
                                 end
                             end
                         end
                     end
-                until epic and tonumber(epic) > 2 and tonumber(epic) <= 3 or Driveworld["autodelivery"] == false
+                until epic and tonumber(epic) > 2.1 or Driveworld["autodelivery"] == false
                 if CompletionRegion:FindFirstChild("Primary") then
                     completepos = CompletionRegion:FindFirstChild("Primary").CFrame
                 end

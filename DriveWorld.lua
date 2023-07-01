@@ -209,7 +209,7 @@ task.spawn(function()
                             end
                         end
                     end
-                until jobDistance and tonumber(jobDistance) > 2.1 and table.find(yeas, "mi") or Driveworld["autodelivery"] == false
+                until jobDistance and tonumber(jobDistance) > 2.1 or Driveworld["autodelivery"] == false
                 if CompletionRegion:FindFirstChild("Primary") then
                     completepos = CompletionRegion:FindFirstChild("Primary").CFrame
                 end

@@ -198,10 +198,9 @@ task.spawn(function()
                         local yeas = string.split(distance, " ")
                         for i,v in next, yeas do
                             if tonumber(v) then
-                                if tonumber(v) < 2.1 or table.find(yeas, "ft") then
+                                if tonumber(v) < 2.1 then
                                     Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "6")
-                                end
-                                if tonumber(v) > 2.1 and table.find(yeas, "mi") then
+                                else
                                     jobDistance = v
                                     print("Trailer Job Distance : " .. jobDistance)
                                     break

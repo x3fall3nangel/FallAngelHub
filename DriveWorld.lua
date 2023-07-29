@@ -102,6 +102,19 @@ Main:Toggle({
     end
 })
 
+Main:Button({
+    Name = "Find Barn Part",
+    Description = "Find barn part",
+	Callback = function()
+        for i,v in next, workspace.Objects.Destructible:GetChildren() do
+            if v.Name == "BarnFindItem" and v:FindFirstChildWhichIsA("MeshPart") then
+                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(v:FindFirstChildWhichIsA("MeshPart").CFrame)
+                task.wait(.1)
+            end
+        end
+    end
+})
+
 task.spawn(function()
     while task.wait() do
         if Driveworld["autocomplete"] then

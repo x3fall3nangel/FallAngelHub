@@ -20,9 +20,6 @@ local lp = Players.LocalPlayer
 local Systems = ReplicatedStorage:WaitForChild("Systems")
 
 local Driveworld = {}
-local xd = require(game:GetService("ReplicatedStorage").Systems.Score)
-local encryptionKey = debug.getupvalue(xd.Start, 4)/69
-local stuff = {}
 
 for i,v in pairs(getconnections(Players.LocalPlayer.Idled)) do
     if v["Disable"] then
@@ -34,24 +31,6 @@ end
 
 local function getchar()
     return lp.Character or lp.CharacterAdded:Wait()
-end
-
-local reg = getgc(true)
-for i,v in pairs(reg) do
-    if type(v) == "function" then
-        local info = debug.getinfo(v)
-        if string.find(info.source, "Score") then
-            if info.name == "" then continue end
-            stuff[info.name] = info.func
-        end
-    end
-end
-
-local function craftStr(amt)
-    local actAmt = amt
-    local rand = math.random
-    local stringToSend = "speedScore=" .. amt .. ";driftScore=" .. rand(1,999) .. ";smashScore=" .. rand(1,999) .. ";airScore=" .. rand(1,10)
-    return stringToSend
 end
 
 local function isvehicle()
@@ -243,14 +222,6 @@ task.spawn(function()
                 print("Completed Job")    
             end)
         end
-    end
-end)
-
-task.spawn(function()
-    while task.wait() do
-        Systems.Score.Begin:FireServer()
-        task.wait(10)
-        Systems.Score.Redeem:FireServer(stuff.encode(encryptionKey, craftStr(999999999)))
     end
 end)
 

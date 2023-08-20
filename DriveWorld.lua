@@ -104,7 +104,7 @@ task.spawn(function()
                         for i = 1, #v.Checkpoints:GetChildren()  do
                             local checkpoint = v:FindFirstChild("Checkpoints"):GetChildren()[i]:FindFirstChild("Forcefield").CFrame
                             Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(checkpoint)
-                            task.wait()
+                            task.wait(.1)
                         end
                     end
                 end

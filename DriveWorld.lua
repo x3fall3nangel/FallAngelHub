@@ -84,7 +84,7 @@ Main:Toggle({
 
 Main:Button({
     Name = "Find Barn Part",
-    Description = "Find barn part",
+    Description = "Tp ur car when u near the barn part",
 	Callback = function()
         for i,v in next, workspace.Objects.Destructible:GetChildren() do
             if v.Name == "BarnFindItem" and v:FindFirstChildWhichIsA("MeshPart") then

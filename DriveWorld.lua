@@ -89,7 +89,7 @@ Main:Button({
         for i,v in next, workspace.Objects.Destructible:GetChildren() do
             if v.Name == "BarnFindItem" and v:FindFirstChildWhichIsA("MeshPart") then
                 Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(v:FindFirstChildWhichIsA("MeshPart").CFrame)
-                task.wait(.1)
+                task.wait(.5)
             end
         end
     end

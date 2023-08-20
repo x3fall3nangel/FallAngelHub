@@ -15,6 +15,7 @@ local Main = GUI:tab{
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualInputManager = game:GetService("VirtualInputManager")
 
 local lp = Players.LocalPlayer
 local Systems = ReplicatedStorage:WaitForChild("Systems")
@@ -120,12 +121,13 @@ task.spawn(function()
                     local Truck = Cars:FindFirstChild("FullE") or Cars:FindFirstChild("Casper")
                     local normalcar = Cars:FindFirstChildWhichIsA("Folder")
                     if Truck then
-                        Systems:WaitForChild("Cars"):WaitForChild("SpawnPlayerCar"):InvokeServer(Truck)
+                        Systems:WaitForChild("CarInteraction"):WaitForChild("SpawnPlayerCar"):InvokeServer(Truck)
                     else
-                        Systems:WaitForChild("Cars"):WaitForChild("SpawnPlayerCar"):InvokeServer(normalcar)
+                        Systems:WaitForChild("CarInteraction"):WaitForChild("SpawnPlayerCar"):InvokeServer(normalcar)
                     end
-                    task.wait(.5)
-                    Systems:WaitForChild("Cars"):WaitForChild("EnterCar"):InvokeServer(getvehicle(), getvehicle():FindFirstChild("Seats"):FindFirstChild("Driver"))
+                    getchar().HumanoidRootPart.CFrame = getvehicle().PrimaryPart.CFrame
+                    task.wait(1)
+                    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                 end
                 local completepos
                 local CompletionRegion
@@ -140,8 +142,11 @@ task.spawn(function()
                 if CompletionRegion:FindFirstChild("Primary") then
                     completepos = CompletionRegion:FindFirstChild("Primary").CFrame
                 end
-                if not isvehicle() or not Driveworld["autodeliveryfood"] then
-                    return
+                for i = 1, 25 do
+                    if not Driveworld["autodelivery"] or not getvehicle() or not getchar() then
+                        return
+                    end
+                    task.wait(1)
                 end
                 Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
                 task.wait(.5)
@@ -165,12 +170,13 @@ task.spawn(function()
                     local Truck = Cars:FindFirstChild("FullE") or Cars:FindFirstChild("Casper")
                     local normalcar = Cars:FindFirstChildWhichIsA("Folder")
                     if Truck then
-                        Systems:WaitForChild("Cars"):WaitForChild("SpawnPlayerCar"):InvokeServer(Truck)
+                        Systems:WaitForChild("CarInteraction"):WaitForChild("SpawnPlayerCar"):InvokeServer(Truck)
                     else
-                        Systems:WaitForChild("Cars"):WaitForChild("SpawnPlayerCar"):InvokeServer(normalcar)
+                        Systems:WaitForChild("CarInteraction"):WaitForChild("SpawnPlayerCar"):InvokeServer(normalcar)
                     end
-                    task.wait(.5)
-                    Systems:WaitForChild("Cars"):WaitForChild("EnterCar"):InvokeServer(getvehicle(), getvehicle():FindFirstChild("Seats"):FindFirstChild("Driver"))
+                    getchar().HumanoidRootPart.CFrame = getvehicle().PrimaryPart.CFrame
+                    task.wait(1)
+                    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                 end
                 local completepos
                 local distance
@@ -204,14 +210,13 @@ task.spawn(function()
                 if CompletionRegion:FindFirstChild("Primary") then
                     completepos = CompletionRegion:FindFirstChild("Primary").CFrame
                 end
-                task.wait(25)
-                if not Driveworld["autodelivery"] then
-                    return
+                for i = 1, 25 do
+                    if not Driveworld["autodelivery"] or not getvehicle() or not getchar() then
+                        return
+                    end
+                    task.wait(1)
                 end
                 Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
-                if not getvehicle() then
-                    return
-                end
                 task.wait(.5)
                 Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
                 task.wait(.5)

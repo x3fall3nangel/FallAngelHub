@@ -101,10 +101,12 @@ task.spawn(function()
             if isvehicle() then
                 for _,v in next, workspace.Races:GetChildren() do
                     if (v:FindFirstChild("Checkpoints") and v:FindFirstChild("Checkpoints"):GetChildren()[1]:FindFirstChild("Forcefield")) then
-                        task.wait(5)
+                        task.wait(3)
                         for i = 1, #v.Checkpoints:GetChildren() do
-                            Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(v.Checkpoints[i].Forcefield.CFrame)
-                            task.wait()
+                            if v.Checkpoints[i]:FindFirstChild("Forcefield") then
+                                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(v.Checkpoints[i].Forcefield.CFrame)
+                                task.wait()
+                            end
                         end
                     end
                 end

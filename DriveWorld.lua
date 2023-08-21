@@ -99,13 +99,12 @@ task.spawn(function()
     while task.wait() do
         if Driveworld["autocomplete"] then
             if isvehicle() then
-                for i,v in next, workspace.Races:GetChildren() do
-                    if (v:FindFirstChild("Checkpoints") and v:FindFirstChild("Active").Value == true and v:FindFirstChild("Checkpoints"):GetChildren()[1]:FindFirstChild("Forcefield")) then
-                        task.wait(3)
-                        for i = 1, #v.Checkpoints:GetChildren()  do
-                            local checkpoint = v:FindFirstChild("Checkpoints"):GetChildren()[i]:WaitForChild("Forcefield",5).CFrame
-                            Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(checkpoint)
-                            task.wait(.1)
+                for _,v in next, workspace.Races:GetChildren() do
+                    if (v:FindFirstChild("Checkpoints") and v:FindFirstChild("Checkpoints"):GetChildren()[1]:FindFirstChild("Forcefield")) then
+                        task.wait(5)
+                        for i = 1, #v.Checkpoints:GetChildren() do
+                            Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(v.Checkpoints[i].Forcefield.CFrame)
+                            task.wait()
                         end
                     end
                 end

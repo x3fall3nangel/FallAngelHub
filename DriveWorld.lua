@@ -80,7 +80,7 @@ Main:Toggle({
 Main:Toggle({
     Name = "Auto Complete Race",
 	StartingState = false,
-    Description = "auto complete when u in race",
+    Description = "use it if u wanna get banned lol",
 	Callback = function(state)
         Driveworld["autocomplete"] = state
     end

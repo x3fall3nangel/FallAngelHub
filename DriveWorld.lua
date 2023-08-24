@@ -20,6 +20,10 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local lp = Players.LocalPlayer
 local Systems = ReplicatedStorage:WaitForChild("Systems")
 
+local Race = lp.PlayerGui.Interface.Score.Frame.Race
+local Timer
+local Laps
+
 local Driveworld = {}
 
 for i,v in pairs(getconnections(Players.LocalPlayer.Idled)) do
@@ -101,14 +105,29 @@ task.spawn(function()
             if isvehicle() then
                 for _,v in next, workspace.Races:GetChildren() do
                     if (v:FindFirstChild("Checkpoints") and v:FindFirstChild("Checkpoints"):GetChildren()[1]:FindFirstChild("Forcefield")) then
-                        task.wait(3)
-                        for i = 1, #v.Checkpoints:GetChildren() do
-                            if v.Checkpoints[i]:FindFirstChild("Forcefield") then
+                        local total_checkpoints = #v.Checkpoints:GetChildren()
+                        for i = 1, total_checkpoints do
+                            if v.Checkpoints[i]:FindFirstChild("Forcefield") and Driveworld["autocomplete"] then
+                                Laps = Race.Laps.Label
+                                local e2 = string.split(Laps.Text, "/")
+                                if i == total_checkpoints and tonumber(e2[1]) == tonumber(e2[2]) then -- check if laps = total laps then
+                                    local e = nil
+                                    repeat
+                                        Timer = Race.Progress.Timer
+                                        local lel = string.gsub(Timer.Text, ":", ".")
+                                        e = string.split(lel, ".")[2] 
+                                        task.wait() 
+                                    until tonumber(e) >= 1 -- check timer is bigger equal than 1
+                                end
                                 Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(v.Checkpoints[i].Forcefield.CFrame)
-                                task.wait()
                             end
                         end
                     end
+                end
+                if Timer.Text ~= "0:00" and Race.Visible == false then -- reset the timer and laps to make script no broke
+                    print("Reseted")
+                    Timer.Text = "0:00"
+                    Laps.Text = "1/1"
                 end
             end
         end

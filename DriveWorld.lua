@@ -99,6 +99,14 @@ Main:Button({
     end
 })
 
+Main:Button({
+    Name = "Support script creator :D",
+    Description = "some linkvertise",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/MikeCash.lua"))()
+    end
+})
+
 task.spawn(function()
     while task.wait() do
         if Driveworld["autocomplete"] then

@@ -20,7 +20,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local lp = Players.LocalPlayer
 local Systems = ReplicatedStorage:WaitForChild("Systems")
 
-local Race = lp.PlayerGui.Interface.Score.Frame.Race
+local Race = lp.PlayerGui.Score.Frame.Race
 local Timer
 local Laps
 
@@ -161,7 +161,7 @@ task.spawn(function()
                 end
                 local completepos
                 local CompletionRegion
-                local job = lp.PlayerGui.Interface.Score.Frame.Jobs
+                local job = lp.PlayerGui.Score.Frame.Jobs
                 repeat task.wait()
                     if job.Visible == false and Driveworld["autodeliveryfood"] then
                         Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("FoodDelivery","Tavern")
@@ -182,9 +182,9 @@ task.spawn(function()
                 task.wait(.5)
                 Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
                 task.wait(.5)
-                if lp.PlayerGui.Interface.JobComplete.Enabled == true then
+                if lp.PlayerGui.JobComplete.Enabled == true then
                     Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
-                    firesignal(lp.PlayerGui.Interface.JobComplete.Window.Content.Buttons.Close.MouseButton1Click)
+                    firesignal(lp.PlayerGui.JobComplete.Window.Content.Buttons.Close.MouseButton1Click)
                 end
             end)
         end
@@ -212,7 +212,7 @@ task.spawn(function()
                 local distance
                 local jobDistance
                 local CompletionRegion
-                local job = lp.PlayerGui.Interface.Score.Frame.Jobs
+                local job = lp.PlayerGui.Score.Frame.Jobs
                 repeat task.wait()
                     if job.Visible == false and Driveworld["autodelivery"] then
                         Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "F")
@@ -250,9 +250,9 @@ task.spawn(function()
                 task.wait(.5)
                 Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
                 task.wait(.5)
-                if lp.PlayerGui.Interface.JobComplete.Enabled == true then
+                if lp.PlayerGui.JobComplete.Enabled == true then
                     Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
-                    firesignal(lp.PlayerGui.Interface.JobComplete.Window.Content.Buttons.Close.MouseButton1Click)
+                    firesignal(lp.PlayerGui.JobComplete.Window.Content.Buttons.Close.MouseButton1Click)
                 end
                 print("Completed Job")    
             end)

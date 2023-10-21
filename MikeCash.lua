@@ -2,7 +2,7 @@ local Title = "Support creator - Please visit the website"
 local API_HOST = "s1.wayauth.com" -- s1.wayauth.com, s2.wayauth.com, s3.wayauth.com, s4.wayauth.com, s5.wayauth.com
 local LINKVERTISE_ID = 939268 -- Change me
 local LINKVERTISE_COUNT = 1 -- Change me
-local TOKEN_EXPIRE_TIME = 120 -- Seconds
+local TOKEN_EXPIRE_TIME = 60 -- Seconds
 
 local Task = {}
 Task.__index = Task

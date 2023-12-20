@@ -215,7 +215,7 @@ task.spawn(function()
                 local job = lp.PlayerGui.Score.Frame.Jobs
                 repeat task.wait()
                     if job.Visible == false and Driveworld["autodelivery"] then
-                        Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "F")
+                        Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "6")
                     end
                 until job.Visible == true or Driveworld["autodelivery"] == false
                 print("Start Job")
@@ -227,7 +227,7 @@ task.spawn(function()
                         for i,v in next, yeas do
                             if tonumber(v) then
                                 if tonumber(v) < 2.1 then
-                                    Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "F")
+                                    Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("TrailerDelivery", "6")
                                 else
                                     jobDistance = v
                                     print("Trailer Job Distance : " .. jobDistance)

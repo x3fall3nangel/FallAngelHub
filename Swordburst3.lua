@@ -12,6 +12,11 @@ local tab = GUI:tab{
     Icon = "rbxassetid://2174510075" -- rbxassetid://2174510075 home icon
 }
 
+local funtab = GUI:tab{
+    Name = "Misc",
+    Icon = "rbxassetid://8569322835" -- rbxassetid://2174510075 home icon
+}
+
 local teleporttab = GUI:tab{
     Name = "Teleport",
     Icon = "rbxassetid://8569322835" -- rbxassetid://2174510075 home icon
@@ -20,6 +25,8 @@ local teleporttab = GUI:tab{
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local lplr = Players.LocalPlayer
+
+local Stamina = require(game:GetService("ReplicatedStorage").Systems.Stamina)
 
 local mobs = {}
 local mines = {}
@@ -204,13 +211,21 @@ teleporttab:Button{
     end
 }
 
+funtab:Button{
+    Name = "Infinite Stamina",
+    Description = nil,
+    Callback = function()
+        debug.setupvalue(Stamina.SetMaxStamina,1,99999999)
+        debug.setupvalue(Stamina.CanUseStamina,1, 99999999)
+    end
+}
+
 GUI:Credit{
     Name = "x3Fall3nAngel",
     Description = "Made the script",
     V3rm = "",
     Discord = "https://discord.gg/b9QX5rnkT5"
 }
-
 
 local function getclosestmobs(mob)
     local distance = math.huge

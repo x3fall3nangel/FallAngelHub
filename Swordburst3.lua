@@ -1,7 +1,7 @@
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/mercury-lib-edit/master/src.lua"))()
 
 local GUI = Library:Create{
-    Name = "Mercury",
+    Name = "SwordBurst 3",
     Size = UDim2.fromOffset(600, 400),
     Theme = Library.Themes.Serika,
     Link = "https://github.com/deeeity/mercury-lib"
@@ -13,7 +13,7 @@ local tab = GUI:tab{
 }
 
 local teleporttab = GUI:tab{
-    Name = "Main",
+    Name = "Teleport",
     Icon = "rbxassetid://8569322835" -- rbxassetid://2174510075 home icon
 }
 

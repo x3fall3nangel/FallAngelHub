@@ -70,12 +70,9 @@ for i,v in next, workspace.Ores:GetChildren() do
     end
 end
 
-for i,v in next, workspace.QuestNPCs:GetChildren() do
-    if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("HumanoidRootPart"):FindFirstChild("Quests") then
-        for i,quest in next, v:FindFirstChild("HumanoidRootPart").Quests:GetChildren() do
-            table.insert(quests, tostring(quest.Name))
-        end
-    end
+local Quest = require(game:GetService("ReplicatedStorage").Systems.Quests.QuestList)
+for i,v in next, Quest do
+    table.insert(quests, "Level " .. v.Level .. " " .. v.Target .. " " .. (v.Repeatable and "Repeatable" or ""))
 end
 
 for i, v in next, getconnections(lplr.Idled) do
@@ -85,7 +82,6 @@ for i, v in next, getconnections(lplr.Idled) do
         v["Disconnect"](v)
     end
 end
-
 
 tab:Dropdown{
     Name = "Select Mobs",
@@ -277,6 +273,16 @@ local function getores()
     return target
 end
 
+local function getquest(chosequest) 
+    for i,v in next, Quest do
+        if string.find("Level " .. v.Level .. " " .. v.Target  .. " " .. (v.Repeatable and "Repeatable" or "") , chosequest) then
+            return i
+        end
+    end
+    return
+end
+
+
 task.spawn(function()
     while task.wait() do
         if swordburst["automobs"] and choosemob then
@@ -361,8 +367,8 @@ end)
 task.spawn(function()
     while task.wait(.1) do
         if swordburst["autoquest"] and choosequest then
-            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Quests"):WaitForChild("AcceptQuest"):FireServer(choosequest)
-            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Quests"):WaitForChild("CompleteQuest"):FireServer(tonumber(choosequest))
+            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Quests"):WaitForChild("AcceptQuest"):FireServer(getquest(choosequest))
+            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Quests"):WaitForChild("CompleteQuest"):FireServer(getquest(choosequest))
         end
     end
 end)

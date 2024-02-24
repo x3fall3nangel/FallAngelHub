@@ -19,7 +19,6 @@ local teleporttab = GUI:tab{
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local VirtualInputManager = game:GetService("VirtualInputManager")
 local lplr = Players.LocalPlayer
 
 local mobs = {}
@@ -204,6 +203,14 @@ teleporttab:Button{
         end
     end
 }
+
+GUI:Credit{
+    Name = "x3Fall3nAngel",
+    Description = "Made the script",
+    V3rm = "",
+    Discord = "https://discord.gg/b9QX5rnkT5"
+}
+
 
 local function getclosestmobs(mob)
     local distance = math.huge

@@ -315,7 +315,7 @@ end)
 
 task.spawn(function()
     while task.wait(.3) do
-        if swordburst["killauraplr"] and getplr() then
+        if swordburst["killauraplr"] and #getplr() >= 1 then
             ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Combat"):WaitForChild("PlayerAttack"):FireServer(getplr())
         end
         if swordburst["killaura"] then

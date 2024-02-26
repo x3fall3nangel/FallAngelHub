@@ -124,7 +124,7 @@ tab:Toggle{
 tab:Toggle{
     Name = "Kill Aura",
     StartingState = false,
-    Description = "doesnt work with killaura for players",
+    Description = nil,
     Callback = function(state)
         swordburst["killaura"] = state
     end
@@ -133,7 +133,7 @@ tab:Toggle{
 tab:Toggle{
     Name = "Kill Aura for Players",
     StartingState = false,
-    Description = "turn on pvp and doesnt work with killaura ",
+    Description = "Enable pvp",
     Callback = function(state)
         swordburst["killauraplr"] = state
     end
@@ -315,14 +315,20 @@ end)
 
 task.spawn(function()
     while task.wait(.3) do
-        if swordburst["killauraplr"] and #getplr() >= 1 then
-            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Combat"):WaitForChild("PlayerAttack"):FireServer(getplr())
-        end
-        if swordburst["killaura"] then
-            local enemy,multienemy = getclosestmobs()
-            if #multienemy >= 1 then
-                ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Combat"):WaitForChild("PlayerAttack"):FireServer(multienemy)
+        local totalenemy = {}
+        local enemy,multienemy = getclosestmobs()
+        if swordburst["killaura"] and #multienemy >= 1 then
+            for i,v in next, multienemy do
+                table.insert(totalenemy, v)
             end
+        end
+        if swordburst["killauraplr"] and #getplr() >= 1 then
+            for i,v in next, getplr() do
+                table.insert(totalenemy,v)
+            end
+        end
+        if #totalenemy >= 1 then
+            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Combat"):WaitForChild("PlayerAttack"):FireServer(totalenemy)
         end
     end
 end)
@@ -331,21 +337,24 @@ task.spawn(function()
     while task.wait(.5) do
         for i,v in next, lplr.PlayerGui.SkillBar.Frame:GetChildren() do
             if v:FindFirstChild("Hotkey") then
-                if swordburst["killauraplr"] and #getplr() >= 1 then
-                    ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Skills"):WaitForChild("UseSkill"):FireServer(v.Name)
-                    for i = 1, 8 do
-                        ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Combat"):WaitForChild("PlayerSkillAttack"):FireServer(getplr(), v.Name, i)
+                local totalenemy = {}
+                local e = choosemob or boss
+                local enemy,multienemy = getclosestmobs(e)
+                if swordburst["killaura"] and #multienemy >= 1 then
+                    for i,v in next, multienemy do
+                        table.insert(totalenemy, v)
                     end
                 end
-                if swordburst["killaura"] then
-                    local e = choosemob or boss
-                    local enemy,multienemy = getclosestmobs(e)
-                    if #multienemy >= 1 then
-                        ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Skills"):WaitForChild("UseSkill"):FireServer(v.Name)
-                        for i = 1, 8 do
-                            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Combat"):WaitForChild("PlayerSkillAttack"):FireServer(multienemy, v.Name, i)
-                        end     
+                if swordburst["killauraplr"] and #getplr() >= 1 then
+                    for i,v in next, getplr() do
+                        table.insert(totalenemy,v)
                     end
+                end
+                if #totalenemy >= 1 then
+                    ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Skills"):WaitForChild("UseSkill"):FireServer(v.Name)
+                    for i = 1, 8 do
+                        ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Combat"):WaitForChild("PlayerSkillAttack"):FireServer(totalenemy, v.Name, i)
+                    end     
                 end
             end
         end

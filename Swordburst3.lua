@@ -34,10 +34,13 @@ local bosses = {}
 local quests = {}
 local waystone = {}
 local swordburst = {}
+local methods = {"above", "below", "behind"}
+local methodscframe = {["above"] = CFrame.new(0, 40, 0), ["below"] = CFrame.new(0,-40,0), ["behind"] = CFrame.new(0,0,25)}
 
 local mine
 local boss
 local insert
+local method
 local waystones
 local choosemob
 local choosequest
@@ -82,6 +85,16 @@ for i, v in next, getconnections(lplr.Idled) do
         v["Disconnect"](v)
     end
 end
+
+tab:Dropdown{
+    Name = "Select Auto farm method",
+    StartingText = "Select...",
+    Description = nil,
+    Items = methods,
+    Callback = function(item)
+        method = item
+    end
+}
 
 tab:Dropdown{
     Name = "Select Mobs",
@@ -288,7 +301,7 @@ task.spawn(function()
         if swordburst["automobs"] and choosemob then
             local enemy = getclosestmobs(choosemob)
             if getchar() and getchar():FindFirstChild("HumanoidRootPart") and enemy and enemy:FindFirstChild("HumanoidRootPart") then
-                getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, 0, 25)
+                getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodscframe[method]
             end
         end 
     end
@@ -296,11 +309,11 @@ end)
 
 task.spawn(function()
     while task.wait() do
-        if swordburst["autoboss"] then
+        if swordburst["autoboss"] and method then
             if getchar() and getchar():FindFirstChild("HumanoidRootPart") and boss then
                 local enemy = getclosestmobs(boss)
                 if enemy and enemy:FindFirstChild("HumanoidRootPart") then
-                    getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, 0, 25)
+                    getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodscframe[method]
                 else
                     for i,v in next, workspace.BossArenas:GetChildren() do
                         if string.find(v.Name, boss) then

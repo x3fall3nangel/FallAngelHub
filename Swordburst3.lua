@@ -249,7 +249,7 @@ local function getclosestmobs(mob)
                     distance = magnitude
                 end
             end
-            if magnitude < 100 then
+            if magnitude < 200 then
                 table.insert(multitarget, v)
             end
         end
@@ -258,7 +258,7 @@ local function getclosestmobs(mob)
 end
 
 local function getplr() 
-    local distance = 100
+    local distance = 200
     local target = {}
     for i,v in next, Players:GetPlayers() do
         if v ~= lplr and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and getchar() and getchar():FindFirstChild("HumanoidRootPart") then

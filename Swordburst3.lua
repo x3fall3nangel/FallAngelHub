@@ -12,7 +12,7 @@ local tab = GUI:tab{
     Icon = "rbxassetid://2174510075" -- rbxassetid://2174510075 home icon
 }
 
-local funtab = GUI:tab{
+local misctab = GUI:tab{
     Name = "Misc",
     Icon = "rbxassetid://8569322835" -- rbxassetid://2174510075 home icon
 }
@@ -26,7 +26,8 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local lplr = Players.LocalPlayer
 
-local Stamina = require(game:GetService("ReplicatedStorage").Systems.Stamina)
+local Stamina = require(ReplicatedStorage.Systems.Stamina)
+local ItemList = require(ReplicatedStorage.Systems.Items.ItemList)
 
 local mobs = {}
 local mines = {}
@@ -35,10 +36,14 @@ local quests = {}
 local waystone = {}
 local swordburst = {}
 local methods = {"above", "below", "behind"}
+local category = {"Material", "Mount", "Cosmetic", "Pickaxe"}
+local raritys = {"common (white)", "uncommon (green) and below", "rare (blue) and below", "epic (purple) and below", "legendary (orange) and below"}
+local realrarity = {["common (white)"] = 1, ["uncommon (green) and below"] = 2, ["rare (blue) and below"] = 3, ["epic (purple) and below"] = 4, ["legendary (orange) and below"] = 5,}
 local methodscframe = {["above"] = CFrame.new(0, 40, 0), ["below"] = CFrame.new(0,-40,0), ["behind"] = CFrame.new(0,0,25)}
 
 local mine
 local boss
+local rarity
 local insert
 local method
 local waystones
@@ -220,12 +225,41 @@ teleporttab:Button{
     end
 }
 
-funtab:Button{
+misctab:Button{
     Name = "Infinite Stamina",
     Description = nil,
     Callback = function()
         debug.setupvalue(Stamina.SetMaxStamina,1,99999999)
         debug.setupvalue(Stamina.CanUseStamina,1, 99999999)
+    end
+}
+
+misctab:Dropdown{
+    Name = "Select Rarity",
+    StartingText = "Select...",
+    Description = nil,
+    Items = raritys,
+    Callback = function(item)
+        rarity = item
+    end
+}
+
+misctab:Button{
+    Name = "Dismantle Selected rarity",
+    Description = nil,
+    Callback = function()
+        if rarity then
+            for i,v in next, ItemList do
+                if v.Rarity and v.Rarity <= realrarity[rarity] and not table.find(category, v.Category) then
+                    for _,items in next, ReplicatedStorage.Profiles[lplr.Name].Inventory:GetChildren() do
+                        if string.find(i, items.Name) then
+                            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Crafting"):WaitForChild("Dismantle"):FireServer(items)
+                            task.wait()
+                        end
+                    end
+                end
+            end
+        end
     end
 }
 

@@ -261,13 +261,13 @@ mainTab:AddToggle({
 })
 
 miscTab:AddToggle({
-	Name = "Auto Mine Ores",
+	Name = "Reduce Lag",
 	Default = false,
 	Callback = function(Value)
-		if Value then
-            RunService:Set3dRenderingEnabled(true)
-        else
+		if Value == true then
             RunService:Set3dRenderingEnabled(false)
+        else
+            RunService:Set3dRenderingEnabled(true)
         end
 	end    
 })

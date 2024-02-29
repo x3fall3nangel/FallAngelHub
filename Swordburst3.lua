@@ -186,8 +186,8 @@ killauraTab:AddTextbox({
 killauraTab:AddSlider({
 	Name = "Kill Aura Range",
 	Min = 1,
-	Max = 200,
-	Default = 100,
+	Max = 100,
+	Default = 80,
 	Color = Color3.fromRGB(255,255,255),
 	Increment = 1,
 	ValueName = "Range",

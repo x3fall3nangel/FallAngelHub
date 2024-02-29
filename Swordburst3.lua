@@ -4,31 +4,31 @@ local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = true, S
 
 local mainTab = Window:MakeTab({
 	Name = "Main",
-	Icon = "rbxassetid://4483345998",
+	Icon = "rbxassetid://13313903300",
 	PremiumOnly = false
 })
 
 local killauraTab = Window:MakeTab({
 	Name = "Kill Aura",
-	Icon = "rbxassetid://4483345998",
+	Icon = "rbxassetid://13850718932",
 	PremiumOnly = false
 })
 
 local miscTab = Window:MakeTab({
 	Name = "Misc",
-	Icon = "rbxassetid://4483345998",
+	Icon = "rbxassetid://16307658016",
 	PremiumOnly = false
 })
 
 local teleportTab = Window:MakeTab({
 	Name = "Teleport",
-	Icon = "rbxassetid://4483345998",
+	Icon = "rbxassetid://13865747134",
 	PremiumOnly = false
 })
 
 local settingsTab = Window:MakeTab({
 	Name = "Settings",
-	Icon = "rbxassetid://4483345998",
+	Icon = "rbxassetid://4738901432",
 	PremiumOnly = false
 })
 

@@ -253,6 +253,10 @@ mainTab:AddToggle({
 	end    
 })
 
+local Section1 = mainTab:AddSection({
+	Name = "Auto Collect"
+})
+
 mainTab:AddToggle({
 	Name = "Auto Collect",
 	Default = false,

@@ -202,6 +202,7 @@ killauraTab:AddToggle({
 	end    
 })
 
+killauraTab:AddParagraph("Kill aura for Players","Enable PvP to dmg ppl")
 killauraTab:AddToggle({
 	Name = "Kill Aura for Players",
 	Default = false,

@@ -1,6 +1,6 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = true, SaveConfig = false, ConfigFolder = "Swordburst3"})
+local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = false, SaveConfig = true, ConfigFolder = "Swordburst3"})
 
 local mainTab = Window:MakeTab({
 	Name = "Main",

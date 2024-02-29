@@ -338,6 +338,12 @@ miscTab:AddButton({
 
 creditTab:AddLabel("Scripts Made by fallen_del")
 creditTab:AddLabel("UI Library by Shlex")
+creditTab:AddButton({
+	Name = "Discord Server",
+	Callback = function()
+        setclipboard("https://discord.gg/auzBFqDrwZ")
+  	end    
+})
 
 settingsTab:AddButton({
 	Name = "Destroy Gui",

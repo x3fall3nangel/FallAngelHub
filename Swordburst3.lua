@@ -361,7 +361,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait(.3) do
+    while task.wait(.25) do
         local totalenemy = {}
         local enemy,multienemy = getclosestmobs()
         if swordburst["killaura"] and #multienemy >= 1 then

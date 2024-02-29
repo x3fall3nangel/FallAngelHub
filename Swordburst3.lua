@@ -164,7 +164,7 @@ mainTab:AddDropdown({
 	end    
 })
 
-mainTab:AddParagraph("Auto Farm Boss","when boss havent spawn it will farm selected mob")
+mainTab:AddParagraph("Auto Farm Boss","when boss havent spawn will farm selected mob")
 mainTab:AddToggle({
 	Name = "Auto Farm Boss",
 	Default = false,
@@ -337,7 +337,7 @@ miscTab:AddButton({
 })
 
 creditTab:AddLabel("Scripts Made by fallen_del")
-creditTab:AddLabel("UI Library Shlex")
+creditTab:AddLabel("UI Library by Shlex")
 
 settingsTab:AddButton({
 	Name = "Destroy Gui",

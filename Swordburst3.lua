@@ -174,13 +174,13 @@ mainTab:AddToggle({
 })
 
 killauraTab:AddSlider({
-	Name = "Auto Farm Distance",
+	Name = "Kill Aura Cooldown",
 	Min = 0.25,
 	Max = 1,
 	Default = 0.3,
 	Color = Color3.fromRGB(255,255,255),
 	Increment = 0.01,
-	ValueName = "distance",
+	ValueName = "Cooldown",
 	Callback = function(Value)
 		cd = Value
 	end    

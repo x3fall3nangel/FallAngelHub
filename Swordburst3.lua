@@ -146,6 +146,7 @@ mainTab:AddDropdown({
 	end    
 })
 
+mainTab:AddParagraph("Auto Farm Mobs","If no one in the area the mobs wont spawn")
 mainTab:AddToggle({
 	Name = "Auto Farm Mobs",
 	Default = false,
@@ -163,6 +164,7 @@ mainTab:AddDropdown({
 	end    
 })
 
+mainTab:AddParagraph("Auto Farm Boss","when boss havent spawn it will farm selected mob")
 mainTab:AddToggle({
 	Name = "Auto Farm Boss",
 	Default = false,

@@ -1,33 +1,63 @@
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/mercury-lib-edit/master/src.lua"))()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local GUI = Library:Create{
-    Name = "SwordBurst 3",
-    Size = UDim2.fromOffset(600, 400),
-    Theme = Library.Themes.Serika,
-    Link = "https://github.com/deeeity/mercury-lib"
-}
+local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = true, SaveConfig = false, ConfigFolder = "Swordburst3"})
 
-local tab = GUI:tab{
-    Name = "Main",
-    Icon = "rbxassetid://2174510075" -- rbxassetid://2174510075 home icon
-}
+local mainTab = Window:MakeTab({
+	Name = "Main",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
 
-local misctab = GUI:tab{
-    Name = "Misc",
-    Icon = "rbxassetid://8569322835" -- rbxassetid://2174510075 home icon
-}
+local killauraTab = Window:MakeTab({
+	Name = "Kill Aura",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
 
-local teleporttab = GUI:tab{
-    Name = "Teleport",
-    Icon = "rbxassetid://8569322835" -- rbxassetid://2174510075 home icon
-}
+local miscTab = Window:MakeTab({
+	Name = "Misc",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local teleportTab = Window:MakeTab({
+	Name = "Teleport",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local settingsTab = Window:MakeTab({
+	Name = "Settings",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local creditTab = Window:MakeTab({
+	Name = "Credits",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local lplr = Players.LocalPlayer
 
 local Stamina = require(ReplicatedStorage.Systems.Stamina)
 local ItemList = require(ReplicatedStorage.Systems.Items.ItemList)
+
+local mine
+local boss
+local rarity
+local insert
+local method
+local waystones
+local choosemob
+local choosequest
+
+local cd
+local range
+local dist
 
 local mobs = {}
 local mines = {}
@@ -39,16 +69,6 @@ local methods = {"above", "below", "behind"}
 local category = {"Material", "Mount", "Cosmetic", "Pickaxe"}
 local raritys = {"common (white)", "uncommon (green) and below", "rare (blue) and below", "epic (purple) and below", "legendary (orange) and below"}
 local realrarity = {["common (white)"] = 1, ["uncommon (green) and below"] = 2, ["rare (blue) and below"] = 3, ["epic (purple) and below"] = 4, ["legendary (orange) and below"] = 5,}
-local methodscframe = {["above"] = CFrame.new(0, 40, 0), ["below"] = CFrame.new(0,-40,0), ["behind"] = CFrame.new(0,0,25)}
-
-local mine
-local boss
-local rarity
-local insert
-local method
-local waystones
-local choosemob
-local choosequest
 
 local function getchar()
     return lplr.Character or lplr.CharacterAdded:Wait()
@@ -63,7 +83,7 @@ for i,v in next, workspace.MobSpawns:GetChildren() do
 end
 
 for i,v in next, workspace.Waystones:GetChildren() do
-    table.insert(waystone, v)
+    table.insert(waystone, v.Name)
 end
 
 for i,v in next, workspace.Ores:GetChildren() do
@@ -91,163 +111,209 @@ for i, v in next, getconnections(lplr.Idled) do
     end
 end
 
-tab:Dropdown{
-    Name = "Select Auto farm method",
-    StartingText = "Select...",
-    Description = nil,
-    Items = methods,
-    Callback = function(item)
-        method = item
-    end
-}
+local Section1 = mainTab:AddSection({
+	Name = "AutoFarm"
+})
 
-tab:Dropdown{
-    Name = "Select Mobs",
-    StartingText = "Select...",
-    Description = nil,
-    Items = mobs,
-    Callback = function(item)
-        choosemob = item
-    end
-}
+mainTab:AddDropdown({
+	Name = "Select Auto farm method",
+	Default = "behind",
+	Options = methods,
+	Callback = function(Value)
+		method = Value
+	end    
+})
 
-tab:Toggle{
-    Name = "Auto Farm Mobs",
-    StartingState = false,
-    Description = nil,
-    Callback = function(state)
-        swordburst["automobs"] = state
-    end
-}
+mainTab:AddSlider({
+	Name = "Auto Farm Distance",
+	Min = 1,
+	Max = 50,
+	Default = 15,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "distance",
+	Callback = function(Value)
+		dist = Value
+	end    
+})
 
-tab:Dropdown{
-    Name = "Select Boss",
-    StartingText = "Select...",
-    Description = nil,
-    Items = bosses,
-    Callback = function(item)
-        boss = item
-    end
-}
+mainTab:AddDropdown({
+	Name = "Select Mobs",
+	Default = nil,
+	Options = mobs,
+	Callback = function(Value)
+		choosemob = Value
+	end    
+})
 
-tab:Toggle{
-    Name = "Auto Farm Boss",
-    StartingState = false,
-    Description = nil,
-    Callback = function(state)
-        swordburst["autoboss"] = state
-    end
-}
+mainTab:AddToggle({
+	Name = "Auto Farm Mobs",
+	Default = false,
+	Callback = function(Value)
+		swordburst["automobs"] = Value
+	end    
+})
 
-tab:Toggle{
-    Name = "Kill Aura",
-    StartingState = false,
-    Description = nil,
-    Callback = function(state)
-        swordburst["killaura"] = state
-    end
-}
+mainTab:AddDropdown({
+	Name = "Select Boss",
+	Default = nil,
+	Options = bosses,
+	Callback = function(Value)
+		boss = Value
+	end    
+})
 
-tab:Toggle{
-    Name = "Kill Aura for Players",
-    StartingState = false,
-    Description = "Enable pvp",
-    Callback = function(state)
-        swordburst["killauraplr"] = state
-    end
-}
+mainTab:AddToggle({
+	Name = "Auto Farm Boss",
+	Default = false,
+	Callback = function(Value)
+		swordburst["autoboss"] = Value
+	end    
+})
 
-tab:Toggle{
-    Name = "Auto Collect",
-    StartingState = false,
-    Description = nil,
-    Callback = function(state)
-        swordburst["autocollect"] = state
-    end
-}
+killauraTab:AddParagraph("Kill Aura Cooldown","below 0.25 will activate anticheat")
+killauraTab:AddTextbox({
+	Name = "Kill Aura Cooldown",
+	Default = "0.3",
+	TextDisappear = true,
+	Callback = function(Value)
+		cd = tonumber(Value)
+	end	  
+})
 
-tab:Dropdown{
-    Name = "Select Quest",
-    StartingText = "Select...",
-    Description = nil,
-    Items = quests,
-    Callback = function(item)
-        choosequest = item
-    end
-}
+killauraTab:AddSlider({
+	Name = "Kill Aura Range",
+	Min = 1,
+	Max = 200,
+	Default = 100,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Range",
+	Callback = function(Value)
+		range = Value
+	end    
+})
 
-tab:Toggle{
-    Name = "Auto Quest",
-    StartingState = false,
-    Description = nil,
-    Callback = function(state)
-        swordburst["autoquest"] = state
-    end
-}
+killauraTab:AddToggle({
+	Name = "Kill Aura",
+	Default = false,
+	Callback = function(Value)
+		swordburst["killaura"] = Value
+	end    
+})
 
-tab:Dropdown{
-    Name = "Select Ores",
-    StartingText = "Select...",
-    Description = nil,
-    Items = mines,
-    Callback = function(item)
-        mine = item
-    end
-}
+killauraTab:AddToggle({
+	Name = "Kill Aura for Players",
+	Default = false,
+	Callback = function(Value)
+		swordburst["killauraplr"] = Value
+	end    
+})
 
+local Section2 = mainTab:AddSection({
+	Name = "Auto Quest"
+})
 
-tab:Toggle{
-    Name = "Auto Mine Ores" ,
-    StartingState = false,
-    Description = nil,
-    Callback = function(state)
-        swordburst["automine"] = state
-    end
-}
+mainTab:AddDropdown({
+	Name = "Select Quest",
+	Default = nil,
+	Options = quests,
+	Callback = function(Value)
+		choosequest = Value
+	end    
+})
 
-teleporttab:Dropdown{
-    Name = "Select Waystones",
-    StartingText = "Select...",
-    Description = nil,
-    Items = waystone,
-    Callback = function(item)
-        waystones = item
-    end
-}
+mainTab:AddToggle({
+	Name = "Auto Quest",
+	Default = false,
+	Callback = function(Value)
+		swordburst["autoquest"] = Value
+	end    
+})
 
-teleporttab:Button{
-    Name = "Teleport Waystones",
-    Description = nil,
-    Callback = function()
-        if waystones then
-            getchar().HumanoidRootPart.CFrame = waystones.Main.CFrame * CFrame.new(0,0,5)
+local Section3 = mainTab:AddSection({
+	Name = "Auto Mine Ores"
+})
+
+mainTab:AddDropdown({
+	Name = "Select Ores",
+	Default = nil,
+	Options = mines,
+	Callback = function(Value)
+		mine = Value
+	end    
+})
+
+mainTab:AddToggle({
+	Name = "Auto Mine Ores",
+	Default = false,
+	Callback = function(Value)
+		swordburst["automine"] = Value
+	end    
+})
+
+mainTab:AddToggle({
+	Name = "Auto Collect",
+	Default = false,
+	Callback = function(Value)
+		swordburst["autocollect"] = Value
+	end    
+})
+
+miscTab:AddToggle({
+	Name = "Auto Mine Ores",
+	Default = false,
+	Callback = function(Value)
+		if Value then
+            RunService:Set3dRenderingEnabled(true)
+        else
+            RunService:Set3dRenderingEnabled(false)
         end
-    end
-}
+	end    
+})
 
-misctab:Button{
-    Name = "Infinite Stamina",
-    Description = nil,
-    Callback = function()
+teleportTab:AddDropdown({
+	Name = "Select Waystones",
+	Default = nil,
+	Options = waystone,
+	Callback = function(Value)
+		waystones = Value
+	end    
+})
+
+teleportTab:AddButton({
+	Name = "Teleport Waystones",
+	Callback = function()
+        if waystones and getchar() and getchar:FindFirstChild("HumanoidRootPart") then
+            for i,v in next, workspace.Waystones:GetChildren() do
+                if v.Name == waystones then
+                    getchar().HumanoidRootPart.CFrame = v.Main.CFrame * CFrame.new(0,0,5)
+                end
+            end
+        end
+  	end    
+})
+
+miscTab:AddButton({
+	Name = "Infinite Stamina",
+	Callback = function()
         debug.setupvalue(Stamina.SetMaxStamina,1,99999999)
         debug.setupvalue(Stamina.CanUseStamina,1, 99999999)
-    end
-}
+  	end    
+})
 
-misctab:Dropdown{
-    Name = "Select Rarity",
-    StartingText = "Select...",
-    Description = nil,
-    Items = raritys,
-    Callback = function(item)
-        rarity = item
-    end
-}
+miscTab:AddDropdown({
+	Name = "Select Rarity",
+	Default = nil,
+	Options = raritys,
+	Callback = function(Value)
+		rarity = Value
+	end    
+})
 
-misctab:Button{
-    Name = "Dismantle Selected rarity",
-    Description = nil,
-    Callback = function()
+miscTab:AddButton({
+	Name = "Dismantle Selected rarity",
+	Callback = function()
         if rarity then
             for i,v in next, ItemList do
                 if v.Rarity and v.Rarity <= realrarity[rarity] and not table.find(category, v.Category) then
@@ -260,15 +326,31 @@ misctab:Button{
                 end
             end
         end
-    end
-}
+  	end    
+})
 
-GUI:Credit{
-    Name = "x3Fall3nAngel",
-    Description = "Made the script",
-    V3rm = "",
-    Discord = "https://discord.gg/b9QX5rnkT5"
-}
+creditTab:AddLabel("Scripts Made by fallen_del")
+creditTab:AddLabel("UI Library Shlex")
+
+settingsTab:AddButton({
+	Name = "Destroy Gui",
+	Callback = function()
+        OrionLib:Destroy()
+  	end    
+})
+
+
+local function methodss()
+    if method and dist then
+        if method == "above" then
+            return CFrame.new(0, dist, 0)
+        elseif method == "below" then
+            return CFrame.new(0, -dist,0)
+        elseif method == "behind" then
+            return CFrame.new(0,0, dist)
+        end
+    end
+end
 
 local function getclosestmobs(mob)
     local distance = math.huge
@@ -283,7 +365,7 @@ local function getclosestmobs(mob)
                     distance = magnitude
                 end
             end
-            if magnitude < 200 then
+            if magnitude <= range then
                 table.insert(multitarget, v)
             end
         end
@@ -292,12 +374,12 @@ local function getclosestmobs(mob)
 end
 
 local function getplr() 
-    local distance = 200
+    local distance = range 
     local target = {}
     for i,v in next, Players:GetPlayers() do
         if v ~= lplr and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
             local magnitude = (getchar().HumanoidRootPart.Position - v.Character:FindFirstChild("HumanoidRootPart").Position).magnitude
-            if magnitude < distance then
+            if magnitude <= distance then
                 table.insert(target, v.Character)
             end
         end
@@ -329,13 +411,12 @@ local function getquest(chosequest)
     return
 end
 
-
 task.spawn(function()
     while task.wait() do
-        if swordburst["automobs"] and choosemob then
+        if swordburst["automobs"] and choosemob and methodss() then
             local enemy = getclosestmobs(choosemob)
             if getchar() and getchar():FindFirstChild("HumanoidRootPart") and enemy and enemy:FindFirstChild("HumanoidRootPart") then
-                getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodscframe[method]
+                getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
             end
         end 
     end
@@ -343,11 +424,11 @@ end)
 
 task.spawn(function()
     while task.wait() do
-        if swordburst["autoboss"] and method then
+        if swordburst["autoboss"] and methodss() then
             if getchar() and getchar():FindFirstChild("HumanoidRootPart") and boss then
                 local enemy = getclosestmobs(boss)
                 if enemy and enemy:FindFirstChild("HumanoidRootPart") then
-                    getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodscframe[method]
+                    getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
                 else
                     for i,v in next, workspace.BossArenas:GetChildren() do
                         if string.find(v.Name, boss) then
@@ -361,7 +442,9 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait(.25) do
+    while true do
+        local cd = cd or 0.3
+        task.wait(cd)
         local totalenemy = {}
         local enemy,multienemy = getclosestmobs()
         if swordburst["killaura"] and #multienemy >= 1 then
@@ -441,3 +524,4 @@ task.spawn(function()
     end
 end)
 
+OrionLib:Init()

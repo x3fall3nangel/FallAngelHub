@@ -344,7 +344,6 @@ settingsTab:AddButton({
   	end    
 })
 
-
 local function methodss()
     if method and dist then
         if method == "above" then
@@ -416,6 +415,21 @@ local function getquest(chosequest)
     return
 end
 
+local function checkpplinbossarena(bo)
+    local target
+    for i,v in next, Players:GetPlayers() do
+        for i,boss in next, workspace.BossArenas:GetChildren() do
+            if v ~= lplr and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and getchar() and getchar():FindFirstChild("HumanoidRootPart") and bo and string.find(boss.Name, bo) then
+                local magnitude = (boss:FindFirstChild("Spawn").Position - v.Character:FindFirstChild("HumanoidRootPart").Position).magnitude
+                if magnitude <= 150 then
+                    target = v
+                end
+            end
+        end
+    end
+    return target
+end
+
 task.spawn(function()
     while task.wait(.1) do
         if swordburst["automobs"] and choosemob then
@@ -434,19 +448,27 @@ end)
 
 task.spawn(function()
     while task.wait() do
-        if swordburst["autoboss"] and methodss() then
+        if swordburst["autoboss"] then
             if getchar() and getchar():FindFirstChild("HumanoidRootPart") and boss then
                 local enemy = getclosestmobs(boss)
                 if enemy and enemy:FindFirstChild("HumanoidRootPart") then
+                    swordburst["automobs"] = false
                     getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
                 else
-                    for i,v in next, workspace.BossArenas:GetChildren() do
-                        if string.find(v.Name, boss) then
-                            getchar().HumanoidRootPart.CFrame = v:FindFirstChild("Spawn").CFrame 
+                    if checkpplinbossarena(boss) then
+                        swordburst["automobs"] = true
+                    else
+                        swordburst["automobs"] = false
+                        for i,v in next, workspace.BossArenas:GetChildren() do
+                            if string.find(v.Name, boss) then
+                                getchar().HumanoidRootPart.CFrame = v:FindFirstChild("Spawn").CFrame 
+                            end
                         end
                     end
                 end
             end
+        else
+            swordburst["automobs"] = false
         end 
     end
 end)

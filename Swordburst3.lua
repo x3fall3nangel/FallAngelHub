@@ -1,6 +1,6 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = false, SaveConfig = true, ConfigFolder = "Swordburst3"})
+local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = false, SaveConfig = true, ConfigFolder = "Swordburst3", ShowIcon = true})
 
 local mainTab = Window:MakeTab({
 	Name = "Main",
@@ -22,7 +22,7 @@ local miscTab = Window:MakeTab({
 
 local teleportTab = Window:MakeTab({
 	Name = "Teleport",
-	Icon = "rbxassetid://13865747134",
+	Icon = "rbxassetid://6723742952",
 	PremiumOnly = false
 })
 
@@ -34,7 +34,7 @@ local settingsTab = Window:MakeTab({
 
 local creditTab = Window:MakeTab({
 	Name = "Credits",
-	Icon = "rbxassetid://4483345998",
+	Icon = "rbxassetid://7731404863",
 	PremiumOnly = false
 })
 

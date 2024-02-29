@@ -469,8 +469,6 @@ task.spawn(function()
                     end
                 end
             end
-        else
-            swordburst["automobs"] = false
         end 
     end
 end)

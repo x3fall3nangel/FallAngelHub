@@ -1,6 +1,6 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = true, SaveConfig = false, ConfigFolder = "Swordburst3"})
+local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = true, SaveConfig = true, ConfigFolder = "Swordburst3"})
 
 local mainTab = Window:MakeTab({
 	Name = "Main",
@@ -173,21 +173,24 @@ mainTab:AddToggle({
 	end    
 })
 
-killauraTab:AddParagraph("Kill Aura Cooldown","below 0.25 will activate anticheat")
-killauraTab:AddTextbox({
-	Name = "Kill Aura Cooldown",
-	Default = "0.3",
-	TextDisappear = true,
+killauraTab:AddSlider({
+	Name = "Auto Farm Distance",
+	Min = 0.25,
+	Max = 1,
+	Default = 0.3,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 0.01,
+	ValueName = "distance",
 	Callback = function(Value)
-		cd = tonumber(Value)
-	end	  
+		cd = Value
+	end    
 })
 
 killauraTab:AddSlider({
 	Name = "Kill Aura Range",
 	Min = 1,
-	Max = 150,
-	Default = 100,
+	Max = 100,
+	Default = 70,
 	Color = Color3.fromRGB(255,255,255),
 	Increment = 1,
 	ValueName = "Range",
@@ -441,7 +444,7 @@ task.spawn(function()
     while task.wait() do
         if swordburst["automobs"] and choosemob or swordburst["mobs"] and choosemob then
             local enemy = getclosestmobs(choosemob)
-            if getchar() and getchar():FindFirstChild("HumanoidRootPart") and enemy and enemy:FindFirstChild("HumanoidRootPart")  then
+            if getchar() and getchar():FindFirstChild("HumanoidRootPart") and enemy and enemy:FindFirstChild("HumanoidRootPart") then
                 getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
             end
         end 

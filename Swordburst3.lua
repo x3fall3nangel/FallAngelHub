@@ -412,12 +412,17 @@ local function getquest(chosequest)
 end
 
 task.spawn(function()
-    while task.wait() do
-        if swordburst["automobs"] and choosemob and methodss() then
-            local enemy = getclosestmobs(choosemob)
-            if getchar() and getchar():FindFirstChild("HumanoidRootPart") and enemy and enemy:FindFirstChild("HumanoidRootPart") then
-                getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
-            end
+    while task.wait(.1) do
+        if swordburst["automobs"] and choosemob then
+            for i,v in next, workspace.Mobs:GetChildren() do
+                if string.find(v.Name, choosemob) then
+                    repeat task.wait()
+                        if getchar() and getchar():FindFirstChild("HumanoidRootPart") and v:FindFirstChild("HumanoidRootPart")  then
+                            getchar().HumanoidRootPart.CFrame = v:FindFirstChild("HumanoidRootPart").CFrame * methodss()
+                        end
+                    until v:FindFirstChild("Healthbar") == nil or swordburst["automobs"] == false 
+                end
+            end 
         end 
     end
 end)

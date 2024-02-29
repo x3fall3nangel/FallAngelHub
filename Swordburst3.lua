@@ -284,7 +284,7 @@ teleportTab:AddDropdown({
 teleportTab:AddButton({
 	Name = "Teleport Waystones",
 	Callback = function()
-        if waystones and getchar() and getchar:FindFirstChild("HumanoidRootPart") then
+        if waystones and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
             for i,v in next, workspace.Waystones:GetChildren() do
                 if v.Name == waystones then
                     getchar().HumanoidRootPart.CFrame = v.Main.CFrame * CFrame.new(0,0,5)

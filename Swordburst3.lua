@@ -426,20 +426,6 @@ local function getquest(chosequest)
     return
 end
 
-local function checkpplinbossarena(bo)
-    for i,v in next, Players:GetPlayers() do
-        for i,boss in next, workspace.BossArenas:GetChildren() do
-            if v ~= lplr and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and getchar() and getchar():FindFirstChild("HumanoidRootPart") and bo and string.find(boss.Name, bo) then
-                local magnitude = (boss:FindFirstChild("Spawn").Position - v.Character:FindFirstChild("HumanoidRootPart").Position).magnitude
-                if magnitude <= 150 then
-                    return true
-                end
-            end
-        end
-    end
-    return false
-end
-
 task.spawn(function()
     while task.wait() do
         if swordburst["automobs"] and choosemob or swordburst["mobs"] and choosemob then
@@ -460,13 +446,14 @@ task.spawn(function()
                     swordburst["automobs"] = false
                     getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
                 else
-                    if checkpplinbossarena(boss) then
-                        swordburst["mobs"] = true
-                    else
-                        swordburst["mobs"] = false
-                        for i,v in next, workspace.BossArenas:GetChildren() do
-                            if string.find(v.Name, boss) then
+                    for i,v in next, workspace.BossArenas:GetChildren() do
+                        if string.find(v.Name, boss) and string.find(v.Spawn.ArenaBillboard.Frame.StatusLabel.Text, "Boss Cooldown") then
+                            local spawntime = string.sub(v.Spawn.ArenaBillboard.Frame.StatusLabel.Text,16,17)
+                            if tonumber(spawntime) and tonumber(spawntime) <= 1 then
+                                swordburst["mobs"] = false
                                 getchar().HumanoidRootPart.CFrame = v:FindFirstChild("Spawn").CFrame 
+                            else
+                                swordburst["mobs"] = true
                             end
                         end
                     end

@@ -449,7 +449,7 @@ task.spawn(function()
                     for i,v in next, workspace.BossArenas:GetChildren() do
                         if string.find(v.Name, boss) and string.find(v.Spawn.ArenaBillboard.Frame.StatusLabel.Text, "Boss Cooldown") then
                             local spawntime = string.sub(v.Spawn.ArenaBillboard.Frame.StatusLabel.Text,16,17)
-                            if tonumber(spawntime) and tonumber(spawntime) <= 1 then
+                            if tonumber(spawntime) and tonumber(spawntime) <= 2 then
                                 swordburst["mobs"] = false
                                 getchar().HumanoidRootPart.CFrame = v:FindFirstChild("Spawn").CFrame 
                             else

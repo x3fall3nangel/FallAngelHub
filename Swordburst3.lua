@@ -164,7 +164,7 @@ mainTab:AddDropdown({
 	end    
 })
 
-mainTab:AddParagraph("Auto Farm Boss","when boss havent spawn will farm selected mob")
+mainTab:AddParagraph("Auto Farm Boss","when boss havent spawn will farm selected mob when mob is spawned")
 mainTab:AddToggle({
 	Name = "Auto Farm Boss",
 	Default = false,

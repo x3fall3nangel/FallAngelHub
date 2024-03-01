@@ -516,7 +516,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait(.1) do
+    while task.wait(3) do
         if swordburst["autocollect"] then
             for i,v in next, ReplicatedStorage.Drops:GetChildren() do
                 if v:GetAttributes("Owner").Owner == lplr.Name then

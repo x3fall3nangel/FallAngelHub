@@ -46,18 +46,18 @@ local lplr = Players.LocalPlayer
 local Stamina = require(ReplicatedStorage.Systems.Stamina)
 local ItemList = require(ReplicatedStorage.Systems.Items.ItemList)
 
+local cd
+local cds
 local mine
 local boss
+local dist
+local range
 local rarity
 local insert
 local method
 local waystones
 local choosemob
 local choosequest
-
-local cd
-local range
-local dist
 
 local mobs = {}
 local mines = {}
@@ -239,6 +239,19 @@ mainTab:AddToggle({
 
 local Section3 = mainTab:AddSection({
 	Name = "Auto Mine Ores"
+})
+
+mainTab:AddSlider({
+	Name = "Mine Ores Cooldown",
+	Min = 0.25,
+	Max = 1,
+	Default = 0.3,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 0.01,
+	ValueName = "Cooldown",
+	Callback = function(Value)
+		cds = Value
+	end    
 })
 
 mainTab:AddDropdown({
@@ -538,7 +551,9 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait(.3) do
+    while true do
+        local cds = cds or 0.3
+        task.wait(cds)
         if swordburst["automine"] and mine then
             if getores() and getores():FindFirstChildWhichIsA("MeshPart") and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
                 getchar():FindFirstChild("HumanoidRootPart").CFrame =  getores():FindFirstChildWhichIsA("MeshPart").CFrame * CFrame.new(0,3,0)

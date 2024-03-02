@@ -456,7 +456,7 @@ task.spawn(function()
             if getchar() and getchar():FindFirstChild("HumanoidRootPart") and boss then
                 local enemy = getclosestmobs(boss)
                 if enemy and enemy:FindFirstChild("HumanoidRootPart") then
-                    swordburst["automobs"] = false
+                    swordburst["mobs"] = false
                     getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
                 else
                     for i,v in next, workspace.BossArenas:GetChildren() do

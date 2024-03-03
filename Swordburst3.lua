@@ -135,7 +135,7 @@ mainTab:AddButton({
             local e = Instance.new("Part")
             e.Name = "epikinvis"
             e.Parent = workspace
-            e.Size = Vector3.new(10,10,10)
+            e.Size = Vector3.new(10,2,10)
             e.Anchored = true
             e.CanCollide = true
             e.Position = getchar().HumanoidRootPart.Position + Vector3.new(0,500,0)

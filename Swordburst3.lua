@@ -128,27 +128,6 @@ task.spawn(function()
     end
 end)
 
--- mainTab:AddButton({
---     Name = "Invisible Character",
---     Callback = function()
---         if getchar() and getchar():FindFirstChild("LowerTorso") and getchar():FindFirstChild("HumanoidRootPart") then
---             local e = Instance.new("Part")
---             e.Name = "epikinvis"
---             e.Parent = workspace
---             e.Size = Vector3.new(10,2,10)
---             e.Anchored = true
---             e.CanCollide = true
---             e.Position = getchar().HumanoidRootPart.Position + Vector3.new(0,500,0)
---             local old = getchar().HumanoidRootPart.CFrame
---             getchar().HumanoidRootPart.CFrame = e.CFrame * CFrame.new(0,1,0)
---             getchar():FindFirstChild("LowerTorso"):Destroy()
---             task.wait(1)
---             getchar().HumanoidRootPart.CFrame = old
---             e:Destroy()
---         end
---     end    
--- })
-
 local Section1 = mainTab:AddSection({
 	Name = "AutoFarm"
 })

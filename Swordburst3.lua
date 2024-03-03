@@ -1,6 +1,6 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = false, SaveConfig = true, ConfigFolder = "Swordburst3", ShowIcon = true})
+local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = false, SaveConfig = true, ConfigFolder = "Swordburst3", ShowIcon = true, Icon = ""})
 
 local mainTab = Window:MakeTab({
 	Name = "Main",
@@ -46,29 +46,38 @@ local lplr = Players.LocalPlayer
 local Stamina = require(ReplicatedStorage.Systems.Stamina)
 local ItemList = require(ReplicatedStorage.Systems.Items.ItemList)
 
-local cd
-local cds
-local mine
-local boss
-local dist
-local range
-local rarity
+local mob
 local insert
-local method
 local waystones
-local choosemob
-local choosequest
 
 local mobs = {}
 local mines = {}
 local bosses = {}
 local quests = {}
 local waystone = {}
-local swordburst = {}
 local methods = {"above", "below", "behind"}
 local category = {"Material", "Mount", "Cosmetic", "Pickaxe"}
 local raritys = {"common (white)", "uncommon (green) and below", "rare (blue) and below", "epic (purple) and below", "legendary (orange) and below"}
 local realrarity = {["common (white)"] = 1, ["uncommon (green) and below"] = 2, ["rare (blue) and below"] = 3, ["epic (purple) and below"] = 4, ["legendary (orange) and below"] = 5,}
+local swordburst = {
+    method = {Value = "behind"},
+    choosemob = {Value = nil},
+    automobs = {Value = false},
+    boss = {Value = nil},
+    autoboss = {Value = false},
+    choosequest = {Value = nil},
+    autoquest = {Value = false},
+    mine = {Value = nil},
+    automine = {Value = false},
+    autocollect = {Value = false},
+    aura = {Value = false},
+    killauraplr = {Value = false},
+    dist = {Value = 15},
+    cds = {Value = 0.3},
+    cd = {Value = 0.3},
+    range = {Value = 70},
+    rarity = {Value = nil},
+}
 
 local function getchar()
     return lplr.Character or lplr.CharacterAdded:Wait()
@@ -111,109 +120,68 @@ for i, v in next, getconnections(lplr.Idled) do
     end
 end
 
+task.spawn(function()
+    while task.wait() do
+        if #OrionLib.Flags >= 1 then
+            swordburst = OrionLib.Flags
+        end
+    end
+end)
+
 local Section1 = mainTab:AddSection({
 	Name = "AutoFarm"
 })
 
 mainTab:AddDropdown({
 	Name = "Select Auto farm method",
-	Default = "behind",
+	Default = swordburst["method"].Value,
 	Options = methods,
-	Callback = function(Value)
-		method = Value
-	end    
+    Save = true,
+    Flag = "method",
 })
 
 mainTab:AddSlider({
 	Name = "Auto Farm Distance",
 	Min = 1,
 	Max = 50,
-	Default = 15,
+	Default = swordburst["dist"].Value,
 	Color = Color3.fromRGB(255,255,255),
 	Increment = 1,
 	ValueName = "distance",
-	Callback = function(Value)
-		dist = Value
-	end    
+    Save = true,
+    Flag = "dist",
 })
 
 mainTab:AddDropdown({
 	Name = "Select Mobs",
-	Default = nil,
+	Default = swordburst["choosemob"].Value,
 	Options = mobs,
-	Callback = function(Value)
-		choosemob = Value
-	end    
+    Save = true,
+    Flag = "choosemob",
 })
 
 mainTab:AddParagraph("Auto Farm Mobs","If no one in the area the mobs wont spawn")
 mainTab:AddToggle({
 	Name = "Auto Farm Mobs",
-	Default = false,
-	Callback = function(Value)
-		swordburst["automobs"] = Value
-	end    
+	Default = swordburst["automobs"].Value,
+    Save = true,
+    Flag = "automobs",   
 })
 
 mainTab:AddDropdown({
 	Name = "Select Boss",
-	Default = nil,
+	Default = swordburst["boss"].Value,
 	Options = bosses,
-	Callback = function(Value)
-		boss = Value
-	end    
+    Save = true,
+    Flag = "boss",
 })
 
 mainTab:AddParagraph("Auto Farm Boss","when boss havent spawn will farm selected mob when mob is spawned")
 mainTab:AddToggle({
 	Name = "Auto Farm Boss",
-	Default = false,
-	Callback = function(Value)
-		swordburst["autoboss"] = Value
-	end    
-})
-
-killauraTab:AddSlider({
-	Name = "Kill Aura Cooldown",
-	Min = 0.25,
-	Max = 1,
-	Default = 0.3,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = 0.01,
-	ValueName = "Cooldown",
-	Callback = function(Value)
-		cd = Value
-	end    
-})
-
-killauraTab:AddSlider({
-	Name = "Kill Aura Range",
-	Min = 1,
-	Max = 100,
-	Default = 70,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = 1,
-	ValueName = "Range",
-	Callback = function(Value)
-		range = Value
-	end    
-})
-
-killauraTab:AddToggle({
-	Name = "Kill Aura",
-	Default = false,
-	Callback = function(Value)
-		swordburst["killaura"] = Value
-	end    
-})
-
-killauraTab:AddParagraph("Kill aura for Players","Enable PvP to dmg ppl")
-killauraTab:AddToggle({
-	Name = "Kill Aura for Players",
-	Default = false,
-	Callback = function(Value)
-		swordburst["killauraplr"] = Value
-	end    
+	Default = swordburst["autoboss"].Value,
+    Save = true,
+    Flag = "autoboss", 
 })
 
 local Section2 = mainTab:AddSection({
@@ -222,19 +190,17 @@ local Section2 = mainTab:AddSection({
 
 mainTab:AddDropdown({
 	Name = "Select Quest",
-	Default = nil,
+	Default = swordburst["choosequest"].Value,
 	Options = quests,
-	Callback = function(Value)
-		choosequest = Value
-	end    
+    Save = true,
+    Flag = "choosequest",
 })
 
 mainTab:AddToggle({
 	Name = "Auto Quest",
-	Default = false,
-	Callback = function(Value)
-		swordburst["autoquest"] = Value
-	end    
+	Default = swordburst["autoquest"].Value,
+    Save = true,
+    Flag = "autoquest",   
 })
 
 local Section3 = mainTab:AddSection({
@@ -245,30 +211,27 @@ mainTab:AddSlider({
 	Name = "Mine Ores Cooldown",
 	Min = 0.25,
 	Max = 1,
-	Default = 0.3,
+	Default = swordburst["cds"].Value,
 	Color = Color3.fromRGB(255,255,255),
 	Increment = 0.01,
 	ValueName = "Cooldown",
-	Callback = function(Value)
-		cds = Value
-	end    
+    Save = true,
+    Flag = "cds",
 })
 
 mainTab:AddDropdown({
 	Name = "Select Ores",
-	Default = nil,
+	Default = swordburst["mine"].Value,
 	Options = mines,
-	Callback = function(Value)
-		mine = Value
-	end    
+    Save = true,
+    Flag = "mine",
 })
 
 mainTab:AddToggle({
 	Name = "Auto Mine Ores",
-	Default = false,
-	Callback = function(Value)
-		swordburst["automine"] = Value
-	end    
+	Default = swordburst["automine"].Value,
+    Save = true,
+    Flag = "automine",
 })
 
 local Section1 = mainTab:AddSection({
@@ -277,22 +240,48 @@ local Section1 = mainTab:AddSection({
 
 mainTab:AddToggle({
 	Name = "Auto Collect",
-	Default = false,
-	Callback = function(Value)
-		swordburst["autocollect"] = Value
-	end    
+	Default = swordburst["autocollect"].Value,
+    Save = true,
+    Flag = "autocollect",  
 })
 
-miscTab:AddToggle({
-	Name = "Reduce Lag",
-	Default = false,
-	Callback = function(Value)
-		if Value == true then
-            RunService:Set3dRenderingEnabled(false)
-        else
-            RunService:Set3dRenderingEnabled(true)
-        end
-	end    
+killauraTab:AddSlider({
+	Name = "Kill Aura Cooldown",
+	Min = 0.25,
+	Max = 1,
+	Default = swordburst["cd"].Value,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 0.01,
+	ValueName = "Cooldown",
+    Save = true,
+    Flag = "cd",
+})
+
+killauraTab:AddSlider({
+	Name = "Kill Aura Range",
+	Min = 1,
+	Max = 100,
+	Default = swordburst["range"].Value,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Range",
+    Save = true,
+    Flag = "range",
+})
+
+killauraTab:AddToggle({
+	Name = "Kill Aura",
+	Default = swordburst["aura"].Value,
+    Save = true,
+    Flag = "aura",
+})
+
+killauraTab:AddParagraph("Kill aura for Players","Enable PvP to dmg ppl")
+killauraTab:AddToggle({
+	Name = "Kill Aura for Players",
+	Default = swordburst["killauraplr"].Value,
+    Save = true,
+    Flag = "killauraplr",  
 })
 
 teleportTab:AddDropdown({
@@ -317,6 +306,18 @@ teleportTab:AddButton({
   	end    
 })
 
+miscTab:AddToggle({
+	Name = "Reduce Lag",
+	Default = false,
+	Callback = function(Value)
+		if Value == true then
+            RunService:Set3dRenderingEnabled(false)
+        else
+            RunService:Set3dRenderingEnabled(true)
+        end
+	end    
+})
+
 miscTab:AddButton({
 	Name = "Infinite Stamina",
 	Callback = function()
@@ -327,19 +328,18 @@ miscTab:AddButton({
 
 miscTab:AddDropdown({
 	Name = "Select Rarity",
-	Default = nil,
+	Default = swordburst["rarity"].Value,
 	Options = raritys,
-	Callback = function(Value)
-		rarity = Value
-	end    
+    Save = true,
+    Flag = "rarity",  
 })
 
 miscTab:AddButton({
 	Name = "Dismantle Selected rarity",
 	Callback = function()
-        if rarity then
+        if OrionLib.Flags["rarity"].Value then
             for i,v in next, ItemList do
-                if v.Rarity and v.Rarity <= realrarity[rarity] and not table.find(category, v.Category) then
+                if v.Rarity and v.Rarity <= realrarity[OrionLib.Flags["rarity"].Value] and not table.find(category, v.Category) then
                     for _,items in next, ReplicatedStorage.Profiles[lplr.Name].Inventory:GetChildren() do
                         if string.find(i, items.Name) then
                             ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Crafting"):WaitForChild("Dismantle"):FireServer(items)
@@ -369,13 +369,13 @@ settingsTab:AddButton({
 })
 
 local function methodss()
-    if method and dist then
-        if method == "above" then
-            return CFrame.new(0, dist, 0)
-        elseif method == "below" then
-            return CFrame.new(0, -dist,0)
-        elseif method == "behind" then
-            return CFrame.new(0,0, dist)
+    if OrionLib.Flags["dist"].Value then
+        if OrionLib.Flags["method"].Value == "above" then
+            return CFrame.new(0, OrionLib.Flags["dist"].Value, 0)
+        elseif OrionLib.Flags["method"].Value == "below" then
+            return CFrame.new(0, -OrionLib.Flags["dist"].Value,0)
+        elseif OrionLib.Flags["method"].Value == "behind" then
+            return CFrame.new(0,0, OrionLib.Flags["dist"].Value)
         end
     end
 end
@@ -393,7 +393,7 @@ local function getclosestmobs(mob)
                     distance = magnitude
                 end
             end
-            if magnitude <= range then
+            if magnitude <= OrionLib.Flags["range"].Value then
                 table.insert(multitarget, v)
             end
         end
@@ -402,7 +402,7 @@ local function getclosestmobs(mob)
 end
 
 local function getplr() 
-    local distance = range 
+    local distance = OrionLib.Flags["range"].Value 
     local target = {}
     for i,v in next, Players:GetPlayers() do
         if v ~= lplr and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
@@ -419,7 +419,7 @@ local function getores()
     local distance = math.huge
     local target
     for i,v in next, workspace.Ores:GetChildren() do
-        if v.Name == mine and getchar() and getchar():FindFirstChild("HumanoidRootPart") and v:FindFirstChildWhichIsA("MeshPart").CFrame then
+        if v.Name == OrionLib.Flags["mine"].Value and getchar() and getchar():FindFirstChild("HumanoidRootPart") and v:FindFirstChildWhichIsA("MeshPart").CFrame then
             local magnitude = (getchar().HumanoidRootPart.Position - v:FindFirstChildWhichIsA("MeshPart").Position).magnitude
             if magnitude < distance then
                 target = v
@@ -441,8 +441,8 @@ end
 
 task.spawn(function()
     while task.wait() do
-        if swordburst["automobs"] and choosemob or swordburst["mobs"] and choosemob then
-            local enemy = getclosestmobs(choosemob)
+        if OrionLib.Flags["automobs"].Value and OrionLib.Flags["choosemob"].Value or mob and OrionLib.Flags["choosemob"].Value then
+            local enemy = getclosestmobs(OrionLib.Flags["choosemob"].Value)
             if getchar() and getchar():FindFirstChild("HumanoidRootPart") and enemy and enemy:FindFirstChild("HumanoidRootPart") then
                 getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
             end
@@ -452,45 +452,43 @@ end)
 
 task.spawn(function()
     while task.wait() do
-        if swordburst["autoboss"] then
-            if getchar() and getchar():FindFirstChild("HumanoidRootPart") and boss then
-                local enemy = getclosestmobs(boss)
+        if OrionLib.Flags["autoboss"].Value then
+            if getchar() and getchar():FindFirstChild("HumanoidRootPart") and OrionLib.Flags["boss"].Value then
+                local enemy = getclosestmobs(OrionLib.Flags["boss"].Value)
                 if enemy and enemy:FindFirstChild("HumanoidRootPart") then
-                    swordburst["mobs"] = false
+                    mob = false
                     getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
                 else
                     for i,v in next, workspace.BossArenas:GetChildren() do
-                        if string.find(v.Name, boss) and string.find(v.Spawn.ArenaBillboard.Frame.StatusLabel.Text, "Boss Cooldown") then
+                        if string.find(v.Name, OrionLib.Flags["boss"].Value) and string.find(v.Spawn.ArenaBillboard.Frame.StatusLabel.Text, "Boss Cooldown") then
                             local e = string.sub(v.Spawn.ArenaBillboard.Frame.StatusLabel.Text,16,18)
                             local spawntime = string.split(e, ")")[1]
                             if tonumber(spawntime) and tonumber(spawntime) <= 1 then
-                                swordburst["mobs"] = false
+                                mob = false
                                 getchar().HumanoidRootPart.CFrame = v:FindFirstChild("Spawn").CFrame 
                             else
-                                swordburst["mobs"] = true
+                                mob = true
                             end
                         end
                     end
                 end
             end
         else
-            swordburst["mobs"] = false
+            mob = false
         end 
     end
 end)
 
 task.spawn(function()
-    while true do
-        local cd = cd or 0.3
-        task.wait(cd)
+    while task.wait(OrionLib.Flags["cd"].Value) do
         local totalenemy = {}
         local enemy,multienemy = getclosestmobs()
-        if swordburst["killaura"] and #multienemy >= 1 then
+        if OrionLib.Flags["aura"].Value and #multienemy >= 1 then
             for i,v in next, multienemy do
                 table.insert(totalenemy, v)
             end
         end
-        if swordburst["killauraplr"] and #getplr() >= 1 then
+        if OrionLib.Flags["killauraplr"].Value and #getplr() >= 1 then
             for i,v in next, getplr() do
                 table.insert(totalenemy,v)
             end
@@ -506,14 +504,13 @@ task.spawn(function()
         for i,v in next, lplr.PlayerGui.SkillBar.Frame:GetChildren() do
             if v:FindFirstChild("Hotkey") then
                 local totalenemy = {}
-                local e = choosemob or boss
-                local enemy,multienemy = getclosestmobs(e)
-                if swordburst["killaura"] and #multienemy >= 1 then
+                local enemy,multienemy = getclosestmobs()
+                if OrionLib.Flags["aura"].Value and #multienemy >= 1 then
                     for i,v in next, multienemy do
                         table.insert(totalenemy, v)
                     end
                 end
-                if swordburst["killauraplr"] and #getplr() >= 1 then
+                if OrionLib.Flags["killauraplr"].Value and #getplr() >= 1 then
                     for i,v in next, getplr() do
                         table.insert(totalenemy,v)
                     end
@@ -531,7 +528,7 @@ end)
 
 task.spawn(function()
     while task.wait(3) do
-        if swordburst["autocollect"] then
+        if OrionLib.Flags["autocollect"].Value then
             for i,v in next, ReplicatedStorage.Drops:GetChildren() do
                 if v:GetAttributes("Owner").Owner == lplr.Name then
                     ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Drops"):WaitForChild("Pickup"):FireServer(v)
@@ -543,18 +540,16 @@ end)
 
 task.spawn(function()
     while task.wait(.1) do
-        if swordburst["autoquest"] and choosequest then
-            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Quests"):WaitForChild("AcceptQuest"):FireServer(getquest(choosequest))
-            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Quests"):WaitForChild("CompleteQuest"):FireServer(getquest(choosequest))
+        if OrionLib.Flags["autoquest"].Value and OrionLib.Flags["choosequest"].Value then
+            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Quests"):WaitForChild("AcceptQuest"):FireServer(getquest(OrionLib.Flags["choosequest"].Value))
+            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Quests"):WaitForChild("CompleteQuest"):FireServer(getquest(OrionLib.Flags["choosequest"].Value))
         end
     end
 end)
 
 task.spawn(function()
-    while true do
-        local cds = cds or 0.3
-        task.wait(cds)
-        if swordburst["automine"] and mine then
+    while task.wait(OrionLib.Flags["cds"].Value) do
+        if OrionLib.Flags["automine"].Value and OrionLib.Flags["mine"].Value then
             if getores() and getores():FindFirstChildWhichIsA("MeshPart") and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
                 getchar():FindFirstChild("HumanoidRootPart").CFrame =  getores():FindFirstChildWhichIsA("MeshPart").CFrame * CFrame.new(0,3,0)
                 ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Equipment"):WaitForChild("EquipTool"):FireServer("Pickaxe", true) 

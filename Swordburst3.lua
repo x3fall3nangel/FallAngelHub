@@ -253,7 +253,7 @@ mainTab:AddToggle({
     Flag = "autocollect",  
 })
 
-mainTab:AddParagraph("Kill Aura Cooldown","Lower down cooldown if does no damage")
+mainTab:AddParagraph("Kill Aura Cooldown","Upper the cooldown if does no damage")
 killauraTab:AddSlider({
 	Name = "Kill Aura Cooldown",
 	Min = 0.25,

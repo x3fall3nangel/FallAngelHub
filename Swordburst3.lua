@@ -418,7 +418,6 @@ webhookTab:AddTextbox({
 	TextDisappear = true,
 	Callback = function(Value)
 		webhookurl = Value
-        print(Value)
 	end	  
 })
 

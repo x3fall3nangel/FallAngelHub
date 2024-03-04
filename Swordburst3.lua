@@ -26,6 +26,12 @@ local teleportTab = Window:MakeTab({
 	PremiumOnly = false
 })
 
+local webhookTab = Window:MakeTab({
+	Name = "webhookTab",
+	Icon = "rbxassetid://14769727847",
+	PremiumOnly = false
+})
+
 local settingsTab = Window:MakeTab({
 	Name = "Settings",
 	Icon = "rbxassetid://4738901432",
@@ -50,6 +56,7 @@ local mob
 local insert
 local crafting
 local waystones
+local webhookurl
 
 local mobs = {}
 local mines = {}
@@ -79,6 +86,8 @@ local swordburst = {
     cd = {Value = 0.3},
     range = {Value = 70},
     rarity = {Value = nil},
+    webhook = {Value = false},
+    cdw = {Value = 5}
 }
 
 local function getchar()
@@ -121,6 +130,11 @@ for i, v in next, getconnections(lplr.Idled) do
         v["Disconnect"](v)
     end
 end
+
+-- if #OrionLib.Flags >= 1 then
+--         swordburst = OrionLib.Flags
+-- end
+
 
 local Section1 = mainTab:AddSection({
 	Name = "AutoFarm"
@@ -239,6 +253,7 @@ mainTab:AddToggle({
     Flag = "autocollect",  
 })
 
+mainTab:AddParagraph("Kill Aura Cooldown","Lower down cooldown if does no damage")
 killauraTab:AddSlider({
 	Name = "Kill Aura Cooldown",
 	Min = 0.25,
@@ -323,7 +338,6 @@ teleportTab:AddButton({
   	end    
 })
 
-
 miscTab:AddToggle({
 	Name = "Reduce Lag",
 	Default = false,
@@ -349,7 +363,7 @@ miscTab:AddDropdown({
 	Default = swordburst["rarity"].Value,
 	Options = raritys,
     Save = true,
-    Flag = "rarity",  
+    Flag = "rarity",
 })
 
 miscTab:AddButton({
@@ -384,6 +398,35 @@ settingsTab:AddButton({
 	Callback = function()
         OrionLib:Destroy()
   	end    
+})
+
+webhookTab:AddSlider({
+	Name = "Webhook Cooldown",
+	Min = 1,
+	Max = 60,
+	Default = swordburst["cdw"].Value,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Minutes",
+    Save = true,
+    Flag = "cdw",
+})
+
+webhookTab:AddTextbox({
+	Name = "Webhook Url",
+	Default = "",
+	TextDisappear = true,
+	Callback = function(Value)
+		webhookurl = Value
+        print(Value)
+	end	  
+})
+
+webhookTab:AddToggle({
+	Name = "Webhook",
+	Default = swordburst["webhook"].Value,
+	Save = true,
+    Flag = "webhook",
 })
 
 local function methodss()
@@ -455,6 +498,10 @@ local function getquest(chosequest)
         end
     end
     return
+end
+
+local function minutes(cd)
+    return cd * 60
 end
 
 task.spawn(function()
@@ -573,6 +620,31 @@ task.spawn(function()
                 ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Equipment"):WaitForChild("EquipTool"):FireServer("Pickaxe", true) 
                 ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Mining"):WaitForChild("Mine"):FireServer()
             end
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(.1) do
+        if OrionLib.Flags["webhook"].Value and webhookurl then
+            local level = lplr.PlayerGui.MainHUD.Frame.Bars.LevelShadow.LevelLabel.Text
+            local xp = lplr.PlayerGui.MainHUD.Frame.XPFrame.XPCount.Text
+            local data = {
+                ["embeds"] = {
+                    {
+                        ["title"] = "**SwordBurst 3**",
+                        ["description"] = "Username: " .. lplr.Name.."\n Level: " .. level .. "\n XP: " .. xp,
+                        ["type"] = "rich",
+                        ["color"] = tonumber(0x7269da),
+                    }
+                }
+            }
+            local newdata = game:GetService("HttpService"):JSONEncode(data)
+            local headers = {["content-type"] = "application/json"}
+            request = http_request or request or HttpPost or syn.request
+            local abcdef = {Url = webhookurl, Body = newdata, Method = "POST", Headers = headers}
+            request(abcdef)
+            task.wait(minutes(OrionLib.Flags["cdw"].Value))
         end
     end
 end)

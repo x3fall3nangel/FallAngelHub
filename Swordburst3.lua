@@ -48,6 +48,7 @@ local ItemList = require(ReplicatedStorage.Systems.Items.ItemList)
 
 local mob
 local insert
+local crafting
 local waystones
 
 local mobs = {}
@@ -56,6 +57,7 @@ local bosses = {}
 local quests = {}
 local waystone = {}
 local methods = {"above", "below", "behind"}
+local craftings = {"Enchanting", "Mounts", "Smithing"}
 local category = {"Material", "Mount", "Cosmetic", "Pickaxe"}
 local raritys = {"common (white)", "uncommon (green) and below", "rare (blue) and below", "epic (purple) and below", "legendary (orange) and below"}
 local realrarity = {["common (white)"] = 1, ["uncommon (green) and below"] = 2, ["rare (blue) and below"] = 3, ["epic (purple) and below"] = 4, ["legendary (orange) and below"] = 5,}
@@ -305,6 +307,30 @@ teleportTab:AddButton({
         end
   	end    
 })
+
+teleportTab:AddDropdown({
+	Name = "Select Crafting Stations",
+	Default = nil,
+	Options = craftings,
+	Callback = function(Value)
+		crafting = Value
+	end    
+})
+
+teleportTab:AddButton({
+	Name = "Teleport Crafting Stations",
+	Callback = function()
+        if crafting and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
+            for i,v in next, workspace.CraftingStations:GetChildren() do
+                if v.Name == crafting then
+                    getchar().HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,0,5)
+                    return
+                end
+            end
+        end
+  	end    
+})
+
 
 miscTab:AddToggle({
 	Name = "Reduce Lag",

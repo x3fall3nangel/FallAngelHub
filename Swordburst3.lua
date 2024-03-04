@@ -122,14 +122,6 @@ for i, v in next, getconnections(lplr.Idled) do
     end
 end
 
-task.spawn(function()
-    while task.wait() do
-        if #OrionLib.Flags >= 1 then
-            swordburst = OrionLib.Flags
-        end
-    end
-end)
-
 local Section1 = mainTab:AddSection({
 	Name = "AutoFarm"
 })

@@ -26,6 +26,12 @@ local teleportTab = Window:MakeTab({
 	PremiumOnly = false
 })
 
+local targetTab = Window:MakeTab({
+	Name = "Target",
+	Icon = "rbxassetid://13677855342",
+	PremiumOnly = false
+})
+
 local webhookTab = Window:MakeTab({
 	Name = "webhookTab",
 	Icon = "rbxassetid://14769727847",
@@ -82,16 +88,29 @@ local swordburst = {
     aura = {Value = false},
     killauraplr = {Value = false},
     dist = {Value = 15},
-    cds = {Value = 0.4},
+    cds = {Value = 0.3},
     cd = {Value = 0.3},
     range = {Value = 70},
     rarity = {Value = nil},
     webhook = {Value = false},
-    cdw = {Value = 5}
+    cdw = {Value = 5},
+    targetplr = {Value = false},
+    choosetarget = {Value = false},
+    ignoreparty = {Value = false}
 }
 
 local function getchar()
     return lplr.Character or lplr.CharacterAdded:Wait()
+end
+
+local function getallplr()
+    local e = {}
+    for i,v in next, Players:GetPlayers() do
+        if v ~= lplr then
+            table.insert(e, v.Name)
+        end
+    end
+    return e
 end
 
 for i,v in next, workspace.BossArenas:GetChildren() do
@@ -130,11 +149,6 @@ for i, v in next, getconnections(lplr.Idled) do
         v["Disconnect"](v)
     end
 end
-
--- if #OrionLib.Flags >= 1 then
---         swordburst = OrionLib.Flags
--- end
-
 
 local Section1 = mainTab:AddSection({
 	Name = "AutoFarm"
@@ -253,7 +267,7 @@ mainTab:AddToggle({
     Flag = "autocollect",  
 })
 
-mainTab:AddParagraph("Kill Aura Cooldown","Upper the cooldown if does no damage")
+mainTab:AddParagraph("Kill Aura Cooldown","Lower down cooldown if does no damage")
 killauraTab:AddSlider({
 	Name = "Kill Aura Cooldown",
 	Min = 0.25,
@@ -291,6 +305,13 @@ killauraTab:AddToggle({
 	Default = swordburst["killauraplr"].Value,
     Save = true,
     Flag = "killauraplr",  
+})
+
+killauraTab:AddToggle({
+	Name = "Ignore Party Members",
+	Default = swordburst["ignoreparty"].Value,
+    Save = true,
+    Flag = "ignoreparty",
 })
 
 teleportTab:AddDropdown({
@@ -428,6 +449,28 @@ webhookTab:AddToggle({
     Flag = "webhook",
 })
 
+local targetdropdown = targetTab:AddDropdown({
+	Name = "Select Target",
+	Default = swordburst["choosetarget"].Value,
+	Options = getallplr(),
+    Save = true,
+    Flag = "choosetarget",
+})
+
+targetTab:AddButton({
+	Name = "Refrash target dropdown",
+	Callback = function()
+        targetdropdown:Refresh(getallplr(),true)
+  	end    
+})
+
+targetTab:AddToggle({
+	Name = "Tp to Selected Players",
+	Default = swordburst["targetplr"].Value,
+    Save = true,
+    Flag = "targetplr",
+})
+
 local function methodss()
     if OrionLib.Flags["dist"].Value then
         if OrionLib.Flags["method"].Value == "above" then
@@ -461,18 +504,37 @@ local function getclosestmobs(mob)
     return target , multitarget
 end
 
-local function getplr() 
-    local distance = OrionLib.Flags["range"].Value 
-    local target = {}
+local function getplr(player) 
+    local distance = math.huge
+    local target
+    local multitarget = {}
+    local function getpartymember()
+        local e = {}
+        for i,v in next, lplr.PlayerGui.Party.Frame.Members:GetChildren() do
+            if v.Name == "Template" and v:FindFirstChild("Username") then
+                table.insert(e, v:FindFirstChild("Username").Text)
+            end
+        end
+        return e
+    end
     for i,v in next, Players:GetPlayers() do
         if v ~= lplr and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
+            if OrionLib.Flags["ignoreparty"].Value and table.find(getpartymember(), v.DisplayName) then
+                continue
+            end
             local magnitude = (getchar().HumanoidRootPart.Position - v.Character:FindFirstChild("HumanoidRootPart").Position).magnitude
-            if magnitude <= distance then
-                table.insert(target, v.Character)
+            if player and string.find(v.Name, player) and v.Character:FindFirstChild("Healthbar") then
+                if magnitude < distance then
+                    target = v.Character
+                    distance = magnitude
+                end
+            end
+            if magnitude <= OrionLib.Flags["range"].Value  then
+                table.insert(multitarget, v.Character)
             end
         end
     end
-    return target
+    return target, multitarget
 end
 
 local function getores()
@@ -511,6 +573,12 @@ task.spawn(function()
                 getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
             end
         end 
+        if OrionLib.Flags["targetplr"].Value and OrionLib.Flags["choosetarget"].Value then
+            local enemy = getplr(OrionLib.Flags["choosetarget"].Value)
+            if getchar() and getchar():FindFirstChild("HumanoidRootPart") and enemy and enemy:FindFirstChild("HumanoidRootPart") then
+                getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
+            end
+        end
     end
 end)
 
@@ -547,13 +615,14 @@ task.spawn(function()
     while task.wait(OrionLib.Flags["cd"].Value) do
         local totalenemy = {}
         local enemy,multienemy = getclosestmobs()
+        local e,m = getplr()
         if OrionLib.Flags["aura"].Value and #multienemy >= 1 then
             for i,v in next, multienemy do
                 table.insert(totalenemy, v)
             end
         end
-        if OrionLib.Flags["killauraplr"].Value and #getplr() >= 1 then
-            for i,v in next, getplr() do
+        if OrionLib.Flags["killauraplr"].Value and #m >= 1 then
+            for i,v in next, m do
                 table.insert(totalenemy,v)
             end
         end
@@ -569,13 +638,14 @@ task.spawn(function()
             if v:FindFirstChild("Hotkey") then
                 local totalenemy = {}
                 local enemy,multienemy = getclosestmobs()
+                local e,m = getplr()
                 if OrionLib.Flags["aura"].Value and #multienemy >= 1 then
                     for i,v in next, multienemy do
                         table.insert(totalenemy, v)
                     end
                 end
-                if OrionLib.Flags["killauraplr"].Value and #getplr() >= 1 then
-                    for i,v in next, getplr() do
+                if OrionLib.Flags["killauraplr"].Value and #m >= 1 then
+                    for i,v in next, m do
                         table.insert(totalenemy,v)
                     end
                 end

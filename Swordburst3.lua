@@ -88,7 +88,7 @@ local swordburst = {
     aura = {Value = false},
     killauraplr = {Value = false},
     dist = {Value = 15},
-    cds = {Value = 0.3},
+    cds = {Value = 0.4},
     cd = {Value = 0.3},
     range = {Value = 70},
     rarity = {Value = nil},

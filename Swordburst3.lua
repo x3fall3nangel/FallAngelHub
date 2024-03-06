@@ -802,7 +802,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait(.1) do
+    while task.wait(minutes(OrionLib.Flags["cdw"].Value)) do
         if OrionLib.Flags["webhook"].Value and webhookurl then
             local level = lplr.PlayerGui.MainHUD.Frame.Bars.LevelShadow.LevelLabel.Text
             local xp = lplr.PlayerGui.MainHUD.Frame.XPFrame.XPCount.Text
@@ -821,9 +821,9 @@ task.spawn(function()
             request = http_request or request or HttpPost or syn.request
             local abcdef = {Url = webhookurl, Body = newdata, Method = "POST", Headers = headers}
             request(abcdef)
-            task.wait(minutes(OrionLib.Flags["cdw"].Value))
         end
     end
 end)
+
 
 OrionLib:Init()

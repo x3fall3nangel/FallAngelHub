@@ -71,6 +71,7 @@ local Stamina = require(ReplicatedStorage.Systems.Stamina)
 local ItemList = require(ReplicatedStorage.Systems.Items.ItemList)
 
 local mob
+local floor
 local insert
 local crafting
 local waystones
@@ -82,6 +83,7 @@ local bosses = {}
 local quests = {}
 local waystone = {}
 local methods = {"above", "below", "behind"}
+local floors = {"Floor1", "Floor2", "Floor3", "Town"}
 local craftings = {"Enchanting", "Mounts", "Smithing"}
 local category = {"Material", "Mount", "Cosmetic", "Pickaxe"}
 local raritys = {"common (white)", "uncommon (green) and below", "rare (blue) and below", "epic (purple) and below", "legendary (orange) and below"}
@@ -381,6 +383,24 @@ miscTab:AddToggle({
             RunService:Set3dRenderingEnabled(true)
         end
 	end    
+})
+
+teleportTab:AddDropdown({
+	Name = "Select Floor",
+	Default = nil,
+	Options = floors,
+	Callback = function(Value)
+		floor = Value
+	end    
+})
+
+teleportTab:AddButton({
+	Name = "Teleport to Selected Floor",
+	Callback = function()
+        if floor then
+            ReplicatedStorage.Systems.Teleport.Teleport:FireServer(floor)
+        end
+  	end    
 })
 
 miscTab:AddButton({

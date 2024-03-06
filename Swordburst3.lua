@@ -666,8 +666,13 @@ task.spawn(function()
     while task.wait() do
         if OrionLib.Flags["automobs"].Value and OrionLib.Flags["choosemob"].Value or mob and OrionLib.Flags["choosemob"].Value then
             local enemy = getclosestmobs(OrionLib.Flags["choosemob"].Value)
-            if getchar() and getchar():FindFirstChild("HumanoidRootPart") and enemy and enemy:FindFirstChild("HumanoidRootPart") then
-                getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
+            if getchar() and getchar():FindFirstChild("HumanoidRootPart") then
+                if enemy and enemy:FindFirstChild("HumanoidRootPart") then
+                    getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
+                else                       
+                    getchar().HumanoidRootPart.CFrame = workspace.Waystones[waystone[math.random(1,#waystone)]].Main.CFrame * CFrame.new(0,0,3)
+                    task.wait(1)
+                end
             end
         end 
         if OrionLib.Flags["targetplr"].Value and OrionLib.Flags["choosetarget"].Value then

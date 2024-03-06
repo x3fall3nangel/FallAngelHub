@@ -826,11 +826,12 @@ task.spawn(function()
         if OrionLib.Flags["webhook"].Value and webhookurl then
             local level = lplr.PlayerGui.MainHUD.Frame.Bars.LevelShadow.LevelLabel.Text
             local xp = lplr.PlayerGui.MainHUD.Frame.XPFrame.XPCount.Text
+            local Vel = lplr.PlayerGui.Inventory.Frame.Currency.Vel.TextLabel.Text
             local data = {
                 ["embeds"] = {
                     {
                         ["title"] = "**SwordBurst 3**",
-                        ["description"] = "Username: " .. lplr.Name.."\n Level: " .. level .. "\n XP: " .. xp,
+                        ["description"] = "Username: " .. lplr.Name.."\n Level: " .. level .. "\n XP: " .. xp .. "\n Vel: " .. Vel,
                         ["type"] = "rich",
                         ["color"] = tonumber(0x7269da),
                     }

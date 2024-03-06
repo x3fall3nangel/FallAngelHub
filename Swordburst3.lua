@@ -671,7 +671,7 @@ task.spawn(function()
                     getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
                 else                       
                     getchar().HumanoidRootPart.CFrame = workspace.Waystones[waystone[math.random(1,#waystone)]].Main.CFrame * CFrame.new(0,0,3)
-                    task.wait(1)
+                    task.wait(.5)
                 end
             end
         end 

@@ -392,6 +392,18 @@ miscTab:AddButton({
 })
 
 miscTab:AddButton({
+	Name = "Claim All Chest",
+	Callback = function()
+        for i,v in next, workspace:GetChildren() do
+            if v.Name == "Chest" and v:FindFirstChild("RootPart") and v:FindFirstChild("RootPart"):FindFirstChild("ProximityPrompt") and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
+                getchar():FindFirstChild("HumanoidRootPart").CFrame = v:FindFirstChild("RootPart").CFrame * CFrame.new(0,2,0)
+                repeat task.wait(.1) game:GetService('VirtualInputManager'):SendKeyEvent(true, "E", false, game) until v:FindFirstChild("RootPart"):FindFirstChild("ProximityPrompt") == nil
+            end
+        end
+  	end    
+})
+
+miscTab:AddButton({
 	Name = "Server Hop",
 	Callback = function()
         local PlaceID = game.PlaceId

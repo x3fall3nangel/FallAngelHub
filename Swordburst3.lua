@@ -1,18 +1,6 @@
-if getgenv().keysystem == true then
-    local KeySystemUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/MaGiXxScripter0/keysystemv2api/master/ui/xrer_mstudio45.lua"))()
-    KeySystemUI.New({
-        ApplicationName = "FallAngelHub", -- Your Key System Application Name
-        Name = "FallAngelHub", -- Your Script name
-        Info = "Get Key For FallAngelHub", -- Info text in the GUI, keep empty for default text.
-        DiscordInvite = "https://discord.gg/auzBFqDrwZ", -- Optional.
-        AuthType = "clientid" -- Can select verifycation with ClientId or IP ("clientid" or "ip")
-    })
-    repeat task.wait() until KeySystemUI.Finished() or KeySystemUI.Closed
-end
-
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = false, SaveConfig = true, ConfigFolder = "Swordburst3", ShowIcon = true})
+local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = false, SaveConfig = true, ConfigFolder = "Swordburst3", ShowIcon = true,})
 
 local mainTab = Window:MakeTab({
 	Name = "Main",
@@ -223,7 +211,6 @@ mainTab:AddDropdown({
     Flag = "choosemob",
 })
 
-mainTab:AddParagraph("Auto Farm Mobs","If no one in the area the mobs wont spawn")
 mainTab:AddToggle({
 	Name = "Auto Farm Mobs",
 	Default = swordburst["automobs"].Value,
@@ -239,7 +226,7 @@ mainTab:AddDropdown({
     Flag = "boss",
 })
 
-mainTab:AddParagraph("Auto Farm Boss","when boss havent spawn will farm selected mob when mob is spawned")
+mainTab:AddParagraph("Auto Farm Boss","when boss havent spawn will farm selected mob")
 mainTab:AddToggle({
 	Name = "Auto Farm Boss",
 	Default = swordburst["autoboss"].Value,
@@ -400,18 +387,6 @@ teleportTab:AddButton({
   	end    
 })
 
-miscTab:AddToggle({
-	Name = "Reduce Lag",
-	Default = false,
-	Callback = function(Value)
-		if Value == true then
-            RunService:Set3dRenderingEnabled(false)
-        else
-            RunService:Set3dRenderingEnabled(true)
-        end
-	end    
-})
-
 teleportTab:AddDropdown({
 	Name = "Select Floor",
 	Default = nil,
@@ -428,6 +403,18 @@ teleportTab:AddButton({
             ReplicatedStorage.Systems.Teleport.Teleport:FireServer(floor)
         end
   	end    
+})
+
+miscTab:AddToggle({
+	Name = "Reduce Lag",
+	Default = false,
+	Callback = function(Value)
+		if Value == true then
+            RunService:Set3dRenderingEnabled(false)
+        else
+            RunService:Set3dRenderingEnabled(true)
+        end
+	end    
 })
 
 miscTab:AddButton({
@@ -871,6 +858,5 @@ task.spawn(function()
         end
     end
 end)
-
 
 OrionLib:Init()

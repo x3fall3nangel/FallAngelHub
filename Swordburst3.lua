@@ -112,6 +112,33 @@ local swordburst = {
     choosetarget = {Value = false},
     ignoreparty = {Value = false}
 }
+local spawnlocation = {
+    ["Chill Bat"] = {CFrame = CFrame.new(-1673.8651123046875, 236.44541931152344, -1950.248046875)},
+    ["Cold Mammoth"] = {CFrame = CFrame.new(-3169.08935546875, 234.57823181152344, 56.66799545288086)},
+    ["Mist Bunny"] = {CFrame = CFrame.new(-223.70713806152344, 64.55667114257812, 2469.333251953125)},
+    ["Frost Scorpion"] = {CFrame = CFrame.new(-138.11627197265625, 81.73929595947266, -1139.07861328125)},
+    ["Penguin"] = {CFrame = CFrame.new(719.542236328125, 17.156511306762695, 474.27288818359375)},
+    ["Polar Bear"] = {CFrame = CFrame.new(-2866.92529296875, 228.58213806152344, -515.750244140625)},
+    ["Snow Kitsune"] = {CFrame = CFrame.new(-475.0198669433594, 84.20121002197266, -2415.970703125)},
+    ["Ember Jaguar"] = {CFrame = CFrame.new(565.008544921875, 404.27178955078125, 43.87567138671875)},
+    ["Fiery Moose"] = {CFrame = CFrame.new(-145.9317169189453, 386.11541748046875, -3065.82763671875)},
+    ["Fire Imp"] = {CFrame = CFrame.new(22.740245819091797, -297.7325744628906, -3466.63818359375)},
+    ["Fire Wasp"] = {CFrame = CFrame.new(-63.78221893310547, 333.5207214355469, 984.7338256835938)},
+    ["Hell Hound"] = {CFrame = CFrame.new(-980.1229858398438, -331.5343322753906, -1971.0489501953125)},
+    ["Lava Basilisk"] = {CFrame = CFrame.new(1413.092529296875, 405.06268310546875, -671.137939453125)},
+    ["Magma Golem"] = {CFrame = CFrame.new(-1658.054443359375, 518.244384765625, -1454.707763671875)},
+    ["Phoenix"] = {CFrame = CFrame.new(-1882.8916015625, 515.0499877929688, -1031.61083984375)},
+    ["Skeleton Bear"] = {CFrame = CFrame.new(836.9502563476562, 402.3498840332031, -822.7938232421875)},
+    ["Basilisk"] = {CFrame = CFrame.new(-862.26318359375, -77.29805755615234, 738.7144165039062)},
+    ["Brown Bear"] = {CFrame = CFrame.new(798.4417724609375, 174.1746368408203, 1415.19677734375)},
+    ["Crystal Boar"] = {CFrame = CFrame.new(-529.992431640625, 150.70542907714844, 783.7307739257812)},
+    ["Razor Boar"] = {CFrame = CFrame.new(897.904296875, 131.67388916015625, -947.9832153320312)},
+    ["Rock Golem"] = {CFrame = CFrame.new(279.1563720703125, 207.06259155273438, 1357.7916259765625)},
+    ["Soldier Boar"] = {CFrame = CFrame.new(-1760.115234375, -43.43751907348633, 1748.4549560546875)},
+    ["Thunder Sakura Moose"] = {CFrame = CFrame.new(-488.3043212890625, 210.30789184570312, -119.70502471923828)},
+    ["Tortoise"] = {CFrame = CFrame.new(1446.4488525390625, 127.01861572265625, -370.18182373046875)},
+    ["Wolf"] = {CFrame = CFrame.new(863.54443359375, 131.0957489013672, 40.45374298095703)},
+}
 
 local function getchar()
     return lplr.Character or lplr.CharacterAdded:Wait()
@@ -690,8 +717,7 @@ task.spawn(function()
                 if enemy and enemy:FindFirstChild("HumanoidRootPart") then
                     getchar().HumanoidRootPart.CFrame = enemy:FindFirstChild("HumanoidRootPart").CFrame * methodss()
                 else                       
-                    getchar().HumanoidRootPart.CFrame = workspace.Waystones[waystone[math.random(1,#waystone)]].Main.CFrame * CFrame.new(0,0,3)
-                    task.wait(.5)
+                    getchar().HumanoidRootPart.CFrame = spawnlocation[OrionLib.Flags["choosemob"].Value].CFrame * CFrame.new(0,-8,0)
                 end
             end
         end 

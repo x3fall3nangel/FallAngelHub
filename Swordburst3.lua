@@ -550,6 +550,13 @@ miscTab:AddButton({
   	end    
 })
 
+miscTab:AddToggle{
+    Name = "Auto Rejoin When Disconnected",
+    StartingState = false,
+    Save = true,
+    Flag = "autorejoin",
+}
+
 creditTab:AddLabel("Scripts Made by fallen_del")
 creditTab:AddLabel("UI Library by Shlex")
 creditTab:AddButton({

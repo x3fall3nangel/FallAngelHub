@@ -527,7 +527,7 @@ miscTab:AddButton({
                     for _,items in next, ReplicatedStorage.Profiles[lplr.Name].Inventory:GetChildren() do
                         if string.find(i, items.Name) then
                             ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Crafting"):WaitForChild("Dismantle"):FireServer(items)
-                            task.wait()
+                            task.wait(.1)
                         end
                     end
                 end

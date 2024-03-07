@@ -12,7 +12,7 @@ end
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = OrionLib:MakeWindow({Name = "Anime Dungeon Fighters", HidePremium = false, SaveConfig = true, ConfigFolder = "AnimeDungeonFighters",ShowIcon = true, Icon = "rbxassetid://11761723768" })
+local Window = OrionLib:MakeWindow({Name = "Anime Dungeon Fighters", HidePremium = false, SaveConfig = true, ConfigFolder = "AnimeDungeonFighters",ShowIcon = true,})
 
 local mainTab = Window:MakeTab({
 	Name = "Main",
@@ -62,7 +62,7 @@ local weapon = {"Sword", "Pistol", "Gloves"}
 local mapdiff = {"Easy" , "Normal", "Hard", "Hell"}
 local statss = {"Health", "Defense", "Attack", "Critical"}
 local fuseit = {"Hat","Back","Weapon","Shoe","Ring","Necklace"}
-local map = {"lvl 1" , "lvl 20", "lvl 40", "lvl 60", "lvl 80", "lvl 100", "lvl 120", "lvl 140", "defense"}
+local map = {"defense", "lvl 1" , "lvl 20", "lvl 40", "lvl 60", "lvl 80", "lvl 100", "lvl 120", "lvl 140",}
 
 local function getchar()
     return lplr.Character or lplr.CharacterAdded:Wait()
@@ -83,41 +83,43 @@ local function getskillid(skillname)
 end
 
 local function getdiff(w)
-    local e 
     if w == "Easy" then
-        e = 1
+        return 1
     elseif w == "Normal" then
-        e = 2
+        return 2
     elseif w == "Hard" then
-        e = 3
+        return 3
     elseif w == "Hell" then
-        e = 4
-        end
-    return e
+        return 4
+    end
 end
 
 local function getdungeon(v)
-    local e 
     if v == "lvl 1" then
-        e = "1_1"
+        return "1_1"
     elseif v == "lvl 20" then
-        e = "1_2"
+        return "1_2"
     elseif v == "lvl 40" then
-        e = "1_3"
+        return "1_3"
     elseif v == "lvl 60" then
-        e = "2_1"
+        return "2_1"
     elseif v == "lvl 80" then
-        e = "2_2"
+        return "2_2"
     elseif v == "lvl 100" then
-        e = "2_3"
+        return "2_3"
     elseif v == "lvl 120" then
-        e = "2_4"
+        return "2_4"
     elseif v == "lvl 140" then
-        e = "2_5"
+        return "2_5"
+    elseif v == "lvl 140" then
+        return "2_5"
+    elseif v == "lvl 140" then
+        return "2_5"
+    elseif v == "lvl 140" then
+        return "2_5"
     elseif v == "defense" then
-        e = "\229\161\148\233\152\178\230\168\161\229\188\143"
+        return "\229\161\148\233\152\178\230\168\161\229\188\143"
     end
-    return e
 end
 
 local function getstat(e)

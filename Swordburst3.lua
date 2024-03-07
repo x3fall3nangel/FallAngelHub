@@ -63,8 +63,10 @@ local creditTab = Window:MakeTab({
 })
 
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GuiService = game:GetService("GuiService")
 local RunService = game:GetService("RunService")
+local TeleportService = game:GetService("TeleportService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local lplr = Players.LocalPlayer
 
 local Stamina = require(ReplicatedStorage.Systems.Stamina)

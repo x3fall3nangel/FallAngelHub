@@ -360,7 +360,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait(30) do
+    while task.wait(3) do
         if OrionLib.Flags["autoequipbest"].Value then
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\232\163\133\229\164\135\230\156\128\228\189\179\232\163\133\229\164\135")
         end

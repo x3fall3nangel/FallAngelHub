@@ -138,7 +138,6 @@ local function getitemid(item, rarity)
     local function getraritys(e)
         for i,v in next, game:GetService("ReplicatedStorage")["\230\173\166\229\153\168\231\168\128\230\156\137\229\186\166\230\184\144\229\143\152\232\137\178"]:GetChildren() do
             if v:FindFirstChild("Stroke") and v.Stroke.Color == e then
-                print(i,v)
                 return tonumber(v.Name)
             end
         end

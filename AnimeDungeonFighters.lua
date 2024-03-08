@@ -39,6 +39,12 @@ local summonTab = Window:MakeTab({
 	PremiumOnly = false
 })
 
+local teleportTab = Window:MakeTab({
+	Name = "Teleport",
+	Icon = "rbxassetid://6723742952",
+	PremiumOnly = false
+})
+
 local settingsTab = Window:MakeTab({
 	Name = "Settings",
 	Icon = "rbxassetid://4738901432",
@@ -62,6 +68,7 @@ local skills = {}
 local prices = {}
 local map = {"Defense Mode"}
 local mapdiff = {"Easy" , "Normal", "Hard", "Hell"}
+local world = {"Lvl.0","Lvl.40","Lvl.60","Lvl.160"}
 local statss = {"Health", "Defense", "Attack", "Critical"}
 local fuseit = {"Hat","Back","Weapon","Shoe","Ring","Necklace"}
 local raritys = {"white","blue and below","purple and below","yellow and below","radical red and below","rainbow and below","dark violet and below"}
@@ -388,6 +395,27 @@ summonTab:AddButton{
     end
 }
 
+teleportTab:AddDropdown({
+	Name = "Select World",
+	Default = nil,
+	Options = world,
+	Save = true,
+    Flag = "world"
+})
+
+teleportTab:AddButton{
+    Name = "Teleport to Selected World",
+    Callback = function()
+        if OrionLib.Flags["world"].Value then
+            for i,v in next, lplr.PlayerGui.ScreenGui["\228\184\150\231\149\140\228\188\160\233\128\129"].Frame:GetChildren() do
+                if v:FindFirstChild("LvStr") and v.LvStr.Text == OrionLib.Flags["world"].Value then
+                    ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\142\187\229\136\171\231\154\132\228\184\150\231\149\140",tonumber(v.Name))
+                end
+            end
+        end
+    end
+}
+
 creditTab:AddLabel("Scripts Made by fallen_del")
 creditTab:AddLabel("UI Library by Shlex")
 creditTab:AddButton({
@@ -417,18 +445,13 @@ task.spawn(function()
                                         if enemy:FindFirstChild("HumanoidRootPart") and enemy:FindFirstChild("NPC") then
                                             local args = {
                                                 [1] = {
-                                                    ["phsic"] = {
-                                                        ["Power"] = 1.42640686035156,
-                                                        ["Time"] = 0.15,
-                                                        ["Dir"] = Vector3.new(-0.08174365013837814, 0.7071067690849304, -0.702366054058075)
-                                                    },
+                                                    ["phsic"] = {["Power"] = 1.42640686035156,["Time"] = 0.15,["Dir"] = Vector3.new(-0.08174365013837814, 0.7071067690849304, -0.702366054058075)},
                                                     ["damage"] = 30,
                                                     ["castPercent"] = 0,
                                                     ["hitID"] = 1,
                                                     ["isSetNetworkOwnerEnemy"] = true,
                                                     ["skillID"] = getskillid(OrionLib.Flags["skill"].Value)
                                                 },
-                                                
                                                 [2] = enemy.Name
                                             }
                                             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("HitEvent"):FireServer(unpack(args))
@@ -515,7 +538,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait(.5) do
+    while task.wait(1) do
         if OrionLib.Flags["autoquest"].Value then
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\233\162\134\229\143\150NPC\228\187\187\229\138\161")
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\233\162\134\229\143\150NPC\228\187\187\229\138\161\229\165\150\229\138\177")

@@ -63,6 +63,8 @@ local map = {"Defense Mode"}
 local mapdiff = {"Easy" , "Normal", "Hard", "Hell"}
 local statss = {"Health", "Defense", "Attack", "Critical"}
 local fuseit = {"Hat","Back","Weapon","Shoe","Ring","Necklace"}
+local raritys = {"white","blue and below","purple and below","yellow and below","radical red and below","rainbow and below","dark violet and below"}
+local realrarity = {["white"] = 1, ["blue and below"] = 2, ["purple and below"] = 3, ["yellow and below"] = 4, ["radical red and below"] = 5, ["rainbow and below"] = 6, ["dark violet and below"] = 7,}
 
 local GetDungeonCfg = debug.getupvalues(require(game:GetService("ReplicatedStorage").Tool.CfgFind).GetDungeonCfg)[1]
 local FindEggCfgById = debug.getupvalues(require(game:GetService("ReplicatedStorage").Tool.CfgFind).FindEggCfgById)[1]
@@ -120,6 +122,53 @@ local function getstat(e)
     end
 end
 
+local function getitemid(item, rarity)
+    local item = item
+    local rarity = rarity
+    local mainId 
+    local othervt = {}
+    local function getequipedicon(e)
+        for _,equipeditem in next, lplr.PlayerGui.ScreenGui["\230\173\166\229\153\168"].Frame["\229\189\147\229\137\141\232\163\133\229\164\135"]:GetChildren() do
+            if equipeditem:FindFirstChild("PosName") and equipeditem:FindFirstChild("PosName").Text == e then
+                return equipeditem.Frame.Icon.Image
+            end
+        end
+    end
+    local function getraritys(e)
+        for i,v in next, game:GetService("ReplicatedStorage")["\230\173\166\229\153\168\231\168\128\230\156\137\229\186\166\230\184\144\229\143\152\232\137\178"]:GetChildren() do
+            if v:FindFirstChild("Stroke") and v.Stroke.Color == e then
+                print(i,v)
+                return tonumber(v.Name)
+            end
+        end
+    end
+    for i,v in next, lplr.PlayerGui.ScreenGui["\230\173\166\229\153\168"].Frame.Bag.ScrollPet:GetChildren() do
+        if v.Name == "Temp" then
+            if v:FindFirstChild("onlyID") then
+                if v:FindFirstChild("Using").Visible then
+                    if getequipedicon(item) == v.Frame.Icon.Image then
+                        mainId = v:FindFirstChild("onlyID").Value
+                    end
+                else
+                    for _,color in next, v.Frame.Stroke:GetChildren() do
+                        if color.Name == "\230\169\153" then
+                            color.Color = game:GetService("ReplicatedStorage")["\230\173\166\229\153\168\231\168\128\230\156\137\229\186\166\230\184\144\229\143\152\232\137\178"]["4"].Stroke.Color
+                        end
+                        if color.Name ~= "UICorner" and getraritys(color.Color) and getraritys(color.Color) <= realrarity[rarity] then
+                            table.insert(othervt, v:FindFirstChild("onlyID").Value)
+                        end
+                    end
+                end
+            else
+                lplr.PlayerGui.ScreenGui["\230\173\166\229\153\168"].Visible = true
+                repeat task.wait() until v:FindFirstChild("onlyID")
+                lplr.PlayerGui.ScreenGui["\230\173\166\229\153\168"].Visible = false
+            end
+        end
+    end
+    return mainId, othervt
+end
+
 for i,v in next, lplr.PlayerGui.ScreenGui.Main["BottomRight\230\137\139\230\156\186"]["\230\138\128\232\131\189"]:GetChildren() do
     if v:FindFirstChild("onlyKey") then
         table.insert(skills, v.Frame.SkillName.Text)
@@ -137,21 +186,21 @@ mainTab:AddDropdown({
 
 mainTab:AddToggle{
     Name = "Kill Aura",
-    StartingState = false,
+    Default = false,
     Save = true,
     Flag = "killaura",
 }
 
 mainTab:AddToggle{
     Name = "Auto Equipbest",
-    StartingState = false,
+    Default = false,
     Save = true,
     Flag = "autoequipbest",
 }
 
 mainTab:AddToggle{
     Name = "Auto Collect",
-    StartingState = false,
+    Default = false,
     Save = true,
     Flag = "autocollect",
 }
@@ -166,14 +215,37 @@ miscTab:AddDropdown({
 
 miscTab:AddToggle{
     Name = "Auto add stats",
-    StartingState = false,
+    Default = false,
     Save = true,
     Flag = "autostats",
 }
 
+miscTab:AddDropdown({
+	Name = "Select Item to Fuse",
+	Default = nil,
+	Options = fuseit,
+	Save = true,
+    Flag = "fuse"
+})
+
+miscTab:AddDropdown({
+	Name = "Select Rarity to Fuse",
+	Default = nil,
+	Options = raritys,
+	Save = true,
+    Flag = "rarity"
+})
+
+miscTab:AddToggle{
+    Name = "Auto Fuse",
+    Default = false,
+    Save = true,
+    Flag = "autofuse",
+}
+
 miscTab:AddToggle{
     Name = "Auto Rejoin When Disconnected",
-    StartingState = false,
+    Default = false,
     Save = true,
     Flag = "autorejoin",
 }
@@ -261,7 +333,7 @@ dungeonTab:AddDropdown({
 
 dungeonTab:AddToggle{
     Name = "Auto Join Dungeon",
-    StartingState = false,
+    Default = false,
     Save = true,
     Flag = "autojoindungeon",
 }
@@ -419,5 +491,20 @@ task.spawn(function()
     end)
 end)
 
+task.spawn(function()
+    while task.wait(10) do
+        if OrionLib.Flags["autofuse"].Value and OrionLib.Flags["fuse"].Value and OrionLib.Flags["rarity"].Value then
+            local mainid,othervt = getitemid(OrionLib.Flags["fuse"].Value , OrionLib.Flags["rarity"].Value)
+            local args = {
+                [1] = "\232\163\133\229\164\135\229\188\186\229\140\150",
+                [2] = {
+                    ["MainID"] = mainid,
+                    ["OtherVt"] = othervt
+                }
+            }
+            ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer(unpack(args))
+        end
+    end
+end)
 
 OrionLib:Init()

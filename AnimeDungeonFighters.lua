@@ -205,6 +205,20 @@ mainTab:AddToggle{
     Flag = "autocollect",
 }
 
+mainTab:AddToggle{
+    Name = "Auto Accept/Claim Quest",
+    Default = false,
+    Save = true,
+    Flag = "autoquest",
+}
+
+mainTab:AddToggle{
+    Name = "Auto Claim Exp Boost",
+    Default = false,
+    Save = true,
+    Flag = "autoclaimexp",
+}
+
 miscTab:AddDropdown({
 	Name = "Select Stats",
 	Default = nil,
@@ -472,7 +486,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait() do
+    while task.wait(.1) do
         if OrionLib.Flags["autostats"].Value and OrionLib.Flags["stat"].Value then
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\177\158\230\128\167\231\130\185\229\138\160\231\130\185",{["attr"] = getstat(OrionLib.Flags["stat"].Value),["addonce"] = 1})
         end
@@ -495,14 +509,19 @@ task.spawn(function()
     while task.wait(10) do
         if OrionLib.Flags["autofuse"].Value and OrionLib.Flags["fuse"].Value and OrionLib.Flags["rarity"].Value then
             local mainid,othervt = getitemid(OrionLib.Flags["fuse"].Value , OrionLib.Flags["rarity"].Value)
-            local args = {
-                [1] = "\232\163\133\229\164\135\229\188\186\229\140\150",
-                [2] = {
-                    ["MainID"] = mainid,
-                    ["OtherVt"] = othervt
-                }
-            }
-            ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer(unpack(args))
+            ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\232\163\133\229\164\135\229\188\186\229\140\150",{["MainID"] = mainid, ["OtherVt"] = othervt})
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(.5) do
+        if OrionLib.Flags["autoquest"].Value then
+            ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\233\162\134\229\143\150NPC\228\187\187\229\138\161")
+            ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\233\162\134\229\143\150NPC\228\187\187\229\138\161\229\165\150\229\138\177")
+        end
+        if OrionLib.Flags["autoclaimexp"].Value then
+            ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\233\162\134\229\143\150\229\143\140\229\128\141\231\187\143\233\170\140")
         end
     end
 end)

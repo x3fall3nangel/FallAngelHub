@@ -12,7 +12,7 @@ end
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = OrionLib:MakeWindow({Name = "Anime Dungeon Fighters", HidePremium = false, SaveConfig = true, ConfigFolder = "AnimeDungeonFighters",ShowIcon = true,})
+local Window = OrionLib:MakeWindow({Name = "Anime Dungeon Fighters", HidePremium = false, SaveConfig = true, ConfigFolder = "AnimeDungeonFighters",ShowIcon = true, Icon = "rbxassetid://11761723768" })
 
 local mainTab = Window:MakeTab({
 	Name = "Main",
@@ -50,19 +50,30 @@ local creditTab = Window:MakeTab({
 	PremiumOnly = false
 })
 
-
 local Players = game:GetService("Players")
+local GuiService = game:GetService("GuiService")
+local TeleportService = game:GetService("TeleportService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local lplr = Players.LocalPlayer
 
 local egg = {}
 local skills = {}
-local weapo = {"lvl 1" , "lvl 20", "lvl 40"}
-local weapon = {"Sword", "Pistol", "Gloves"}
+local prices = {}
+local map = {"Defense Mode"}
 local mapdiff = {"Easy" , "Normal", "Hard", "Hell"}
 local statss = {"Health", "Defense", "Attack", "Critical"}
 local fuseit = {"Hat","Back","Weapon","Shoe","Ring","Necklace"}
-local map = {"defense", "lvl 1" , "lvl 20", "lvl 40", "lvl 60", "lvl 80", "lvl 100", "lvl 120", "lvl 140",}
+
+local GetDungeonCfg = debug.getupvalues(require(game:GetService("ReplicatedStorage").Tool.CfgFind).GetDungeonCfg)[1]
+local FindEggCfgById = debug.getupvalues(require(game:GetService("ReplicatedStorage").Tool.CfgFind).FindEggCfgById)[1]
+
+for i,v in next, GetDungeonCfg do
+    table.insert(map, GetDungeonCfg[i].ZhName .. " Level : " .. GetDungeonCfg[i].UnlockLv .. " World " .. GetDungeonCfg[i].world)
+end
+
+for i,v in next, FindEggCfgById do
+    table.insert(prices, FindEggCfgById[i].ZhName .. " Price : " .. FindEggCfgById[i].Price)
+end
 
 local function getchar()
     return lplr.Character or lplr.CharacterAdded:Wait()
@@ -82,58 +93,31 @@ local function getskillid(skillname)
     end
 end
 
-local function getdiff(w)
-    if w == "Easy" then
-        return 1
-    elseif w == "Normal" then
-        return 2
-    elseif w == "Hard" then
-        return 3
-    elseif w == "Hell" then
-        return 4
+local function getdungeon(dungeonname)
+    if dungeonname == "Defense Mode" then
+       return "\229\161\148\233\152\178\230\168\161\229\188\143"
     end
-end
-
-local function getdungeon(v)
-    if v == "lvl 1" then
-        return "1_1"
-    elseif v == "lvl 20" then
-        return "1_2"
-    elseif v == "lvl 40" then
-        return "1_3"
-    elseif v == "lvl 60" then
-        return "2_1"
-    elseif v == "lvl 80" then
-        return "2_2"
-    elseif v == "lvl 100" then
-        return "2_3"
-    elseif v == "lvl 120" then
-        return "2_4"
-    elseif v == "lvl 140" then
-        return "2_5"
-    elseif v == "lvl 140" then
-        return "2_5"
-    elseif v == "lvl 140" then
-        return "2_5"
-    elseif v == "lvl 140" then
-        return "2_5"
-    elseif v == "defense" then
-        return "\229\161\148\233\152\178\230\168\161\229\188\143"
+    for dungeon,v in next, GetDungeonCfg do
+        if dungeonname and string.find(dungeonname, GetDungeonCfg[dungeon].ZhName) then
+            local e = string.split(dungeonname, ": ")[2]
+            local UnlockLevel = string.split(e, " ")[1]
+            if tonumber(UnlockLevel) == GetDungeonCfg[dungeon].UnlockLv then
+                return GetDungeonCfg[dungeon].mapTag, GetDungeonCfg[dungeon].hardlv
+            end
+        end
     end
 end
 
 local function getstat(e)
-    local w 
     if e == "Health" then
-        w = "3"
+        return "3"
     elseif e == "Attack" then
-        w = "1"
+        return "1"
     elseif e == "Defense" then
-        w = "2"
+        return "2"
     elseif e == "Critical" then
-        w = "6"
+        return "6"
     end
-    return w
 end
 
 for i,v in next, lplr.PlayerGui.ScreenGui.Main["BottomRight\230\137\139\230\156\186"]["\230\138\128\232\131\189"]:GetChildren() do
@@ -202,19 +186,85 @@ miscTab:AddToggle{
     Flag = "autofuse",
 }
 
-miscTab:AddParagraph("Claim All Mail","Open mailbox to claim all item")
-miscTab:AddButton{
-    Name = "Claim all item in Mail",
-    Callback = function()
-        lplr.PlayerGui.ScreenGui["\233\130\174\228\187\182"].Visible = true
-        for i,v in next, lplr.PlayerGui.ScreenGui["\233\130\174\228\187\182"].Frame.Scorll:GetChildren() do
-            if tonumber(v.Name) then
-                ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteEvent"):FireServer("\233\162\134\229\143\150\233\130\174\228\187\182\229\165\150\229\138\177", tonumber(v.Name))
+miscTab:AddToggle{
+    Name = "Auto Rejoin When Disconnected",
+    StartingState = false,
+    Save = true,
+    Flag = "autorejoin",
+}
+
+miscTab:AddButton({
+	Name = "Server Hop",
+	Callback = function()
+        local PlaceID = game.PlaceId
+        local AllIDs = {}
+        local foundAnything = ""
+        local actualHour = os.date("!*t").hour
+        local Deleted = false
+        local File = pcall(function()
+            AllIDs = game:GetService('HttpService'):JSONDecode(readfile("NotSameServers.json"))
+        end)
+        if not File then
+            table.insert(AllIDs, actualHour)
+            writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+        end
+        local function TPReturner()
+            local Site;
+            if foundAnything == "" then
+                Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100'))
+            else
+                Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. foundAnything))
+            end
+            local ID = ""
+            if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
+                foundAnything = Site.nextPageCursor
+            end
+            local num = 0;
+            for i,v in pairs(Site.data) do
+                local Possible = true
+                ID = tostring(v.id)
+                if tonumber(v.maxPlayers) > tonumber(v.playing) then
+                    for _,Existing in pairs(AllIDs) do
+                        if num ~= 0 then
+                            if ID == tostring(Existing) then
+                                Possible = false
+                            end
+                        else
+                            if tonumber(actualHour) ~= tonumber(Existing) then
+                                local delFile = pcall(function()
+                                    delfile("NotSameServers.json")
+                                    AllIDs = {}
+                                    table.insert(AllIDs, actualHour)
+                                end)
+                            end
+                        end
+                        num = num + 1
+                    end
+                    if Possible == true then
+                        table.insert(AllIDs, ID)
+                        wait()
+                        pcall(function()
+                            writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+                            wait()
+                            game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, game.Players.LocalPlayer)
+                        end)
+                    end
+                end
             end
         end
-        lplr.PlayerGui.ScreenGui["\233\130\174\228\187\182"].Visible = false
-    end
-}
+        local function Teleport()
+            while wait() do
+                pcall(function()
+                    TPReturner()
+                    if foundAnything ~= "" then
+                        TPReturner()
+                    end
+                end)
+            end
+        end
+        Teleport()
+  	end    
+})
 
 dungeonTab:AddDropdown({
 	Name = "Select Dungeon",
@@ -222,14 +272,6 @@ dungeonTab:AddDropdown({
 	Options = map,
 	Save = true,
     Flag = "dungeon",
-})
-
-dungeonTab:AddDropdown({
-	Name = "Select Dungeon Difficult",
-	Default = "Easy",
-	Options = mapdiff,
-	Save = true,
-    Flag = "diff",
 })
 
 dungeonTab:AddToggle{
@@ -240,28 +282,21 @@ dungeonTab:AddToggle{
 }
 
 summonTab:AddDropdown({
-	Name = "Select Weapon lvl",
-	Default = nil,
-	Options = weapo,
-	Save = true,
-    Flag = "eggid",
-})
-
-summonTab:AddDropdown({
 	Name = "Select Weapon",
 	Default = nil,
-	Options = weapon,
+	Options = prices,
 	Save = true,
-    Flag = "weapontype",
+    Flag = "eggid",
 })
 
 summonTab:AddButton{
     Name = "Draw Weapon",
     Callback = function()
-        if OrionLib.Flags["eggid"].Value and OrionLib.Flags["weapontype"].Value then
-            for i,v in next, workspace["\229\156\186\230\153\175"]["\229\164\167\229\142\133"]["\230\138\189\230\173\166\229\153\168"]:GetChildren() do
-                if string.find(v.Name, getdungeon(OrionLib.Flags["eggid"].Value)) and v.TouchPart.EggGUI.NameLabel.Text == OrionLib.Flags["weapontype"].Value then
-                    ReplicatedStorage:WaitForChild("Msg"):WaitForChild("DrawWeapon"):InvokeServer(v.EggId.Value,1)
+        if OrionLib.Flags["eggid"].Value then
+            local price = string.split(OrionLib.Flags["eggid"].Value, ":")[2]
+            for i,v in next, FindEggCfgById do
+                if tonumber(price) == FindEggCfgById[i].Price and string.find(OrionLib.Flags["eggid"].Value, FindEggCfgById[i].ZhName) then
+                    ReplicatedStorage:WaitForChild("Msg"):WaitForChild("DrawWeapon"):InvokeServer(i ,1)
                 end
             end
         end
@@ -312,7 +347,7 @@ task.spawn(function()
                                             local args = {
                                                 [1] = {
                                                     ["phsic"] = {
-                                                        ["Power"] = 42.42640686035156,
+                                                        ["Power"] = 1.42640686035156,
                                                         ["Time"] = 0.15,
                                                         ["Dir"] = Vector3.new(-0.08174365013837814, 0.7071067690849304, -0.702366054058075)
                                                     },
@@ -322,6 +357,7 @@ task.spawn(function()
                                                     ["isSetNetworkOwnerEnemy"] = true,
                                                     ["skillID"] = getskillid(OrionLib.Flags["skill"].Value)
                                                 },
+                                                
                                                 [2] = enemy.Name
                                             }
                                             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("HitEvent"):FireServer(unpack(args))
@@ -339,7 +375,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait(5) do
+    while task.wait(30) do
         if OrionLib.Flags["autoequipbest"].Value then
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\232\163\133\229\164\135\230\156\128\228\189\179\232\163\133\229\164\135")
         end
@@ -348,16 +384,16 @@ end)
 
 task.spawn(function()
     while task.wait(.5) do
-        if OrionLib.Flags["dungeon"].Value == "defense" and OrionLib.Flags["diff"].Value then
+        if OrionLib.Flags["dungeon"].Value == "Defense Mode" then
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\138\160\229\133\165\231\187\132\233\152\159\230\136\191\233\151\180",getdungeon(OrionLib.Flags["dungeon"].Value))
-            ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\230\138\149\231\165\168\233\154\190\229\186\166", getdiff(OrionLib.Flags["diff"].Value))
         end
-        if OrionLib.Flags["dungeon"].Value and OrionLib.Flags["diff"].Value then
+        if OrionLib.Flags["dungeon"].Value then
+            local dungeon, diff = getdungeon(OrionLib.Flags["dungeon"].Value)
             if OrionLib.Flags["autojoindungeon"].Value then
-                ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\138\160\229\133\165\231\187\132\233\152\159\230\136\191\233\151\180",getdungeon(OrionLib.Flags["dungeon"].Value))
-                ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\230\138\149\231\165\168\233\154\190\229\186\166", getdiff(OrionLib.Flags["diff"].Value))
+                ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\138\160\229\133\165\231\187\132\233\152\159\230\136\191\233\151\180", dungeon)
+                ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\230\138\149\231\165\168\233\154\190\229\186\166", diff)
             else
-                ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\233\128\128\229\135\186\231\187\132\233\152\159\230\136\191\233\151\180", getdungeon(OrionLib.Flags["dungeon"].Value))
+                ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\233\128\128\229\135\186\231\187\132\233\152\159\230\136\191\233\151\180", dungeon)
             end
             if lplr.PlayerGui.ScreenGui["\233\128\154\229\133\179\231\187\147\231\174\151"].Visible == true then
                 ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\233\128\128\229\135\186\229\137\175\230\156\172")
@@ -371,15 +407,11 @@ task.spawn(function()
     while task.wait() do
         if OrionLib.Flags["autocollect"].Value then
             for i,v in next, lplr.DropFolder:GetChildren() do
+                task.wait(3)
                 ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\230\139\190\229\143\150\231\137\169\229\147\129",{[1] = tonumber(v.Name),[2] = v:GetAttribute("DropNum"),[3] = v:GetAttribute("Identification")})
             end
         end
     end
-    workspace:FindFirstChild("DropFolder").ChildAdded:Connect(function(v)
-        if OrionLib.Flags["autocollect"].Value then
-            v:Destroy()
-        end
-    end)
 end)
 
 task.spawn(function()
@@ -388,6 +420,18 @@ task.spawn(function()
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\177\158\230\128\167\231\130\185\229\138\160\231\130\185",{["attr"] = getstat(OrionLib.Flags["stat"].Value),["addonce"] = 1})
         end
     end
+end)
+
+task.spawn(function()
+    GuiService.ErrorMessageChanged:Connect(function()
+        if #Players:GetPlayers() <= 1 then
+            lplr:Kick("\nRejoining...")
+            task.wait()
+            TeleportService:Teleport(game.PlaceId, lplr)
+        else
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, lplr)
+        end
+    end)
 end)
 
 -- task.spawn(function()

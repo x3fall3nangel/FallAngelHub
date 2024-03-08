@@ -171,21 +171,6 @@ miscTab:AddToggle{
     Flag = "autostats",
 }
 
-miscTab:AddDropdown({
-	Name = "Select Item to Fuse",
-	Default = nil,
-	Options = fuseit,
-	Save = true,
-    Flag = "fuse"
-})
-
-miscTab:AddToggle{
-    Name = "Auto Fuse",
-    StartingState = false,
-    Save = true,
-    Flag = "autofuse",
-}
-
 miscTab:AddToggle{
     Name = "Auto Rejoin When Disconnected",
     StartingState = false,
@@ -434,11 +419,5 @@ task.spawn(function()
     end)
 end)
 
--- task.spawn(function()
---     while task.wait() do
---         if OrionLib.Flags["autofuse"].Value and OrionLib.Flags["fuse"].Value then
---         end
---     end
--- end)
 
 OrionLib:Init()

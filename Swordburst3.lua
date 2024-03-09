@@ -866,50 +866,48 @@ Fluent:Notify({
 })
 SaveManager:LoadAutoloadConfig()
 
--- Gui to Lua
--- Version: 3.2
-
--- Instances:
-
-local ScreenGui = Instance.new("ScreenGui")
-local ImageButton = Instance.new("ImageButton")
-local TextLabel = Instance.new("TextLabel")
-
---Properties:
-
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-ImageButton.Parent = ScreenGui
-ImageButton.BackgroundColor3 = Color3.fromRGB(116, 104, 96)
-ImageButton.BackgroundTransparency = 0.500
-ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-ImageButton.BorderSizePixel = 4
-ImageButton.Position = UDim2.new(0, 0, 0.308541536, 0)
-ImageButton.Size = UDim2.new(0, 137, 0, 35)
-ImageButton.Image = "http://www.roblox.com/asset/?id=1547208871"
-ImageButton.ImageColor3 = Color3.fromRGB(162, 255, 188)
-
-TextLabel.Parent = ImageButton
-TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel.BackgroundTransparency = 1.000
-TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-TextLabel.BorderSizePixel = 0
-TextLabel.Position = UDim2.new(0.325138301, 0, 0.042424228, 0)
-TextLabel.Size = UDim2.new(0, 47, 0, 33)
-TextLabel.Font = Enum.Font.Unknown
-TextLabel.Text = "Open/Close Gui"
-TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
-TextLabel.TextSize = 14.000
-
--- Scripts:
-
-local function IOUVXF_fake_script() -- ScreenGui.LocalScript 
-	local script = Instance.new('LocalScript', ScreenGui)
-	local Button = script.Parent.ImageButton
-	Button.MouseButton1Click:Connect(function()
-		VirtualInputManager:SendKeyEvent(true, "LeftControl", false, game)
-		VirtualInputManager:SendKeyEvent(false, "LeftControl", false, game)
-	end)
-end
-coroutine.wrap(IOUVXF_fake_script)()
+task.spawn(function()
+    while task.wait(.5) do
+        if not lplr:WaitForChild("PlayerGui"):FindFirstChild("lelelel") then
+            local ScreenGui = Instance.new("ScreenGui")
+            local ImageButton = Instance.new("ImageButton")
+            local TextLabel = Instance.new("TextLabel")
+        
+            ScreenGui.Name = "lelelel"
+            ScreenGui.Parent = lplr:WaitForChild("PlayerGui")
+            ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        
+            ImageButton.Parent = ScreenGui
+            ImageButton.BackgroundColor3 = Color3.fromRGB(116, 104, 96)
+            ImageButton.BackgroundTransparency = 0.500
+            ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+            ImageButton.BorderSizePixel = 4
+            ImageButton.Position = UDim2.new(0, 0, 0.308541536, 0)
+            ImageButton.Size = UDim2.new(0, 137, 0, 35)
+            ImageButton.Image = "http://www.roblox.com/asset/?id=1547208871"
+            ImageButton.ImageColor3 = Color3.fromRGB(162, 255, 188)
+        
+            TextLabel.Parent = ImageButton
+            TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            TextLabel.BackgroundTransparency = 1.000
+            TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+            TextLabel.BorderSizePixel = 0
+            TextLabel.Position = UDim2.new(0.325138301, 0, 0.042424228, 0)
+            TextLabel.Size = UDim2.new(0, 47, 0, 33)
+            TextLabel.Font = Enum.Font.Unknown
+            TextLabel.Text = "Open/Close Gui"
+            TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+            TextLabel.TextSize = 14.000
+        
+            local function IOUVXF_fake_script()
+                local script = Instance.new('LocalScript', ScreenGui)
+                local Button = script.Parent.ImageButton
+                Button.MouseButton1Click:Connect(function()
+                    VirtualInputManager:SendKeyEvent(true, "LeftControl", false, game)
+                    VirtualInputManager:SendKeyEvent(false, "LeftControl", false, game)
+                end)
+            end
+            coroutine.wrap(IOUVXF_fake_script)()
+        end
+    end
+end)

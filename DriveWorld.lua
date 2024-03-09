@@ -76,15 +76,6 @@ Main:Toggle({
     end
 })
 
-Main:Toggle({
-    Name = "Auto Complete Race",
-	StartingState = false,
-    Description = "use it if u wanna get banned lol",
-	Callback = function(state)
-        Driveworld["autocomplete"] = state
-    end
-})
-
 Main:Button({
     Name = "Find Barn Part",
     Description = "Tp ur car when u near the barn part",
@@ -97,49 +88,6 @@ Main:Button({
         end
     end
 })
-
-Main:Button({
-    Name = "Support script creator :D",
-    Description = "some linkvertise",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/MikeCash.lua"))()
-    end
-})
-
-task.spawn(function()
-    while task.wait() do
-        if Driveworld["autocomplete"] then
-            if isvehicle() then
-                for _,v in next, workspace.Races:GetChildren() do
-                    if (v:FindFirstChild("Checkpoints") and v:FindFirstChild("Checkpoints"):GetChildren()[1]:FindFirstChild("Forcefield")) then
-                        local total_checkpoints = #v.Checkpoints:GetChildren()
-                        for i = 1, total_checkpoints do
-                            if v.Checkpoints[i]:FindFirstChild("Forcefield") and Driveworld["autocomplete"] then
-                                Laps = Race.Laps.Label
-                                local e2 = string.split(Laps.Text, "/")
-                                if i == total_checkpoints and tonumber(e2[1]) == tonumber(e2[2]) then -- check if laps = total laps then
-                                    local e = nil
-                                    repeat
-                                        Timer = Race.Progress.Timer
-                                        local lel = string.gsub(Timer.Text, ":", ".")
-                                        e = string.split(lel, ".")[2] 
-                                        task.wait() 
-                                    until tonumber(e) >= 1 -- check timer is bigger equal than 1
-                                end
-                                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(v.Checkpoints[i].Forcefield.CFrame)
-                            end
-                        end
-                    end
-                end
-                if Timer.Text ~= "0:00" and Race.Visible == false then -- reset the timer and laps to make script no broke
-                    print("Reseted")
-                    Timer.Text = "0:00"
-                    Laps.Text = "1/1"
-                end
-            end
-        end
-    end
-end)
 
 task.spawn(function()
     while task.wait() do

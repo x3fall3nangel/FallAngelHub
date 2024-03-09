@@ -828,7 +828,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait(minutes(Options["cdw"].Value)) do
+    while task.wait(300) do
         if Options["webhook"].Value and webhookurl then
             webhook(webhookurl)
         end

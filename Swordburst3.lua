@@ -266,8 +266,8 @@ Tabs.mainTab:AddSlider("cds", {
     Title = "Mine Ores Cooldown",
     Description = "",
     Default = swordburst["cds"].Value,
-    Min = 0.3,
-    Max = 1,
+    Min = 0.4,
+    Max = 0.8,
     Rounding = 1,
 })
 
@@ -291,7 +291,7 @@ Tabs.killauraTab:AddSlider("cd", {
     Description = "",
     Default = swordburst["cd"].Value,
     Min = 0.25,
-    Max = 1,
+    Max = 0.8,
     Rounding = 1,
 })
 

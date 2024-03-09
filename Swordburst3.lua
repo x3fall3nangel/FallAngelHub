@@ -12,7 +12,7 @@ end
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = false, SaveConfig = true, ConfigFolder = "Swordburst3", ShowIcon = true,})
+local Window = OrionLib:MakeWindow({Name = "Swordburst 3", HidePremium = false, SaveConfig = true, ConfigFolder = "Swordburst3", ShowIcon = true})
 
 local mainTab = Window:MakeTab({
 	Name = "Main",
@@ -32,15 +32,21 @@ local miscTab = Window:MakeTab({
 	PremiumOnly = false
 })
 
+local targetTab = Window:MakeTab({
+    Name = "Target",
+    Icon = "rbxassetid://13677855342",
+    PremiumOnly = false
+})
+
 local teleportTab = Window:MakeTab({
 	Name = "Teleport",
 	Icon = "rbxassetid://6723742952",
 	PremiumOnly = false
 })
 
-local targetTab = Window:MakeTab({
-	Name = "Target",
-	Icon = "rbxassetid://13677855342",
+local upgradeTab = Window:MakeTab({
+	Name = "Upgrade",
+	Icon = "rbxassetid://15640528020",
 	PremiumOnly = false
 })
 
@@ -67,6 +73,7 @@ local GuiService = game:GetService("GuiService")
 local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualInputManager = game:GetService('VirtualInputManager')
 local lplr = Players.LocalPlayer
 
 local Stamina = require(ReplicatedStorage.Systems.Stamina)
@@ -144,7 +151,6 @@ local spawnlocation = {
     ["Icewhal"] = {CFrame = CFrame.new(-24482.04296875, 2986.56396484375, 38.78126907348633)},
 }
 
-
 local function getchar()
     return lplr.Character or lplr.CharacterAdded:Wait()
 end
@@ -180,6 +186,24 @@ for i,v in next, workspace.Ores:GetChildren() do
     end
     if insert then
         table.insert(mines, v.Name)
+    end
+end
+
+for i,v in next, lplr.PlayerGui.Upgrade.Frame.List:GetChildren() do
+    if v.Name == "ItemTemplate" then
+        v:Destroy()
+    end
+end
+
+for i,v in next, lplr.PlayerGui.Mounts.Frame.Mounts.MountList.Items:GetChildren() do
+    if v.Name == "ItemTemplate" then
+        v:Destroy()
+    end
+end
+
+for i,v in next, lplr.PlayerGui.Enchant.Frame.List:GetChildren() do
+    if v.Name == "ItemTemplate" then
+        v:Destroy()
     end
 end
 
@@ -382,29 +406,6 @@ teleportTab:AddButton({
 })
 
 teleportTab:AddDropdown({
-	Name = "Select Crafting Stations",
-	Default = nil,
-	Options = craftings,
-	Callback = function(Value)
-		crafting = Value
-	end    
-})
-
-teleportTab:AddButton({
-	Name = "Teleport Crafting Stations",
-	Callback = function()
-        if crafting and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
-            for i,v in next, workspace.CraftingStations:GetChildren() do
-                if v.Name == crafting then
-                    getchar().HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,0,5)
-                    return
-                end
-            end
-        end
-  	end    
-})
-
-teleportTab:AddDropdown({
 	Name = "Select Floor",
 	Default = nil,
 	Options = floors,
@@ -448,7 +449,7 @@ miscTab:AddButton({
         for i,v in next, workspace:GetChildren() do
             if v.Name == "Chest" and v:FindFirstChild("RootPart") and v:FindFirstChild("RootPart"):FindFirstChild("ProximityPrompt") and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
                 getchar():FindFirstChild("HumanoidRootPart").CFrame = v:FindFirstChild("RootPart").CFrame * CFrame.new(0,2,0)
-                repeat task.wait(.1) game:GetService('VirtualInputManager'):SendKeyEvent(true, "E", false, game) until v:FindFirstChild("RootPart"):FindFirstChild("ProximityPrompt") == nil
+                repeat task.wait(.1) VirtualInputManager:SendKeyEvent(true, "E", false, game) until v:FindFirstChild("RootPart"):FindFirstChild("ProximityPrompt") == nil
             end
         end
   	end    
@@ -624,6 +625,51 @@ targetTab:AddToggle({
 	Default = swordburst["targetplr"].Value,
     Save = true,
     Flag = "targetplr",
+})
+
+upgradeTab:AddButton({
+	Name = "Open Upgrade Gui",
+	Callback = function()
+        if lplr.PlayerGui.Upgrade.Frame.List:FindFirstChild("ItemTemplate") then
+            lplr.PlayerGui.Upgrade.Enabled = true
+            lplr.PlayerGui.Upgrade.Frame.Visible = true
+        else
+            repeat task.wait() 
+                getchar().HumanoidRootPart.CFrame = workspace.CraftingStations.Smithing.CFrame
+                VirtualInputManager:SendKeyEvent(true, "E", false, game) 
+            until lplr.PlayerGui.Upgrade.Frame.List:FindFirstChild("ItemTemplate")
+        end
+  	end    
+})
+
+upgradeTab:AddButton({
+	Name = "Open Mount Gui",
+	Callback = function()
+        if lplr.PlayerGui.Mounts.Frame.Mounts.MountList.Items:FindFirstChild("ItemTemplate") then
+            lplr.PlayerGui.Mounts.Enabled = true
+            lplr.PlayerGui.Mounts.Frame.Visible = true
+        else
+            repeat task.wait() 
+                getchar().HumanoidRootPart.CFrame = workspace.CraftingStations.Mounts.CFrame
+                VirtualInputManager:SendKeyEvent(true, "E", false, game) 
+            until lplr.PlayerGui.Mounts.Frame.Mounts.MountList.Items:FindFirstChild("ItemTemplate")
+        end
+  	end    
+})
+
+upgradeTab:AddButton({
+	Name = "Open Enchant Gui",
+	Callback = function()
+        if lplr.PlayerGui.Enchant.Frame.List:FindFirstChild("ItemTemplate")then
+            lplr.PlayerGui.Enchant.Enabled = true
+            lplr.PlayerGui.Enchant.Frame.Visible = true
+        else
+            repeat task.wait() 
+                getchar().HumanoidRootPart.CFrame = workspace.CraftingStations.Enchanting.CFrame
+                VirtualInputManager:SendKeyEvent(true, "E", false, game) 
+            until lplr.PlayerGui.Enchant.Frame.List:FindFirstChild("ItemTemplate")
+        end   
+  	end    
 })
 
 local function methodss()

@@ -754,7 +754,7 @@ task.spawn(function()
                     for i,v in next, workspace.BossArenas:GetChildren() do
                         if string.find(v.Name, OrionLib.Flags["boss"].Value) then
                             if string.find(v.Spawn.ArenaBillboard.Frame.StatusLabel.Text, "Boss Cooldown") then
-                                times = 1
+                                times = 0
                             elseif string.find(v.Spawn.ArenaBillboard.Frame.StatusLabel.Text, "Spawning Boss") then
                                 times = 15
                             end
@@ -762,7 +762,7 @@ task.spawn(function()
                             local spawntime = string.split(e, ")")[1]
                             if tonumber(spawntime) and tonumber(spawntime) <= times then
                                 mob = false
-                                getchar().HumanoidRootPart.CFrame = v:FindFirstChild("Spawn").CFrame * methodss()
+                                getchar().HumanoidRootPart.CFrame = v:FindFirstChild("Spawn").CFrame
                             else
                                 mob = true
                             end

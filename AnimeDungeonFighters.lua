@@ -1,4 +1,3 @@
-queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/AnimeDungeonFighters.lua", true))()]])
 if getgenv().keysystem == true then
     local KeySystemUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/MaGiXxScripter0/keysystemv2api/master/ui/xrer_mstudio45.lua"))()
     KeySystemUI.New({
@@ -525,6 +524,7 @@ task.spawn(function()
         else
             TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, lplr)
         end
+        queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/AnimeDungeonFighters.lua", true))()]])
     end)
 end)
 

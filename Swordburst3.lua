@@ -141,7 +141,10 @@ local spawnlocation = {
     ["Thunder Sakura Moose"] = {CFrame = CFrame.new(-488.3043212890625, 210.30789184570312, -119.70502471923828)},
     ["Tortoise"] = {CFrame = CFrame.new(1446.4488525390625, 127.01861572265625, -370.18182373046875)},
     ["Wolf"] = {CFrame = CFrame.new(863.54443359375, 131.0957489013672, 40.45374298095703)},
+    ["Ice Wraith"] = {CFrame = CFrame.new(-22720.41796875, 2971.15771484375, 1777.969482421875)},
+    ["Icewhal"] = {CFrame = CFrame.new(-24482.04296875, 2986.56396484375, 38.78126907348633)},
 }
+
 
 local function getchar()
     return lplr.Character or lplr.CharacterAdded:Wait()

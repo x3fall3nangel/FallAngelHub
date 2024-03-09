@@ -64,8 +64,8 @@ local quests = {}
 local waystone = {}
 local methods = {"above", "below", "behind"}
 local floors = {"Floor1", "Floor2", "Floor3", "Town"}
-local craftings = {"Enchanting", "Mounts", "Smithing"}
 local category = {"Material", "Mount", "Cosmetic", "Pickaxe"}
+local enchanttype = {["1"] = "MOVESPD + 20%", ["2"] = "ATK + 8%", ["3"] = "HPREGEN + 20%", ["4"] = "MAXHP + 20%", ["5"] = "CRIT + 10%", ["6"] = "SPREGEN + 40%", ["7"] = "CRITDMG + 75%", ["8"] = "BURSTPWR + 10%", ["9"] = "STAMINA + 25%",}
 local raritys = {"common (white)", "uncommon (green) and below", "rare (blue) and below", "epic (purple) and below", "legendary (orange) and below"}
 local rarityw = {"common (white) and higher", "uncommon (green) and higher", "rare (blue) and higher", "epic (purple) and higher", "legendary (orange) only"}
 local realrarity = {["common (white)"] = 1, ["uncommon (green)"] = 2, ["rare (blue)"] = 3, ["epic (purple)"] = 4, ["legendary (orange)"] = 5,}
@@ -138,8 +138,9 @@ local function getallplr()
     return e
 end
 
-local function webhook(url,item)
-    local item = item or "test"
+local function webhook(url,item, enchant)
+    local item = item or "nothing"
+    local enchant = enchanttype[enchant] or "nothing"
     local level = lplr.PlayerGui.MainHUD.Frame.Bars.LevelShadow.LevelLabel.Text
     local xp = lplr.PlayerGui.MainHUD.Frame.XPFrame.XPCount.Text
     local Vel = lplr.PlayerGui.Inventory.Frame.Currency.Vel.TextLabel.Text
@@ -147,7 +148,7 @@ local function webhook(url,item)
         ["embeds"] = {
             {
                 ["title"] = "**SwordBurst 3**",
-                ["description"] = "Username: " .. lplr.Name.."\n Level: " .. level .. "\n XP: " .. xp .. "\n Vel: " .. Vel .. "\n Got Item : " .. item,
+                ["description"] = "Username: " .. lplr.Name.."\n Level: " .. level .. "\n XP: " .. xp .. "\n Vel: " .. Vel .. "\n Got Item : " .. item .. " Enchant : " .. enchant,
                 ["type"] = "rich",
                 ["color"] = tonumber(0x7269da),
             }
@@ -835,7 +836,7 @@ task.spawn(function()
             for i,v in next, ItemList do
                 if v.Rarity and v.Rarity >= realrarity[e] and not table.find(category, v.Category) then
                     if string.find(i, items.Name) then
-                        webhook(webhookurl, items.Name)
+                        webhook(webhookurl, items.Name, tostring(items.LegendEnchant.Value) or "nothing")
                     end
                 end
             end

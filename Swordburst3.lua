@@ -762,7 +762,7 @@ task.spawn(function()
                             local spawntime = string.split(e, ")")[1]
                             if tonumber(spawntime) and tonumber(spawntime) <= times then
                                 mob = false
-                                getchar().HumanoidRootPart.CFrame = v:FindFirstChild("Spawn").CFrame  * CFrame.new(0,-8,0)
+                                getchar().HumanoidRootPart.CFrame = v:FindFirstChild("Spawn").CFrame * methodss()
                             else
                                 mob = true
                             end

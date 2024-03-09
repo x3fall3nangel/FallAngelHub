@@ -59,7 +59,7 @@ end
 
 
 Main:Toggle({
-    Name = "Auto Delivery Trailer",
+    Name = "Auto Delivery Truck",
 	StartingState = false,
     Description = "Use Full-E or Casper for more money(work in USA map only)",
 	Callback = function(state)

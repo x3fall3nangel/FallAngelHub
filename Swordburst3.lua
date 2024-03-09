@@ -67,6 +67,7 @@ local floors = {"Floor1", "Floor2", "Floor3", "Town"}
 local craftings = {"Enchanting", "Mounts", "Smithing"}
 local category = {"Material", "Mount", "Cosmetic", "Pickaxe"}
 local raritys = {"common (white)", "uncommon (green) and below", "rare (blue) and below", "epic (purple) and below", "legendary (orange) and below"}
+local rarityw = {"common (white) and higher", "uncommon (green) and higher", "rare (blue) and higher", "epic (purple) and higher", "legendary (orange) only"}
 local realrarity = {["common (white)"] = 1, ["uncommon (green) and below"] = 2, ["rare (blue) and below"] = 3, ["epic (purple) and below"] = 4, ["legendary (orange) and below"] = 5,}
 local swordburst = {
     method = {Value = "behind"},
@@ -87,11 +88,11 @@ local swordburst = {
     range = {Value = 40},
     rarity = {Value = nil},
     webhook = {Value = false},
-    cdw = {Value = 5},
     targetplr = {Value = false},
     choosetarget = {Value = false},
     ignoreparty = {Value = false},
     autorejoin = {Value = false},
+    rarityw = {Value = "legendary (orange) only"}
 }
 local spawnlocation = {
     ["Chill Bat"] = {CFrame = CFrame.new(-1673.8651123046875, 236.44541931152344, -1950.248046875)},
@@ -506,15 +507,6 @@ Tabs.creditTab:AddButton({
   	end    
 })
 
-Tabs.webhookTab:AddSlider("cdw", {
-    Title = "Webhook Cooldown (Minutes)",
-    Description = "",
-    Default = swordburst["cdw"].Value,
-    Min = 1,
-    Max = 60,
-    Rounding = 1,
-})
-
 Tabs.webhookTab:AddInput("Input", {
     Title = "Webhook Url",
     Default = "",
@@ -536,7 +528,15 @@ Tabs.webhookTab:AddButton({
   	end    
 })
 
+Tabs.miscTab:AddDropdown("rarityw", {
+    Title = "Select Rarity for webhook",
+    Values = rarityw,
+    Multi = false,
+    Default = swordburst["rarityw"].Value,
+})
+
 Tabs.webhookTab:AddToggle("webhook", {Title = "Webhook", Default = swordburst["webhook"].Value})
+
 
 Tabs.targetTab:AddDropdown("choosetarget", {
     Title = "Select Target",
@@ -865,3 +865,51 @@ Fluent:Notify({
     Duration = 8
 })
 SaveManager:LoadAutoloadConfig()
+
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local ImageButton = Instance.new("ImageButton")
+local TextLabel = Instance.new("TextLabel")
+
+--Properties:
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+ImageButton.Parent = ScreenGui
+ImageButton.BackgroundColor3 = Color3.fromRGB(116, 104, 96)
+ImageButton.BackgroundTransparency = 0.500
+ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ImageButton.BorderSizePixel = 4
+ImageButton.Position = UDim2.new(0, 0, 0.308541536, 0)
+ImageButton.Size = UDim2.new(0, 137, 0, 35)
+ImageButton.Image = "http://www.roblox.com/asset/?id=1547208871"
+ImageButton.ImageColor3 = Color3.fromRGB(162, 255, 188)
+
+TextLabel.Parent = ImageButton
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Position = UDim2.new(0.325138301, 0, 0.042424228, 0)
+TextLabel.Size = UDim2.new(0, 47, 0, 33)
+TextLabel.Font = Enum.Font.Unknown
+TextLabel.Text = "Open/Close Gui"
+TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.TextSize = 14.000
+
+-- Scripts:
+
+local function IOUVXF_fake_script() -- ScreenGui.LocalScript 
+	local script = Instance.new('LocalScript', ScreenGui)
+	local Button = script.Parent.ImageButton
+	Button.MouseButton1Click:Connect(function()
+		VirtualInputManager:SendKeyEvent(true, "LeftControl", false, game)
+		VirtualInputManager:SendKeyEvent(false, "LeftControl", false, game)
+	end)
+end
+coroutine.wrap(IOUVXF_fake_script)()

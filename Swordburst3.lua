@@ -68,7 +68,7 @@ local craftings = {"Enchanting", "Mounts", "Smithing"}
 local category = {"Material", "Mount", "Cosmetic", "Pickaxe"}
 local raritys = {"common (white)", "uncommon (green) and below", "rare (blue) and below", "epic (purple) and below", "legendary (orange) and below"}
 local rarityw = {"common (white) and higher", "uncommon (green) and higher", "rare (blue) and higher", "epic (purple) and higher", "legendary (orange) only"}
-local realrarity = {["common (white)"] = 1, ["uncommon (green) and below"] = 2, ["rare (blue) and below"] = 3, ["epic (purple) and below"] = 4, ["legendary (orange) and below"] = 5,}
+local realrarity = {["common (white)"] = 1, ["uncommon (green)"] = 2, ["rare (blue)"] = 3, ["epic (purple)"] = 4, ["legendary (orange)"] = 5,}
 local swordburst = {
     method = {Value = "behind"},
     choosemob = {Value = nil},
@@ -138,7 +138,8 @@ local function getallplr()
     return e
 end
 
-local function webhook(url)
+local function webhook(url,item)
+    local item = item or "test"
     local level = lplr.PlayerGui.MainHUD.Frame.Bars.LevelShadow.LevelLabel.Text
     local xp = lplr.PlayerGui.MainHUD.Frame.XPFrame.XPCount.Text
     local Vel = lplr.PlayerGui.Inventory.Frame.Currency.Vel.TextLabel.Text
@@ -146,7 +147,7 @@ local function webhook(url)
         ["embeds"] = {
             {
                 ["title"] = "**SwordBurst 3**",
-                ["description"] = "Username: " .. lplr.Name.."\n Level: " .. level .. "\n XP: " .. xp .. "\n Vel: " .. Vel,
+                ["description"] = "Username: " .. lplr.Name.."\n Level: " .. level .. "\n XP: " .. xp .. "\n Vel: " .. Vel .. "\n Got Item : " .. item,
                 ["type"] = "rich",
                 ["color"] = tonumber(0x7269da),
             }
@@ -266,8 +267,8 @@ Tabs.mainTab:AddSlider("cds", {
     Title = "Mine Ores Cooldown",
     Description = "",
     Default = swordburst["cds"].Value,
-    Min = 0.4,
-    Max = 0.8,
+    Min = 0.3,
+    Max = 1,
     Rounding = 1,
 })
 
@@ -291,7 +292,7 @@ Tabs.killauraTab:AddSlider("cd", {
     Description = "",
     Default = swordburst["cd"].Value,
     Min = 0.25,
-    Max = 0.8,
+    Max = 1,
     Rounding = 1,
 })
 
@@ -475,8 +476,9 @@ Tabs.miscTab:AddButton({
     Description = "",
 	Callback = function()
         if Options["rarity"].Value then
+            local e = string.split(Options["rarity"].Value, " ")[1] .. " " .. string.split(Options["rarity"].Value, " ")[2]
             for i,v in next, ItemList do
-                if v.Rarity and v.Rarity <= realrarity[Options["rarity"].Value] and not table.find(category, v.Category) then
+                if v.Rarity and v.Rarity <= realrarity[e] and not table.find(category, v.Category) then
                     for _,items in next, ReplicatedStorage.Profiles[lplr.Name].Inventory:GetChildren() do
                         if string.find(i, items.Name) then
                             ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Crafting"):WaitForChild("Dismantle"):FireServer(items)
@@ -528,7 +530,7 @@ Tabs.webhookTab:AddButton({
   	end    
 })
 
-Tabs.miscTab:AddDropdown("rarityw", {
+Tabs.webhookTab:AddDropdown("rarityw", {
     Title = "Select Rarity for webhook",
     Values = rarityw,
     Multi = false,
@@ -536,7 +538,6 @@ Tabs.miscTab:AddDropdown("rarityw", {
 })
 
 Tabs.webhookTab:AddToggle("webhook", {Title = "Webhook", Default = swordburst["webhook"].Value})
-
 
 Tabs.targetTab:AddDropdown("choosetarget", {
     Title = "Select Target",
@@ -828,11 +829,18 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait(300) do
-        if Options["webhook"].Value and webhookurl then
-            webhook(webhookurl)
+    ReplicatedStorage.Profiles[lplr.Name].Inventory.ChildAdded:Connect(function(items)
+        if Options["webhook"].Value and webhookurl and Options["rarityw"].Value then
+            local e = string.split(Options["rarityw"].Value, " ")[1] .. " " .. string.split(Options["rarityw"].Value, " ")[2]
+            for i,v in next, ItemList do
+                if v.Rarity and v.Rarity >= realrarity[e] and not table.find(category, v.Category) then
+                    if string.find(i, items.Name) then
+                        webhook(webhookurl, items.Name)
+                    end
+                end
+            end
         end
-    end
+    end)
 end)
 
 task.spawn(function()

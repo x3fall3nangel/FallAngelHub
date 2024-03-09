@@ -1,4 +1,3 @@
-queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Swordburst3.lua", true))()]])
 if getgenv().keysystem == true then
     local KeySystemUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/MaGiXxScripter0/keysystemv2api/master/ui/xrer_mstudio45.lua"))()
     KeySystemUI.New({
@@ -882,6 +881,19 @@ task.spawn(function()
             request(abcdef)
         end
     end
+end)
+
+task.spawn(function()
+    GuiService.ErrorMessageChanged:Connect(function()
+        if #Players:GetPlayers() <= 1 then
+            Players.LocalPlayer:Kick("\nRejoining...")
+            task.wait()
+            TeleportService:Teleport(game.PlaceId, Players.LocalPlayer)
+        else
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, Players.LocalPlayer)
+        end
+        queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Swordburst3.lua", true))()]])
+    end)
 end)
 
 OrionLib:Init()

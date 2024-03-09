@@ -10,56 +10,37 @@ if getgenv().keysystem == true then
     repeat task.wait() until KeySystemUI.Finished() or KeySystemUI.Closed
 end
 
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
-local Window = OrionLib:MakeWindow({Name = "Anime Dungeon Fighters", HidePremium = false, SaveConfig = true, ConfigFolder = "AnimeDungeonFighters",ShowIcon = true})
-
-local mainTab = Window:MakeTab({
-	Name = "Main",
-	Icon = "rbxassetid://13313903300",
-	PremiumOnly = false
+local Window = Fluent:CreateWindow({
+    Title = "Anime Dungeon Fighters",
+    SubTitle = "by fallen_del",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = false, -- The blur may be detectable, setting this to false disables blur entirely
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
 })
 
-local miscTab = Window:MakeTab({
-	Name = "Misc",
-	Icon = "rbxassetid://16307658016",
-	PremiumOnly = false
-})
+local Tabs = {
+    mainTab = Window:AddTab({ Title = "Main", Icon = "scroll"}),
+    miscTab = Window:AddTab({ Title = "Misc", Icon = "layout-grid"}),
+    dungeonTab = Window:AddTab({ Title = "Dungeon", Icon = "shield" }),
+    summonTab = Window:AddTab({ Title = "Summon", Icon = "shuffle"}),
+    teleportTab = Window:AddTab({ Title = "Teleport", Icon = "user-cog"}),
+    creditTab = Window:AddTab({ Title = "Information", Icon = "users"}),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings"})
+}
 
-local dungeonTab = Window:MakeTab({
-	Name = "Dungeon",
-	Icon = "rbxassetid://180083965",
-	PremiumOnly = false
-})
-
-local summonTab = Window:MakeTab({
-	Name = "Summon",
-	Icon = "rbxassetid://938790070",
-	PremiumOnly = false
-})
-
-local teleportTab = Window:MakeTab({
-	Name = "Teleport",
-	Icon = "rbxassetid://6723742952",
-	PremiumOnly = false
-})
-
-local settingsTab = Window:MakeTab({
-	Name = "Settings",
-	Icon = "rbxassetid://4738901432",
-	PremiumOnly = false
-})
-
-local creditTab = Window:MakeTab({
-	Name = "Credits",
-	Icon = "rbxassetid://7731404863",
-	PremiumOnly = false
-})
+local Options = Fluent.Options
 
 local Players = game:GetService("Players")
 local GuiService = game:GetService("GuiService")
 local TeleportService = game:GetService("TeleportService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualInputManager = game:GetService('VirtualInputManager')
 local lplr = Players.LocalPlayer
 
 local egg = {}
@@ -181,97 +162,58 @@ for i,v in next, lplr.PlayerGui.ScreenGui.Main["BottomRight\230\137\139\230\156\
     end
 end
 
-mainTab:AddParagraph("Select Best Skills","choose unlocked best skills to do more damage")
-mainTab:AddDropdown({
-	Name = "Select Best Skills for Kill Aura",
-	Default = nil,
-	Options = skills,
-	Save = true,
-    Flag = "skill"
+Tabs.mainTab:AddParagraph({
+    Title = "Select Best Skills",
+    Content = "choose unlocked best skills to do more damage"
 })
 
-mainTab:AddToggle{
-    Name = "Kill Aura",
-    Default = false,
-    Save = true,
-    Flag = "killaura",
-}
-
-mainTab:AddToggle{
-    Name = "Auto Equipbest",
-    Default = false,
-    Save = true,
-    Flag = "autoequipbest",
-}
-
-mainTab:AddToggle{
-    Name = "Auto Collect",
-    Default = false,
-    Save = true,
-    Flag = "autocollect",
-}
-
-mainTab:AddToggle{
-    Name = "Auto Accept/Claim Quest",
-    Default = false,
-    Save = true,
-    Flag = "autoquest",
-}
-
-mainTab:AddToggle{
-    Name = "Auto Claim Exp Boost",
-    Default = false,
-    Save = true,
-    Flag = "autoclaimexp",
-}
-
-miscTab:AddDropdown({
-	Name = "Select Stats",
-	Default = nil,
-	Options = statss,
-	Save = true,
-    Flag = "stat"
+Tabs.mainTab:AddDropdown("skill", {
+    Title = "Select Best Skills for Kill Aura",
+    Values = skills,
+    Multi = false,
+    Default = nil,
 })
 
-miscTab:AddToggle{
-    Name = "Auto add stats",
-    Default = false,
-    Save = true,
-    Flag = "autostats",
-}
+Tabs.mainTab:AddToggle("killaura", {Title = "Kill Aura", Default = false})
 
-miscTab:AddDropdown({
-	Name = "Select Item to Fuse",
-	Default = nil,
-	Options = fuseit,
-	Save = true,
-    Flag = "fuse"
+Tabs.mainTab:AddToggle("autoequipbest", {Title = "Auto Equipbest", Default = false})
+
+Tabs.mainTab:AddToggle("autocollect", {Title = "Auto Collect", Default = false})
+
+Tabs.mainTab:AddToggle("autoquest", {Title = "Auto Accept/Claim Quest", Default = false})
+
+Tabs.mainTab:AddToggle("autoclaimexp", {Title = "Auto Claim Exp Boost", Default = false})
+
+Tabs.miscTab:AddDropdown("stat", {
+    Title = "Select Stat",
+    Values = statss,
+    Multi = false,
+    Default = nil,
 })
 
-miscTab:AddDropdown({
-	Name = "Select Rarity to Fuse",
-	Default = nil,
-	Options = raritys,
-	Save = true,
-    Flag = "rarity"
+Tabs.miscTab:AddToggle("autostats", {Title = "Auto Add Stats", Default = false})
+
+Tabs.miscTab:AddDropdown("fuse", {
+    Title = "Select Item to Fuse",
+    Values = fuseit,
+    Multi = false,
+    Default = nil,
 })
 
-miscTab:AddToggle{
-    Name = "Auto Fuse",
-    Default = false,
-    Save = true,
-    Flag = "autofuse",
-}
+Tabs.miscTab:AddDropdown("rarity", {
+    Title = "Select Rarity to Fuse",
+    Values = raritys,
+    Multi = false,
+    Default = nil,
+})
 
-miscTab:AddToggle{
-    Name = "Auto Rejoin When Disconnected",
-    Default = false,
-    Save = true,
-    Flag = "autorejoin",
-}
+Tabs.miscTab:AddToggle("autofuse", {Title = "Auto Fuse", Default = false})
 
-miscTab:AddButton({
-	Name = "Server Hop",
+Tabs.miscTab:AddToggle("autorejoin", {Title = "Auto Rejoin When Disconnected", Default = false})
+
+Tabs.miscTab:AddButton({
+	Title = "Server Hop",
+    Description = "",
 	Callback = function()
         local PlaceID = game.PlaceId
         local AllIDs = {}
@@ -343,36 +285,30 @@ miscTab:AddButton({
   	end    
 })
 
-dungeonTab:AddDropdown({
-	Name = "Select Dungeon",
-	Default = nil,
-	Options = map,
-	Save = true,
-    Flag = "dungeon",
+Tabs.dungeonTab:AddDropdown("dungeon", {
+    Title = "Select Dungeon",
+    Values = map,
+    Multi = false,
+    Default = nil,
 })
 
-dungeonTab:AddToggle{
-    Name = "Auto Join Dungeon",
-    Default = false,
-    Save = true,
-    Flag = "autojoindungeon",
-}
+Tabs.dungeonTab:AddToggle("autojoindungeon", {Title = "Auto Join Dungeon", Default = false})
 
-summonTab:AddDropdown({
-	Name = "Select Weapon",
-	Default = nil,
-	Options = prices,
-	Save = true,
-    Flag = "eggid",
+Tabs.summonTab:AddDropdown("eggid", {
+    Title = "Select Weapon",
+    Values = prices,
+    Multi = false,
+    Default = nil,
 })
 
-summonTab:AddButton{
-    Name = "Draw Weapon",
+Tabs.summonTab:AddButton{
+    Title = "Draw Weapon",
+    Description = "",
     Callback = function()
-        if OrionLib.Flags["eggid"].Value then
-            local price = string.split(OrionLib.Flags["eggid"].Value, ":")[2]
+        if Options["eggid"].Value then
+            local price = string.split(Options["eggid"].Value, ":")[2]
             for i,v in next, FindEggCfgById do
-                if tonumber(price) == FindEggCfgById[i].Price and string.find(OrionLib.Flags["eggid"].Value, FindEggCfgById[i].ZhName) then
+                if tonumber(price) == FindEggCfgById[i].Price and string.find(Options["eggid"].Value, FindEggCfgById[i].ZhName) then
                     ReplicatedStorage:WaitForChild("Msg"):WaitForChild("DrawWeapon"):InvokeServer(i ,1)
                 end
             end
@@ -380,34 +316,36 @@ summonTab:AddButton{
     end
 }
 
-summonTab:AddButton{
-    Name = "Draw Fruit",
+Tabs.summonTab:AddButton{
+    Title = "Draw Fruit",
+    Description = "",
     Callback = function()
         ReplicatedStorage:WaitForChild("Msg"):WaitForChild("DrawFruit"):InvokeServer(1)
     end
 }
 
-summonTab:AddButton{
-    Name = "Draw Hero",
+Tabs.summonTab:AddButton{
+    Title = "Draw Hero",
+    Description = "",
     Callback = function()
         ReplicatedStorage:WaitForChild("Msg"):WaitForChild("DrawHero"):InvokeServer(1,1)
     end
 }
 
-teleportTab:AddDropdown({
-	Name = "Select World",
-	Default = nil,
-	Options = world,
-	Save = true,
-    Flag = "world"
+Tabs.teleportTab:AddDropdown("world", {
+    Title = "Select World",
+    Values = world,
+    Multi = false,
+    Default = nil,
 })
 
-teleportTab:AddButton{
-    Name = "Teleport to Selected World",
+Tabs.teleportTab:AddButton{
+    Title = "Teleport to Selected World",
+    Description = "",
     Callback = function()
-        if OrionLib.Flags["world"].Value then
+        if Options["world"].Value then
             for i,v in next, lplr.PlayerGui.ScreenGui["\228\184\150\231\149\140\228\188\160\233\128\129"].Frame:GetChildren() do
-                if v:FindFirstChild("LvStr") and v.LvStr.Text == OrionLib.Flags["world"].Value then
+                if v:FindFirstChild("LvStr") and v.LvStr.Text == Options["world"].Value then
                     ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\142\187\229\136\171\231\154\132\228\184\150\231\149\140",tonumber(v.Name))
                 end
             end
@@ -415,25 +353,25 @@ teleportTab:AddButton{
     end
 }
 
-creditTab:AddLabel("Scripts Made by fallen_del")
-creditTab:AddLabel("UI Library by Shlex")
-creditTab:AddButton({
-	Name = "Discord Server",
+Tabs.creditTab:AddParagraph({
+    Title = "Scripts Made by fallen_del",
+    Content = ""
+})
+Tabs.creditTab:AddParagraph({
+    Title = "UI Library by dawid",
+    Content = ""
+})
+Tabs.creditTab:AddButton({
+	Title = "Discord Server",
+    Description = "",
 	Callback = function()
         setclipboard("https://discord.gg/auzBFqDrwZ")
   	end    
 })
 
-settingsTab:AddButton({
-	Name = "Destroy Gui",
-	Callback = function()
-        OrionLib:Destroy()
-  	end    
-})
-
 task.spawn(function()
     while task.wait() do
-        if OrionLib.Flags["killaura"].Value and OrionLib.Flags["skill"].Value then
+        if Options["killaura"].Value and Options["skill"].Value then
             for _,v in next, workspace["\229\137\175\230\156\172\229\156\176\229\155\190"]:GetChildren() do
                 for _, plr in next, v.Players:GetChildren() do
                     if plr.Value == lplr.UserId then
@@ -449,7 +387,7 @@ task.spawn(function()
                                                     ["castPercent"] = 0,
                                                     ["hitID"] = 1,
                                                     ["isSetNetworkOwnerEnemy"] = true,
-                                                    ["skillID"] = getskillid(OrionLib.Flags["skill"].Value)
+                                                    ["skillID"] = getskillid(Options["skill"].Value)
                                                 },
                                                 [2] = enemy.Name
                                             }
@@ -469,7 +407,7 @@ end)
 
 task.spawn(function()
     while task.wait(3) do
-        if OrionLib.Flags["autoequipbest"].Value then
+        if Options["autoequipbest"].Value then
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\232\163\133\229\164\135\230\156\128\228\189\179\232\163\133\229\164\135")
         end
     end
@@ -477,12 +415,12 @@ end)
 
 task.spawn(function()
     while task.wait(.5) do
-        if OrionLib.Flags["dungeon"].Value == "Defense Mode" then
-            ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\138\160\229\133\165\231\187\132\233\152\159\230\136\191\233\151\180",getdungeon(OrionLib.Flags["dungeon"].Value))
+        if Options["dungeon"].Value == "Defense Mode" then
+            ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\138\160\229\133\165\231\187\132\233\152\159\230\136\191\233\151\180",getdungeon(Options["dungeon"].Value))
         end
-        if OrionLib.Flags["dungeon"].Value then
-            local dungeon, diff = getdungeon(OrionLib.Flags["dungeon"].Value)
-            if OrionLib.Flags["autojoindungeon"].Value then
+        if Options["dungeon"].Value then
+            local dungeon, diff = getdungeon(Options["dungeon"].Value)
+            if Options["autojoindungeon"].Value then
                 ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\138\160\229\133\165\231\187\132\233\152\159\230\136\191\233\151\180", dungeon)
                 ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\230\138\149\231\165\168\233\154\190\229\186\166", diff)
             else
@@ -498,7 +436,7 @@ end)
 
 task.spawn(function()
     while task.wait() do
-        if OrionLib.Flags["autocollect"].Value then
+        if Options["autocollect"].Value then
             for i,v in next, lplr.DropFolder:GetChildren() do
                 task.wait(3)
                 ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\230\139\190\229\143\150\231\137\169\229\147\129",{[1] = tonumber(v.Name),[2] = v:GetAttribute("DropNum"),[3] = v:GetAttribute("Identification")})
@@ -509,29 +447,31 @@ end)
 
 task.spawn(function()
     while task.wait(.1) do
-        if OrionLib.Flags["autostats"].Value and OrionLib.Flags["stat"].Value then
-            ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\177\158\230\128\167\231\130\185\229\138\160\231\130\185",{["attr"] = getstat(OrionLib.Flags["stat"].Value),["addonce"] = 1})
+        if Options["autostats"].Value and Options["stat"].Value then
+            ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\229\177\158\230\128\167\231\130\185\229\138\160\231\130\185",{["attr"] = getstat(Options["stat"].Value),["addonce"] = 1})
         end
     end
 end)
 
 task.spawn(function()
     GuiService.ErrorMessageChanged:Connect(function()
-        if #Players:GetPlayers() <= 1 then
-            lplr:Kick("\nRejoining...")
-            task.wait()
-            TeleportService:Teleport(game.PlaceId, lplr)
-        else
-            TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, lplr)
+        if Options["autorejoin"].Value then
+            if #Players:GetPlayers() <= 1 then
+                Players.LocalPlayer:Kick("\nRejoining...")
+                task.wait()
+                TeleportService:Teleport(game.PlaceId, Players.LocalPlayer)
+            else
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, Players.LocalPlayer)
+            end
+            queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/AnimeDungeonFighters.lua", true))()]])
         end
-        queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/AnimeDungeonFighters.lua", true))()]])
     end)
 end)
 
 task.spawn(function()
     while task.wait(10) do
-        if OrionLib.Flags["autofuse"].Value and OrionLib.Flags["fuse"].Value and OrionLib.Flags["rarity"].Value then
-            local mainid,othervt = getitemid(OrionLib.Flags["fuse"].Value , OrionLib.Flags["rarity"].Value)
+        if Options["autofuse"].Value and Options["fuse"].Value and Options["rarity"].Value then
+            local mainid,othervt = getitemid(Options["fuse"].Value , Options["rarity"].Value)
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\232\163\133\229\164\135\229\188\186\229\140\150",{["MainID"] = mainid, ["OtherVt"] = othervt})
         end
     end
@@ -539,14 +479,75 @@ end)
 
 task.spawn(function()
     while task.wait(1) do
-        if OrionLib.Flags["autoquest"].Value then
+        if Options["autoquest"].Value then
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\233\162\134\229\143\150NPC\228\187\187\229\138\161")
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\233\162\134\229\143\150NPC\228\187\187\229\138\161\229\165\150\229\138\177")
         end
-        if OrionLib.Flags["autoclaimexp"].Value then
+        if Options["autoclaimexp"].Value then
             ReplicatedStorage:WaitForChild("Msg"):WaitForChild("RemoteFunction"):InvokeServer("\233\162\134\229\143\150\229\143\140\229\128\141\231\187\143\233\170\140")
         end
     end
 end)
 
-OrionLib:Init()
+task.spawn(function()
+    while task.wait(.5) do
+        if not lplr:WaitForChild("PlayerGui"):FindFirstChild("lelelel") then
+            local ScreenGui = Instance.new("ScreenGui")
+            local ImageButton = Instance.new("ImageButton")
+            local TextLabel = Instance.new("TextLabel")
+        
+            ScreenGui.Name = "lelelel"
+            ScreenGui.Parent = lplr:WaitForChild("PlayerGui")
+            ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        
+            ImageButton.Parent = ScreenGui
+            ImageButton.BackgroundColor3 = Color3.fromRGB(116, 104, 96)
+            ImageButton.BackgroundTransparency = 0.500
+            ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+            ImageButton.BorderSizePixel = 4
+            ImageButton.Position = UDim2.new(0, 0, 0.308541536, 0)
+            ImageButton.Size = UDim2.new(0, 137, 0, 35)
+            ImageButton.Image = "http://www.roblox.com/asset/?id=1547208871"
+            ImageButton.ImageColor3 = Color3.fromRGB(162, 255, 188)
+        
+            TextLabel.Parent = ImageButton
+            TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            TextLabel.BackgroundTransparency = 1.000
+            TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+            TextLabel.BorderSizePixel = 0
+            TextLabel.Position = UDim2.new(0.325138301, 0, 0.042424228, 0)
+            TextLabel.Size = UDim2.new(0, 47, 0, 33)
+            TextLabel.Font = Enum.Font.Unknown
+            TextLabel.Text = "Open/Close Gui"
+            TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+            TextLabel.TextSize = 14.000
+        
+            local function IOUVXF_fake_script()
+                local script = Instance.new('LocalScript', ScreenGui)
+                local Button = script.Parent.ImageButton
+                Button.MouseButton1Click:Connect(function()
+                    VirtualInputManager:SendKeyEvent(true, "LeftControl", false, game)
+                    VirtualInputManager:SendKeyEvent(false, "LeftControl", false, game)
+                end)
+            end
+            coroutine.wrap(IOUVXF_fake_script)()
+        end
+    end
+end)
+
+
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({})
+InterfaceManager:SetFolder("FallAngelHub")
+SaveManager:SetFolder("FallAngelHub/AnimeDungenFighters")
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+Window:SelectTab(1)
+Fluent:Notify({
+    Title = "Fluent",
+    Content = "The script has been loaded.",
+    Duration = 8
+})
+SaveManager:LoadAutoloadConfig()

@@ -855,7 +855,7 @@ task.spawn(function()
             local e = string.split(Options["rarityw"].Value, " ")[1] .. " " .. string.split(Options["rarityw"].Value, " ")[2]
             for i,v in next, ItemList do
                 if v.Rarity and v.Rarity >= realrarity[e] and not table.find(category, v.Category) then
-                    if string.find(i, items.Name) and items:GetAttribute("Owner").Owner == lplr.Name then
+                    if string.find(i, items.Name) and items:GetAttributes("Owner").Owner == lplr.Name then
                         webhook(webhookurl, items.Name, tostring(items.LegendEnchant.Value) or "nothing")
                     end
                 end

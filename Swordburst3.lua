@@ -865,10 +865,10 @@ task.spawn(function()
                 if v.Rarity and v.Rarity >= realrarity[e] and not table.find(category, v.Category) then
                     if string.find(i, items.Name) and items:GetAttributes("Owner").Owner == lplr.Name then
                         local enchant 
-                        if items:FindFirstChild("LegendEnchant") then
-                            enchant = items.LegendEnchant.Value
+                        if items:WaitForChild("LegendEnchant").Value then
+                            enchant = items:WaitForChild("LegendEnchant").Value
                         end
-                        webhook(webhookurl, items.Name, tostring(enchant) or "nothing")
+                        webhook(webhookurl, items.Name, tostring(enchant))
                     end
                 end
             end
@@ -941,8 +941,7 @@ task.spawn(function()
             TextLabel.TextSize = 14.000
         
             local function IOUVXF_fake_script()
-                local script = Instance.new('LocalScript', ScreenGui)
-                local Button = script.Parent.ImageButton
+                local Button = ImageButton
                 Button.MouseButton1Click:Connect(function()
                     VirtualInputManager:SendKeyEvent(true, "LeftControl", false, game)
                     VirtualInputManager:SendKeyEvent(false, "LeftControl", false, game)

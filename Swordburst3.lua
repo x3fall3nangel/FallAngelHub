@@ -829,9 +829,17 @@ task.spawn(function()
     while task.wait(Options["cds"].Value) do
         if Options["automine"].Value and Options["mine"].Value then
             if getores() and getores():FindFirstChildWhichIsA("MeshPart") and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
-                getchar():FindFirstChild("HumanoidRootPart").CFrame =  getores():FindFirstChildWhichIsA("MeshPart").CFrame * CFrame.new(0,3,0)
+                if workspace:FindFirstChild("lelelelelelel") then
+                    workspace:FindFirstChild("lelelelelelel"):Destroy()
+                end
+                getchar():FindFirstChild("HumanoidRootPart").CFrame =  getores():FindFirstChildWhichIsA("MeshPart").CFrame * CFrame.new(0,-5,0)
                 ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Equipment"):WaitForChild("EquipTool"):FireServer("Pickaxe", true) 
                 ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Mining"):WaitForChild("Mine"):FireServer()
+                local part = Instance.new("Part")
+                part.Transparency = 0.5
+                part.Size = Vector3.new(10,3,10)
+                part.Position = getchar():FindFirstChild("HumanoidRootPart").Position + Vector3.new(0,-8,0)
+                part.Name = "lelelelelelel"
             end
         end
     end
@@ -856,7 +864,11 @@ task.spawn(function()
             for i,v in next, ItemList do
                 if v.Rarity and v.Rarity >= realrarity[e] and not table.find(category, v.Category) then
                     if string.find(i, items.Name) and items:GetAttributes("Owner").Owner == lplr.Name then
-                        webhook(webhookurl, items.Name, tostring(items.LegendEnchant.Value) or "nothing")
+                        local enchant 
+                        if items:FindFirstChild("LegendEnchant") then
+                            enchant = items.LegendEnchant.Value
+                        end
+                        webhook(webhookurl, items.Name, tostring(enchant) or "nothing")
                     end
                 end
             end

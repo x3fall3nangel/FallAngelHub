@@ -363,11 +363,19 @@ Tabs.teleportTab:AddButton({
 local reduceToggle = Tabs.miscTab:AddToggle("reducelag", {Title = "Reduce Lag", Default = false})
 reduceToggle:OnChanged(function()
     if Options["reducelag"].Value == true then
-        RunService:Set3dRenderingEnabled(false)
+        if workspace:FindFirstChild("Effects") then
+            workspace:FindFirstChild("Effects"):Destroy()
+        end
     else
-        RunService:Set3dRenderingEnabled(true)
+        if not workspace:FindFirstChild("Effects") then
+            local folder = Instance.new("Folder")
+            folder.Name = "Effects"
+            folder.Parent = workspace
+        end
     end
 end)  
+
+Tabs.miscTab:AddToggle("noclip", {Title = "Noclip", Default = false})
 
 Tabs.miscTab:AddButton({
 	Title = "Infinite Stamina",
@@ -830,12 +838,24 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    ReplicatedStorage.Profiles[lplr.Name].Inventory.ChildAdded:Connect(function(items)
+    RunService.RenderStepped:Connect(function()
+        if getchar() and Options["noclip"].Value then
+            for _, child in pairs(getchar():GetDescendants()) do
+                if child:IsA("BasePart") and child.CanCollide == true then
+                    child.CanCollide = false
+                end
+            end
+        end
+    end)
+end)
+
+task.spawn(function()
+    ReplicatedStorage.Drops.ChildAdded:Connect(function(items)
         if Options["webhook"].Value and webhookurl and Options["rarityw"].Value then
             local e = string.split(Options["rarityw"].Value, " ")[1] .. " " .. string.split(Options["rarityw"].Value, " ")[2]
             for i,v in next, ItemList do
                 if v.Rarity and v.Rarity >= realrarity[e] and not table.find(category, v.Category) then
-                    if string.find(i, items.Name) then
+                    if string.find(i, items.Name) and items:GetAttribute("Owner").Owner == lplr.Name then
                         webhook(webhookurl, items.Name, tostring(items.LegendEnchant.Value) or "nothing")
                     end
                 end

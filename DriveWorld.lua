@@ -186,15 +186,15 @@ task.spawn(function()
                     end
                 end
             until jobDistance and tonumber(jobDistance) > 2.1 or Driveworld["autodelivery"] == false
-            if CompletionRegion:WaitForChild("Primary") then
-                completepos = CompletionRegion:WaitForChild("Primary").CFrame
-            end
             for i = 1, 25 do
                 if not Driveworld["autodelivery"] or not getvehicle() or not getchar() or isvehicle() == false or job.Visible == false then
                     break
                 end
                 task.wait(1)
                 print("cd")
+            end
+            if CompletionRegion:FindFirstChild("Primary") then
+                completepos = CompletionRegion:FindFirstChild("Primary").CFrame
             end
             Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
             task.wait(.5)

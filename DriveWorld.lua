@@ -121,18 +121,17 @@ task.spawn(function()
                         Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("FoodDelivery","Tavern")
                     end
                 until job.Visible == true or Driveworld["autodeliveryfood"] == false
-                task.wait(25)
                 CompletionRegion = workspace:FindFirstChild("CompletionRegion")
-                if CompletionRegion:FindFirstChild("Primary") then
-                    completepos = CompletionRegion:FindFirstChild("Primary").CFrame
-                end
                 for i = 1, 25 do
-                    if not Driveworld["autodelivery"] or not getvehicle() or not getchar() then
+                    if not Driveworld["autodelivery"] or not getvehicle() or not getchar() or isvehicle() == false or job.Visible == false then
                         return
                     end
                     task.wait(1)
                 end
-                Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
+                if CompletionRegion:FindFirstChild("Primary").CFrame then
+                    completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0) 
+                end
+                getvehicle():SetPrimaryPartCFrame(completepos)
                 task.wait(.5)
                 Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
                 task.wait(.5)
@@ -191,12 +190,11 @@ task.spawn(function()
                     break
                 end
                 task.wait(1)
-                print("cd")
             end
-            if CompletionRegion:FindFirstChild("Primary") then
-                completepos = CompletionRegion:FindFirstChild("Primary").CFrame
+            if CompletionRegion:FindFirstChild("Primary").CFrame then
+                completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0) 
             end
-            Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(completepos)
+            getvehicle():SetPrimaryPartCFrame(completepos)
             task.wait(.5)
             Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
             task.wait(.5)

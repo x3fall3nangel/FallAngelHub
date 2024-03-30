@@ -1,4 +1,4 @@
-repeat task.wait() until game:IsLoaded()
+repeat task.wait() until game:GetService("Players").LocalPlayer
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
@@ -18,6 +18,7 @@ local Tabs = {
     mainTab = Window:AddTab({ Title = "Main", Icon = "scroll" }),
     dungeonTab = Window:AddTab({ Title = "Dungeon", Icon = "shield" }),
     creditTab = Window:AddTab({Title = "Information",Icon = "users"}),
+    miscTab = Window:AddTab({Title = "Misc",Icon = "layout-grid"}),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 

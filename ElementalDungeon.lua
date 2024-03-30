@@ -1,3 +1,4 @@
+repeat task.wait() until game:IsLoaded()
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
@@ -153,6 +154,7 @@ task.spawn(function()
     end
 end)
 
+local b
 task.spawn(function()
     while task.wait(.1) do
         if Options["autodungeon"].Value then
@@ -168,11 +170,15 @@ task.spawn(function()
             CreatePartyRemote:InvokeServer(getdungeon(Options["choosedungeon"].Value).id, getdungeon(Options["choosedungeon"].Value).diff, "Friends", "Normal")
             local id = GetPartyFromPlayerRemote:InvokeServer(lplr).Data.UUID
             StartPartyRemote:InvokeServer(id)
-            -- queue_on_teleport([[]])
+            if b == false then
+                b = true
+                queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/ElementalDungeon.lua"))()]])
+            end
         end
     end
 end)
 
+local a = false
 task.spawn(function()
     while task.wait(.1) do
         if Options["autoretry"].Value then
@@ -185,6 +191,10 @@ task.spawn(function()
                     return
                 end
                 VoteOnRemote:InvokeServer("Retry")
+                if a == false then
+                    a = true
+                    queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/ElementalDungeon.lua"))()]])
+                end
             end
         end
     end

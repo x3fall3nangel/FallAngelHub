@@ -74,6 +74,10 @@ for _,v in next, Dungeon do
     end
 end
 
+for i,v in next, ReplicatedStorage.ReplicatedStorage.Packages.Knit.Services.AntiCheatService:GetChildren() do
+    v:Destroy()
+end
+
 local function getdungeon(e)
     local dungeon = {
         id = "",

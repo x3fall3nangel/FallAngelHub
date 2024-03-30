@@ -49,6 +49,8 @@ local CollectDropRemote = debug.getupvalue(debug.getupvalue(DropsService.Collect
 local DropsController = require(game:GetService("Players").LocalPlayer.PlayerScripts.StarterPlayerScripts.Controllers.DropsController)
 local DropsTable =  debug.getupvalue(DropsController.KnitStart,3)
 local StartDungeonRemote = debug.getupvalue(debug.getupvalue(DungeonService.StartDungeon,1),1)
+local HealingService = debug.getupvalue(KnitClient.GetService, 1).HealingService
+local UseHealRemote = debug.getupvalue(debug.getupvalue(HealingService.UseHeal,1),1)
 
 local function getchar()
 	return lplr.Character or lplr.CharacterAdded:Wait()
@@ -99,6 +101,8 @@ Tabs.dungeonTab:AddToggle("autoretry", {Title = "Auto Retry", Default = false})
 Tabs.mainTab:AddToggle("killaura", {Title = "Sword Aura", Default = false})
 
 Tabs.mainTab:AddToggle("autoshoot", {Title = "Auto Shoot Element", Default = false})
+
+Tabs.mainTab:AddToggle("autoheal", {Title = "Auto Use Heal When Low", Default = false})
 
 Tabs.mainTab:AddSlider("dist", {
     Title = "Auto Farm Distance",
@@ -241,6 +245,18 @@ task.spawn(function()
                     Remote:FireServer(v2,{["Direction"] = Vector3.new(0,0,0),["Origin"] = Vector3.new(0,0,0),["Position"] = Vector3.new(0,0,0)},"End")
                 end
             end            
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(.1) do
+        if Options["autoheal"] then
+            if getchar() and getchar():FindFirstChild("Humanoid") then
+                if getchar().Humanoid.Health <= getchar().Humanoid.MaxHealth / 2 then
+                    UseHealRemote:InvokeServer()
+                end
+            end           
         end
     end
 end)

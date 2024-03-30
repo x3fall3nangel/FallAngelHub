@@ -159,7 +159,7 @@ task.spawn(function()
     end
 end)
 
-local b
+local b = false
 task.spawn(function()
     while task.wait(.1) do
         if Options["autodungeon"].Value then

@@ -43,7 +43,7 @@ local PartyService = debug.getupvalue(KnitClient.GetService, 1).PartyService
 local WeaponService = debug.getupvalue(KnitClient.GetService, 1).WeaponService
 repeat task.wait() 
     e = pcall(function() return debug.getupvalue(debug.getupvalue(WeaponService.UseSword,1),1) end)
-until e
+until e == true
 local UseSwordRemote = debug.getupvalue(debug.getupvalue(WeaponService.UseSword,1),1)
 local GetPartyFromPlayerRemote = debug.getupvalue(debug.getupvalue(PartyService.GetPartyFromPlayer,1),1)
 local DataController = debug.getupvalue(KnitClient.GetController, 1).DataController
@@ -246,13 +246,6 @@ task.spawn(function()
                     end
                 until not v:FindFirstChild("HumanoidRootPart") or v:FindFirstChild("Humanoid").Health <= 0 or Options["autofarm"].Value == false or not getchar()
                 CanShootElement = false
-                if getchar() and getchar():FindFirstChild("HumanoidRootPart") then
-                    for i,v in next, workspace.Map:GetChildren() do
-                        if v:FindFirstChild("PlayerSpawns") then
-                            getchar():FindFirstChild("HumanoidRootPart").CFrame = v:FindFirstChild("PlayerSpawns")[1].Part.CFrame
-                        end
-                    end
-                end
             end
         end
     end
@@ -267,7 +260,7 @@ task.spawn(function()
                     Remote:FireServer(v2,{["Direction"] = Vector3.new(0,0,0),["Origin"] = Vector3.new(0,0,0),["Position"] = Vector3.new(0,0,0)},"Start")
                     Remote:FireServer(v2,{["Direction"] = Vector3.new(0,0,0),["Origin"] = Vector3.new(0,0,0),["Position"] = Vector3.new(0,0,0)},"End")
                 end
-            end            
+            end
         end
     end
 end)

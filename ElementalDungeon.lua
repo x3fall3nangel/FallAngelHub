@@ -185,6 +185,21 @@ Tabs.creditTab:AddButton({
   	end
 })
 
+local function getclosestmob()
+    local dist = math.huge
+    local target 
+    for i,v in next, workspace.Mobs:GetChildren() do
+        if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid").Health > 0 and getchar() and getchar():FindFirstChild("HumanoidRootPart")then
+            local magnitude = (getchar():FindFirstChild("HumanoidRootPart").Position - v.HumanoidRootPart.Position).magnitude
+            if magnitude < dist then
+                dist = magnitude
+                target = v
+            end
+        end
+    end
+    return target
+end
+
 task.spawn(function()
     while task.wait() do
         VirtualUser:CaptureController();
@@ -270,15 +285,11 @@ end)
 task.spawn(function()
     while task.wait(.1) do
         if Options["autofarm"].Value then
-            for i,v in next, workspace.Mobs:GetChildren() do
-                repeat task.wait()
-                    if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid").Health > 0 and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
-                        tween(getchar().HumanoidRootPart, v:FindFirstChild("HumanoidRootPart"), Options["tweenspeed"].Value,CFrame.new(0, 0, Options["dist"].Value))
-                        CanShootElement = true
-                    end
-                until not v:FindFirstChild("HumanoidRootPart") or v:FindFirstChild("Humanoid").Health <= 0 or Options["autofarm"].Value == false or not getchar()
-                CanShootElement = false
+            if getclosestmob() and getclosestmob():FindFirstChild("HumanoidRootPart") and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
+                tween(getchar().HumanoidRootPart, getclosestmob():FindFirstChild("HumanoidRootPart"), Options["tweenspeed"].Value, CFrame.new(0, 0, Options["dist"].Value))
+                CanShootElement = true
             end
+            CanShootElement = false
         end
     end
 end)

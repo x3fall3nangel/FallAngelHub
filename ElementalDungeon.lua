@@ -29,6 +29,7 @@ local VirtualUser = game:GetService("VirtualUser")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local lplr = Players.LocalPlayer
 
+local e 
 local Attack_ID
 local CanShootElement = false
 
@@ -40,7 +41,9 @@ local KnitClient = require(ReplicatedStorage.ReplicatedStorage.Packages.Knit.Kni
 local DungeonService = debug.getupvalue(KnitClient.GetService, 1).DungeonService
 local PartyService = debug.getupvalue(KnitClient.GetService, 1).PartyService
 local WeaponService = debug.getupvalue(KnitClient.GetService, 1).WeaponService
-repeat task.wait() until debug.getupvalue(debug.getupvalue(WeaponService.UseSword,1),1) ~= nil
+repeat task.wait() 
+    e = pcall(function() return debug.getupvalue(debug.getupvalue(WeaponService.UseSword,1),1) end)
+until e
 local UseSwordRemote = debug.getupvalue(debug.getupvalue(WeaponService.UseSword,1),1)
 local GetPartyFromPlayerRemote = debug.getupvalue(debug.getupvalue(PartyService.GetPartyFromPlayer,1),1)
 local DataController = debug.getupvalue(KnitClient.GetController, 1).DataController
@@ -246,6 +249,13 @@ task.spawn(function()
                     end
                 until not v:FindFirstChild("HumanoidRootPart") or v:FindFirstChild("Humanoid").Health <= 0 or Options["autofarm"].Value == false or not getchar()
                 CanShootElement = false
+                if getchar() and getchar():FindFirstChild("HumanoidRootPart") then
+                    for i,v in next, workspace.Map:GetChildren() do
+                        if v:FindFirstChild("PlayerSpawns") then
+                            getchar():FindFirstChild("HumanoidRootPart").CFrame = v:FindFirstChild("PlayerSpawns")[1].Part.CFrame
+                        end
+                    end
+                end
             end
         end
     end

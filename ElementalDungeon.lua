@@ -26,11 +26,14 @@ local Options = Fluent.Options
 
 local Players = game:GetService("Players")
 local VirtualUser = game:GetService("VirtualUser")
+local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local lplr = Players.LocalPlayer
 
-local e 
+local e
+local t
 local Attack_ID
+local cancel = false
 local CanShootElement = false
 
 local dungeonid = {}
@@ -90,6 +93,32 @@ local function getdungeon(e)
     return dungeon
 end
 
+local function tween(part, target, speed, addcframe)
+    local e = addcframe or CFrame.new(0,0,0)
+    if t and t.PlaybackState == Enum.PlaybackState.Playing then
+        t:Cancel()
+    end
+    if not part or not target then
+        return
+    end
+    t = (TweenService:Create(part, TweenInfo.new((part.Position - target.Position).magnitude / speed, Enum.EasingStyle.Linear), {CFrame = target.CFrame * e}))
+    local done = false
+    t.Completed:Connect(function()
+        done = true
+    end)
+    if t.PlaybackState ~= Enum.PlaybackState.Playing then
+        t:Play()
+    end
+    repeat task.wait()
+        if not getchar() or cancel then
+            if t.PlaybackState == Enum.PlaybackState.Playing then
+                t:Cancel()
+            end
+            return
+        end
+    until done
+end
+
 Tabs.dungeonTab:AddDropdown("choosedungeon", {
     Title = "Select Dungeon",
     Values = dungeonid,
@@ -103,12 +132,14 @@ Tabs.dungeonTab:AddToggle("autostart", {Title = "Auto Start Dungeon", Default = 
 
 Tabs.dungeonTab:AddToggle("autoretry", {Title = "Auto Retry", Default = false})
 
-Tabs.mainTab:AddToggle("killaura", {Title = "Sword Aura", Default = false})
-
-Tabs.mainTab:AddToggle("autoshoot", {Title = "Auto Shoot Element", Default = false})
-
-Tabs.mainTab:AddToggle("autoheal", {Title = "Auto Use Heal When Low", Default = false})
-
+Tabs.mainTab:AddSlider("tweenspeed", {
+    Title = "Tweening Speed",
+    Description = "",
+    Default = 300,
+    Min = 50,
+    Max = 1000,
+    Rounding = 1
+})
 
 Tabs.mainTab:AddSlider("dist", {
     Title = "Auto Farm Distance",
@@ -120,6 +151,12 @@ Tabs.mainTab:AddSlider("dist", {
 })
 
 Tabs.mainTab:AddToggle("autofarm", {Title = "Auto Farm Mobs", Default = false})
+
+Tabs.mainTab:AddToggle("killaura", {Title = "Sword Aura", Default = false})
+
+Tabs.mainTab:AddToggle("autoshoot", {Title = "Auto Shoot Element", Default = false})
+
+Tabs.mainTab:AddToggle("autoheal", {Title = "Auto Use Heal When Low", Default = false})
 
 Tabs.mainTab:AddToggle("autocollect", {Title = "Auto Collect Drops", Default = false})
 
@@ -241,7 +278,7 @@ task.spawn(function()
                         getchar().Humanoid.AutoRotate = false
                         getchar().HumanoidRootPart.CFrame = v:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, 0, Options["dist"].Value)
                         local rotation = CFrame.new(getchar():FindFirstChild("HumanoidRootPart").Position, getchar():FindFirstChild("HumanoidRootPart").Position + lookDirection)
-                        getchar():FindFirstChild("HumanoidRootPart").CFrame = rotation
+                        tween(getchar().HumanoidRootPart, rotation, Options["tweenspeed"].Value)
                         CanShootElement = true
                     end
                 until not v:FindFirstChild("HumanoidRootPart") or v:FindFirstChild("Humanoid").Health <= 0 or Options["autofarm"].Value == false or not getchar()

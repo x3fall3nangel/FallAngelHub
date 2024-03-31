@@ -242,6 +242,7 @@ task.spawn(function()
                     if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid").Health >= 0 and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
                         local lookAtPosition = v.HumanoidRootPart.Position
                         local lookDirection = (lookAtPosition - getchar():FindFirstChild("HumanoidRootPart").Position).unit
+                        getchar().Humanoid.AutoRotate = false
                         getchar().HumanoidRootPart.CFrame = v:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, 0, Options["dist"].Value)
                         local rotation = CFrame.new(getchar():FindFirstChild("HumanoidRootPart").Position, getchar():FindFirstChild("HumanoidRootPart").Position + lookDirection)
                         getchar():FindFirstChild("HumanoidRootPart").CFrame = rotation

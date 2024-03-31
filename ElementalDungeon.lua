@@ -80,10 +80,6 @@ for _,v in next, Dungeon do
     end
 end
 
-for i,v in next, ReplicatedStorage.ReplicatedStorage.Packages.Knit.Services.AntiCheatService:GetChildren() do
-    v:Destroy()
-end
-
 local function getdungeon(e)
     local dungeon = {
         id = "",
@@ -239,7 +235,7 @@ task.spawn(function()
         if Options["autofarm"].Value then
             for i,v in next, workspace.Mobs:GetChildren() do
                 repeat task.wait()
-                    if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid").Health >= 0 and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
+                    if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid").Health > 0 and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
                         local lookAtPosition = v.HumanoidRootPart.Position
                         local lookDirection = (lookAtPosition - getchar():FindFirstChild("HumanoidRootPart").Position).unit
                         getchar().Humanoid.AutoRotate = false

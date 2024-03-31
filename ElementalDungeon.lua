@@ -135,9 +135,9 @@ Tabs.dungeonTab:AddToggle("autoretry", {Title = "Auto Retry", Default = false})
 Tabs.mainTab:AddSlider("tweenspeed", {
     Title = "Tweening Speed",
     Description = "",
-    Default = 300,
+    Default = 150,
     Min = 50,
-    Max = 1000,
+    Max = 300,
     Rounding = 1
 })
 

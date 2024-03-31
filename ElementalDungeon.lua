@@ -273,12 +273,7 @@ task.spawn(function()
             for i,v in next, workspace.Mobs:GetChildren() do
                 repeat task.wait()
                     if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid").Health > 0 and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
-                        local lookAtPosition = v.HumanoidRootPart.Position
-                        local lookDirection = (lookAtPosition - getchar():FindFirstChild("HumanoidRootPart").Position).unit
-                        getchar().Humanoid.AutoRotate = false
-                        getchar().HumanoidRootPart.CFrame = v:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0, 0, Options["dist"].Value)
-                        local rotation = CFrame.new(getchar():FindFirstChild("HumanoidRootPart").Position, getchar():FindFirstChild("HumanoidRootPart").Position + lookDirection)
-                        tween(getchar().HumanoidRootPart, rotation, Options["tweenspeed"].Value)
+                        tween(getchar().HumanoidRootPart, v:FindFirstChild("HumanoidRootPart"), Options["tweenspeed"].Value,CFrame.new(0, 0, Options["dist"].Value))
                         CanShootElement = true
                     end
                 until not v:FindFirstChild("HumanoidRootPart") or v:FindFirstChild("Humanoid").Health <= 0 or Options["autofarm"].Value == false or not getchar()

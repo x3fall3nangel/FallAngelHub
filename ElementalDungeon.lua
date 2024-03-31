@@ -283,7 +283,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    while task.wait(.1) do
+    while task.wait() do
         if Options["autofarm"].Value then
             if getclosestmob() and getclosestmob():FindFirstChild("HumanoidRootPart") and getchar() and getchar():FindFirstChild("HumanoidRootPart") then
                 tween(getchar().HumanoidRootPart, getclosestmob():FindFirstChild("HumanoidRootPart"), Options["tweenspeed"].Value, CFrame.new(0, 0, Options["dist"].Value))

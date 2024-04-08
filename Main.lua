@@ -8,6 +8,8 @@ elseif game.PlaceId == 16582687738 or game.PlaceId == 14819490378 or game.PlaceI
     loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Swordburst3.lua"))()
 elseif game.PlaceId == 15502802094 or game.PlaceId == 12135640403 or game.PlaceId == 15742087191 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/AnimeDungeonFighters.lua"))()
+elseif game.PlaceId == 15423741735 then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/BeyBlade.lua"))()
 else
     loadstring(game:HttpGet("https://raw.githubusercontent.com/GSstarGamer/Roblox-Exploits/main/loader.lua"))()
 end

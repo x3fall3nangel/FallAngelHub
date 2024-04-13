@@ -122,7 +122,7 @@ task.spawn(function()
                     end
                 until job.Visible == true or Driveworld["autodeliveryfood"] == false
                 CompletionRegion = workspace:FindFirstChild("CompletionRegion")
-                for i = 1, 25 do
+                for i = 1, 10 do
                     if not Driveworld["autodelivery"] or not getvehicle() or not getchar() or isvehicle() == false or job.Visible == false then
                         return
                     end
@@ -185,7 +185,7 @@ task.spawn(function()
                     end
                 end
             until jobDistance and tonumber(jobDistance) > 2.1 or Driveworld["autodelivery"] == false
-            for i = 1, 25 do
+            for i = 1, 10 do
                 if not Driveworld["autodelivery"] or not getvehicle() or not getchar() or isvehicle() == false or job.Visible == false then
                     break
                 end

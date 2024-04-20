@@ -22,6 +22,7 @@ local Systems = ReplicatedStorage:WaitForChild("Systems")
 local Race = lp.PlayerGui.Score.Frame.Race
 local Timer
 local Laps
+local material
 
 local Driveworld = {}
 
@@ -75,6 +76,29 @@ Main:Toggle({
     Description = "Use Full-E or Casper for more money(work in USA map only)",
 	Callback = function(state)
         Driveworld["autodelivery"] = state
+    end
+})
+
+Main:Dropdown{
+    Name = "Select Material",
+    StartingText = "Select...",
+    Description = nil,
+    Items = {"Wood", "Steel"},
+    Callback = function(item)
+        material = item
+    end
+}
+
+Main:Toggle({
+    Name = "Auto Delivery Material",
+	StartingState = false,
+    Description = "wait 25 sec",
+	Callback = function(state)
+        Driveworld["autodeliverymaterial"] = state
+        if state == false then
+            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Contracts"):WaitForChild("EndContract"):InvokeServer()
+            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Contracts"):WaitForChild("EndContract"):InvokeServer()
+        end
     end
 })
 
@@ -162,7 +186,7 @@ task.spawn(function()
             local CompletionRegion
             local job = lp.PlayerGui.Score.Frame.Jobs
             repeat task.wait()
-                if job.Visible == false and Driveworld["autodelivery"] then
+                if job.Visible == false then
                     ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer(workspace:WaitForChild("Jobs"):WaitForChild("Trucking"),workspace:WaitForChild("Jobs"):WaitForChild("Trucking"):WaitForChild("StartPoints"):WaitForChild("Logs"))
                 end
             until job.Visible == true or Driveworld["autodelivery"] == false
@@ -202,7 +226,48 @@ task.spawn(function()
                 Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
                 firesignal(lp.PlayerGui.JobComplete.Window.Content.Buttons.RetryButton.MouseButton1Click)
             end
-            print("Completed Job")    
+            print("Completed Job")
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(.1) do
+        if Driveworld["autodeliverymaterial"] and material then
+            local completepos
+            local CompletionRegion
+            local Contracts = lp.PlayerGui.Score.Frame.Contracts
+            repeat task.wait()
+                if Contracts.Visible == false then
+                    ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Contracts"):WaitForChild("PrecalculateRoutes"):InvokeServer()
+                    ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Contracts"):WaitForChild("AcceptContract"):InvokeServer(material)
+                end
+            until Contracts.Visible == true or Driveworld["autodeliverymaterial"] == false
+            repeat task.wait() until workspace:FindFirstChild("Model") or Driveworld["autodeliverymaterial"] == false
+            for i,v in next, workspace.Model:GetChildren() do
+                if v:FindFirstChild("CargoTypes") and v.PrimaryPart then
+                    getvehicle():SetPrimaryPartCFrame(v.PrimaryPart.CFrame)
+                end
+            end
+            task.wait(1)
+            VirtualInputManager:SendKeyEvent(true, "E", false, game)
+            repeat task.wait()
+                if workspace:FindFirstChild("CompletionRegion") then
+                    CompletionRegion = workspace.CompletionRegion
+                end
+            until CompletionRegion or Driveworld["autodeliverymaterial"] == false
+            if CompletionRegion:FindFirstChild("Primary").CFrame then
+                completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0)
+            end
+            for i = 1, 25 do
+                if not Driveworld["autodeliverymaterial"] or not getvehicle() or not getchar() or isvehicle() == false or Contracts.Visible == false then
+                    return
+                end
+                task.wait(1)
+            end
+            getvehicle():SetPrimaryPartCFrame(completepos)
+            task.wait(.5)
+            ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Contracts"):WaitForChild("DropoffCargo"):InvokeServer()
         end
     end
 end)

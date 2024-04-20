@@ -255,13 +255,11 @@ task.spawn(function()
                 end
             until Contracts.Visible == true or Driveworld["autodeliverymaterial"] == false
             task.wait(1)
-            repeat task.wait(1) 
+            repeat task.wait(.1) 
                 if workspace:FindFirstChild("Model") then
                     for i,v in next, workspace.Model:GetChildren() do
                         if v:FindFirstChild("CargoTypes") and v.PrimaryPart then
                             cargo = v.PrimaryPart
-                        else
-                            cargo = nil
                         end
                     end
                 end
@@ -275,16 +273,18 @@ task.spawn(function()
                         getvehicle():SetPrimaryPartCFrame(cargo.CFrame)
                     end
                 end
-            until not workspace:FindFirstChild("Model") or not cargo or Driveworld["autodeliverymaterial"] == false
+            until not workspace:FindFirstChild("Model") or cargo == nil or Driveworld["autodeliverymaterial"] == false
             task.wait(1)
             if lp.PlayerGui.CancelActivityConfirmation.Enabled == true then
                 firesignal(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click)
             end
-            repeat task.wait(3)
+            local count = 0
+            repeat task.wait(.1)
                 if workspace:FindFirstChild("CompletionRegion") then
                     CompletionRegion = workspace.CompletionRegion
                 end
-            until CompletionRegion or Driveworld["autodeliverymaterial"] == false
+                count = count + 1
+            until CompletionRegion or Driveworld["autodeliverymaterial"] == false or count >= 50
             if CompletionRegion and CompletionRegion:FindFirstChild("Primary").CFrame then
                 completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0)
             end

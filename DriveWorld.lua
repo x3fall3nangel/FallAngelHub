@@ -268,10 +268,12 @@ task.spawn(function()
                 if lp.PlayerGui.CancelActivityConfirmation.Enabled == true then
                     firesignal(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click)
                 end
-                if cargo and getvehicle() and getvehicle().PrimaryPart and (cargo.Position - getvehicle().PrimaryPart.Position).magnitude <= 30 then
-                    VirtualInputManager:SendKeyEvent(true, "E", false, game)
-                else
-                    getvehicle():SetPrimaryPartCFrame(cargo.CFrame)
+                if cargo and getvehicle() and getvehicle().PrimaryPart then 
+                    if (cargo.Position - getvehicle().PrimaryPart.Position).magnitude <= 30 then
+                        VirtualInputManager:SendKeyEvent(true, "E", false, game)
+                    else
+                        getvehicle():SetPrimaryPartCFrame(cargo.CFrame)
+                    end
                 end
             until not workspace:FindFirstChild("Model") or not cargo or Driveworld["autodeliverymaterial"] == false
             task.wait(1)

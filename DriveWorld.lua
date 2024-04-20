@@ -208,7 +208,7 @@ task.spawn(function()
                         end
                     end
                 end
-            until jobDistance and tonumber(jobDistance) > 2.1 or Driveworld["autodelivery"] == false
+            until jobDistance and tonumber(jobDistance) >= 2.1 or Driveworld["autodelivery"] == false
             for i = 1, 10 do
                 if not Driveworld["autodelivery"] or not getvehicle() or not getchar() or isvehicle() == false or job.Visible == false then
                     break
@@ -255,21 +255,26 @@ task.spawn(function()
                 end
             until Contracts.Visible == true or Driveworld["autodeliverymaterial"] == false
             task.wait(1)
-            for i,v in next, workspace.Model:GetChildren() do
-                if v:FindFirstChild("CargoTypes") and v.PrimaryPart then
-                    cargo = v.PrimaryPart
+            repeat task.wait(1) 
+                if workspace:FindFirstChild("Model") then
+                    for i,v in next, workspace.Model:GetChildren() do
+                        if v:FindFirstChild("CargoTypes") and v.PrimaryPart then
+                            cargo = v.PrimaryPart
+                        else
+                            cargo = nil
+                        end
+                    end
                 end
-            end
-            repeat task.wait(.1)
                 if lp.PlayerGui.CancelActivityConfirmation.Enabled == true then
                     firesignal(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click)
                 end
-                if cargo and (cargo.Position - getvehicle().PrimaryPart.Position).magnitude <= 30 then
+                if cargo and getvehicle() and getvehicle().PrimaryPart and (cargo.Position - getvehicle().PrimaryPart.Position).magnitude <= 30 then
                     VirtualInputManager:SendKeyEvent(true, "E", false, game)
                 else
                     getvehicle():SetPrimaryPartCFrame(cargo.CFrame)
                 end
-            until not workspace:FindFirstChild("Model") or Driveworld["autodeliverymaterial"] == false
+            until not workspace:FindFirstChild("Model") or not cargo or Driveworld["autodeliverymaterial"] == false
+            task.wait(1)
             if lp.PlayerGui.CancelActivityConfirmation.Enabled == true then
                 firesignal(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click)
             end

@@ -263,17 +263,17 @@ task.spawn(function()
                         end
                     end
                 end
-                if lp.PlayerGui.CancelActivityConfirmation.Enabled == true then
-                    firesignal(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click)
+            until cargo or Driveworld["autodeliverymaterial"] == false
+            if lp.PlayerGui.CancelActivityConfirmation.Enabled == true then
+                firesignal(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click)
+            end
+            if cargo and getvehicle() and getvehicle().PrimaryPart then 
+                getvehicle():SetPrimaryPartCFrame(cargo.CFrame)
+                task.wait(1)
+                if (cargo.Position - getvehicle().PrimaryPart.Position).magnitude <= 30 then
+                    VirtualInputManager:SendKeyEvent(true, "E", false, game)
                 end
-                if cargo and getvehicle() and getvehicle().PrimaryPart then 
-                    if (cargo.Position - getvehicle().PrimaryPart.Position).magnitude <= 30 then
-                        VirtualInputManager:SendKeyEvent(true, "E", false, game)
-                    else
-                        getvehicle():SetPrimaryPartCFrame(cargo.CFrame)
-                    end
-                end
-            until not workspace:FindFirstChild("Model") or cargo == nil or Driveworld["autodeliverymaterial"] == false
+            end
             task.wait(1)
             if lp.PlayerGui.CancelActivityConfirmation.Enabled == true then
                 firesignal(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click)
@@ -288,7 +288,7 @@ task.spawn(function()
             if CompletionRegion and CompletionRegion:FindFirstChild("Primary").CFrame then
                 completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0)
             end
-            for i = 1, 30 do
+            for i = 1, 27 do
                 if not Driveworld["autodeliverymaterial"] or not getvehicle() or not getchar() or isvehicle() == false or Contracts.Visible == false then
                     break
                 end
@@ -296,7 +296,7 @@ task.spawn(function()
             end
             if completepos then
                 getvehicle():SetPrimaryPartCFrame(completepos)
-                task.wait(.5)
+                task.wait(1)
                 ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Contracts"):WaitForChild("DropoffCargo"):InvokeServer()
             end
         end

@@ -255,7 +255,7 @@ task.spawn(function()
                 end
             until Contracts.Visible == true or Driveworld["autodeliverymaterial"] == false
             task.wait(1)
-            repeat task.wait(.1) 
+            repeat task.wait(.5)
                 if workspace:FindFirstChild("Model") then
                     for i,v in next, workspace.Model:GetChildren() do
                         if v:FindFirstChild("CargoTypes") and v.PrimaryPart then
@@ -267,7 +267,7 @@ task.spawn(function()
             if lp.PlayerGui.CancelActivityConfirmation.Enabled == true then
                 firesignal(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click)
             end
-            if cargo and getvehicle() and getvehicle().PrimaryPart then 
+            if cargo and getvehicle() and getvehicle().PrimaryPart then
                 getvehicle():SetPrimaryPartCFrame(cargo.CFrame)
                 task.wait(1)
                 if (cargo.Position - getvehicle().PrimaryPart.Position).magnitude <= 30 then

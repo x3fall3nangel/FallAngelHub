@@ -224,7 +224,9 @@ task.spawn(function()
             task.wait(.5)
             if lp.PlayerGui.JobComplete.Enabled == true then
                 Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
-                firesignal(lp.PlayerGui.JobComplete.Window.Content.Buttons.RetryButton.MouseButton1Click)
+                for i,v in next, getconnections(lp.PlayerGui.JobComplete.Window.Content.Buttons.RetryButton.MouseButton1Click) do
+                    v:Fire()
+                end
             end
             print("Completed Job")
         end

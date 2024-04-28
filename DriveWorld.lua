@@ -180,10 +180,6 @@ task.spawn(function()
                 VirtualInputManager:SendKeyEvent(true, "E", false, game)
                 VirtualInputManager:SendKeyEvent(false, "E", false, game)
             end
-            local completepos
-            local distance
-            local jobDistance
-            local CompletionRegion
             local job = lp.PlayerGui.Score.Frame.Jobs
             repeat task.wait()
                 if job.Visible == false then
@@ -191,10 +187,12 @@ task.spawn(function()
                 end
             until job.Visible == true or Driveworld["autodelivery"] == false
             print("Start Job")
-            repeat task.wait() 
+            local distance
+            local completepos
+            local jobDistance
+            repeat task.wait()
                 if workspace:FindFirstChild("CompletionRegion") then
-                    CompletionRegion = workspace:WaitForChild("CompletionRegion")
-                    distance = CompletionRegion:FindFirstChild("Primary"):FindFirstChild("DestinationIndicator"):FindFirstChild("Distance").Text
+                    distance = workspace:FindFirstChild("CompletionRegion"):FindFirstChild("Primary"):FindFirstChild("DestinationIndicator"):FindFirstChild("Distance").Text
                     local yeas = string.split(distance, " ")
                     for i,v in next, yeas do
                         if tonumber(v) then
@@ -215,9 +213,11 @@ task.spawn(function()
                 end
                 task.wait(1)
             end
-            if CompletionRegion and CompletionRegion:FindFirstChild("Primary") then
-                completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0)
-            end
+            repeat task.wait()
+                if workspace:FindFirstChild("CompletionRegion") and workspace:FindFirstChild("CompletionRegion"):FindFirstChild("Primary") then
+                    completepos = workspace:FindFirstChild("CompletionRegion"):FindFirstChild("Primary").CFrame * CFrame.new(0,3,0)
+                end
+            until completepos or Driveworld["autodelivery"] == false
             getvehicle():SetPrimaryPartCFrame(completepos)
             task.wait(.5)
             Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()

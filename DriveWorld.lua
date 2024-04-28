@@ -192,8 +192,8 @@ task.spawn(function()
             until job.Visible == true or Driveworld["autodelivery"] == false
             print("Start Job")
             repeat task.wait() 
-                CompletionRegion = workspace:WaitForChild("CompletionRegion", 3)
-                if CompletionRegion then
+                if workspace:FindFirstChild("CompletionRegion") then
+                    CompletionRegion = workspace:WaitForChild("CompletionRegion")
                     distance = CompletionRegion:FindFirstChild("Primary"):FindFirstChild("DestinationIndicator"):FindFirstChild("Distance").Text
                     local yeas = string.split(distance, " ")
                     for i,v in next, yeas do

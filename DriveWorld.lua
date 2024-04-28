@@ -215,8 +215,8 @@ task.spawn(function()
                 end
                 task.wait(1)
             end
-            if CompletionRegion and CompletionRegion:FindFirstChild("Primary").CFrame then
-                completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0) 
+            if CompletionRegion and CompletionRegion:FindFirstChild("Primary") then
+                completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0)
             end
             getvehicle():SetPrimaryPartCFrame(completepos)
             task.wait(.5)

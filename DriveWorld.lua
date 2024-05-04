@@ -255,11 +255,9 @@ task.spawn(function()
             until Contracts.Visible == true or Driveworld["autodeliverymaterial"] == false
             task.wait(1)
             repeat task.wait(.5)
-                if workspace:FindFirstChild("Model") then
-                    for i,v in next, workspace.Model:GetChildren() do
-                        if v:FindFirstChild("CargoTypes") and v.PrimaryPart then
-                            cargo = v.PrimaryPart
-                        end
+                for i,v in next, workspace:GetChildren() do
+                    if v.Name == "Model" and v:FindFirstChild("ShippingCargo") and v.ShippingCargo.PrimaryPart then
+                        cargo = v.ShippingCargo.PrimaryPart
                     end
                 end
             until cargo or Driveworld["autodeliverymaterial"] == false

@@ -256,8 +256,8 @@ task.spawn(function()
             task.wait(1)
             repeat task.wait(.5)
                 for i,v in next, workspace:GetChildren() do
-                    if v.Name == "Model" and v:FindFirstChild("ShippingCargo") and v.ShippingCargo.PrimaryPart then
-                        cargo = v.ShippingCargo.PrimaryPart
+                    if v.Name == "Model" and (v:FindFirstChild("ShippingCargo") or v:FindFirstChild("WoodCrates")) and v:FindFirstChildWhichIsA("Model").PrimaryPart then
+                        cargo = v:FindFirstChildWhichIsA("Model").PrimaryPart
                     end
                 end
             until cargo or Driveworld["autodeliverymaterial"] == false

@@ -256,13 +256,20 @@ task.spawn(function()
             task.wait(1)
             repeat task.wait(.5)
                 for i,v in next, workspace:GetChildren() do
-                    if v.Name == "Model" and (v:FindFirstChild("SteelPalettes") or v:FindFirstChild("WoodCrates")) and v:FindFirstChildWhichIsA("Model").PrimaryPart then
+                    if v.Name == "Model" and (v:FindFirstChild("SteelPalettes") or v:FindFirstChild("WoodCrates") or v:FindFirstChild("ShippingCargo")) and v:FindFirstChildWhichIsA("Model").PrimaryPart then
                         cargo = v:FindFirstChildWhichIsA("Model").PrimaryPart
                     end
                 end
             until cargo or Driveworld["autodeliverymaterial"] == false
+            if lp.PlayerGui.GarageContracts.Frame.ContractFinished.Visible == true then
+                for i,v in next, getconnections(lp.PlayerGui.GarageContracts.Frame.Header.CloseButton.MouseButton1Click) do
+                    v:Fire()
+                end
+            end
             if lp.PlayerGui.CancelActivityConfirmation.Enabled == true then
-                firesignal(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click)
+                for i,v in next, getconnections(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click) do
+                    v:Fire()
+                end
             end
             if cargo and getvehicle() and getvehicle().PrimaryPart then
                 getvehicle():SetPrimaryPartCFrame(cargo.CFrame)
@@ -273,7 +280,9 @@ task.spawn(function()
             end
             task.wait(1)
             if lp.PlayerGui.CancelActivityConfirmation.Enabled == true then
-                firesignal(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click)
+                for i,v in next, getconnections(lp.PlayerGui.CancelActivityConfirmation.Window.Content.Buttons.Cancel.MouseButton1Click) do
+                    v:Fire()
+                end
             end
             local count = 0
             repeat task.wait(.1)

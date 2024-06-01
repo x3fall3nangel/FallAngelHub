@@ -34,6 +34,15 @@ for i,v in pairs(getconnections(Players.LocalPlayer.Idled)) do
     end
 end
 
+local old
+old = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
+    if not checkcaller() and getnamecallmethod() == "InvokeServer" and self.Name == "QuitJob" and Driveworld["autodelivery"] then
+        print("haha")
+        return wait(9e99)
+    end
+    return old(self, ...)
+end))
+
 local function getchar()
     return lp.Character or lp.CharacterAdded:Wait()
 end

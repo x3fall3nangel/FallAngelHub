@@ -15,7 +15,7 @@ else
 end
 
 --anti afk kick
-local vu = game:GetService("VirtualUser")
+local vu = cloneref(game:GetService("VirtualUser"))
 game:GetService("Players").LocalPlayer.Idled:connect(function()
    vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
    wait(1)

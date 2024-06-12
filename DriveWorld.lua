@@ -34,15 +34,6 @@ for i,v in pairs(getconnections(Players.LocalPlayer.Idled)) do
     end
 end
 
-local old
-old = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
-    if not checkcaller() and getnamecallmethod() == "InvokeServer" and self.Name == "QuitJob" and Driveworld["autodelivery"] then
-        print("haha")
-        return wait(9e99)
-    end
-    return old(self, ...)
-end))
-
 local function getchar()
     return lp.Character or lp.CharacterAdded:Wait()
 end
@@ -81,7 +72,7 @@ end
 Main:Toggle({
     Name = "Auto Delivery Truck",
 	StartingState = false,
-    Description = "Use Full-E or Casper for more money(work in USA map only)",
+    Description = "Use Full-E or Casper for more money(work in USA map only) wait for 40 sec",
 	Callback = function(state)
         Driveworld["autodelivery"] = state
     end
@@ -110,71 +101,62 @@ Main:Toggle({
     end
 })
 
--- Main:Toggle({
---     Name = "Auto Delivery Food",
--- 	StartingState = false,
---     Description = "easier for quest",
--- 	Callback = function(state)
---         Driveworld["autodeliveryfood"] = state
---     end
--- })
+Main:Toggle({
+    Name = "Auto Delivery Food",
+	StartingState = false,
+    Description = "easier for quest",
+	Callback = function(state)
+        Driveworld["autodeliveryfood"] = state
+    end
+})
 
--- Main:Button({
---     Name = "Find Barn Part",
---     Description = "Tp ur car when u near the barn part",
--- 	Callback = function()
---         for i,v in next, workspace.Objects.Destructible:GetChildren() do
---             if v.Name == "BarnFindItem" and v:FindFirstChildWhichIsA("MeshPart") then
---                 Systems:WaitForChild("Navigate"):WaitForChild("Teleport"):InvokeServer(v:FindFirstChildWhichIsA("MeshPart").CFrame)
---                 task.wait(.5)
---             end
---         end
---     end
--- })
-
--- task.spawn(function()
---     while task.wait() do
---         if Driveworld["autodeliveryfood"] then
---             pcall(function()
---                 if isvehicle() == false then
---                     if not getvehicle() then
---                         spawnvehicle()
---                     end
---                     getchar().HumanoidRootPart.CFrame = getvehicle().PrimaryPart.CFrame
---                     task.wait(1)
---                     VirtualInputManager:SendKeyEvent(true, "E", false, game)
---                     VirtualInputManager:SendKeyEvent(false, "E", false, game)
---                 end
---                 local completepos
---                 local CompletionRegion
---                 local job = lp.PlayerGui.Score.Frame.Jobs
---                 repeat task.wait()
---                     if job.Visible == false and Driveworld["autodeliveryfood"] then
---                         Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer("FoodDelivery","Tavern")
---                     end
---                 until job.Visible == true or Driveworld["autodeliveryfood"] == false
---                 CompletionRegion = workspace:FindFirstChild("CompletionRegion")
---                 for i = 1, 10 do
---                     if not Driveworld["autodelivery"] or not getvehicle() or not getchar() or isvehicle() == false or job.Visible == false then
---                         break
---                     end
---                     task.wait(1)
---                 end
---                 if CompletionRegion and CompletionRegion:FindFirstChild("Primary").CFrame then
---                     completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0) 
---                 end
---                 getvehicle():SetPrimaryPartCFrame(completepos)
---                 task.wait(.5)
---                 Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
---                 task.wait(.5)
---                 if lp.PlayerGui.JobComplete.Enabled == true then
---                     Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
---                     firesignal(lp.PlayerGui.JobComplete.Window.Content.Buttons.RetryButton.MouseButton1Click)
---                 end
---             end)
---         end
---     end
--- end)
+task.spawn(function()
+    while task.wait() do
+        if Driveworld["autodeliveryfood"] then
+            if isvehicle() == false then
+                if not getvehicle() then
+                    spawnvehicle()
+                end
+                getchar().HumanoidRootPart.CFrame = getvehicle().PrimaryPart.CFrame
+                task.wait(1)
+                VirtualInputManager:SendKeyEvent(true, "E", false, game)
+                VirtualInputManager:SendKeyEvent(false, "E", false, game)
+            end
+            local completepos
+            local CompletionRegion
+            local job = lp.PlayerGui.Score.Frame.Jobs
+            repeat task.wait()
+                if job.Visible == false then
+                    Systems:WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer(workspace:WaitForChild("Jobs"):WaitForChild("FoodDelivery"), workspace:WaitForChild("Jobs"):WaitForChild("FoodDelivery"):WaitForChild("StartPoints"):WaitForChild("ClubManta"))
+                end
+            until job.Visible == true or Driveworld["autodeliveryfood"] == false
+            repeat task.wait(.1)
+                if workspace:FindFirstChild("CompletionRegion") then
+                    CompletionRegion = workspace:FindFirstChild("CompletionRegion")
+                end
+            until CompletionRegion or Driveworld["autodeliveryfood"] == false
+            for i = 1, 15 do
+                if not Driveworld["autodeliveryfood"] or not getvehicle() or not getchar() or isvehicle() == false or job.Visible == false then
+                    break
+                end
+                task.wait(1)
+            end
+            if CompletionRegion:FindFirstChild("Primary").CFrame then
+                completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0)
+            end
+            getvehicle():SetPrimaryPartCFrame(completepos)
+            task.wait(.25)
+            Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
+            task.wait(.5)
+            if lp.PlayerGui.JobComplete.Enabled == true then
+                Systems:WaitForChild("Jobs"):WaitForChild("CashBankedEarnings"):FireServer()
+                for i,v in next, getconnections(lp.PlayerGui.JobComplete.Window.Content.Buttons.CloseButton.MouseButton1Click) do
+                    v:Fire()
+                end
+            end
+        end
+    end
+end)
 
 task.spawn(function()
     while task.wait(.1) do
@@ -224,7 +206,7 @@ task.spawn(function()
             if workspace:FindFirstChild("CompletionRegion") and workspace:FindFirstChild("CompletionRegion"):FindFirstChild("Primary") then
                 getvehicle():SetPrimaryPartCFrame(workspace:FindFirstChild("CompletionRegion"):FindFirstChild("Primary").CFrame * CFrame.new(0,3,0))
             end
-            task.wait(.25)
+            task.wait(.15)
             Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
             task.wait(.5)
             if lp.PlayerGui.JobComplete.Enabled == true then

@@ -135,7 +135,7 @@ task.spawn(function()
                     CompletionRegion = workspace:FindFirstChild("CompletionRegion")
                 end
             until CompletionRegion or Driveworld["autodeliveryfood"] == false
-            for i = 1, 15 do
+            for i = 1, 20 do
                 if not Driveworld["autodeliveryfood"] or not getvehicle() or not getchar() or isvehicle() == false or job.Visible == false then
                     break
                 end
@@ -145,7 +145,7 @@ task.spawn(function()
                 completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0)
             end
             getvehicle():SetPrimaryPartCFrame(completepos)
-            task.wait(.25)
+            task.wait(.1)
             Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
             task.wait(.5)
             if lp.PlayerGui.JobComplete.Enabled == true then
@@ -206,7 +206,7 @@ task.spawn(function()
             if workspace:FindFirstChild("CompletionRegion") and workspace:FindFirstChild("CompletionRegion"):FindFirstChild("Primary") then
                 getvehicle():SetPrimaryPartCFrame(workspace:FindFirstChild("CompletionRegion"):FindFirstChild("Primary").CFrame * CFrame.new(0,3,0))
             end
-            task.wait(.15)
+            task.wait(.1)
             Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
             task.wait(.5)
             if lp.PlayerGui.JobComplete.Enabled == true then

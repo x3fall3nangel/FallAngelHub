@@ -4,7 +4,7 @@ elseif game.PlaceId == 7655489843 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Anime%20Battlegrounds%20X.lua"))()
 elseif game.PlaceId == 10704789056 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/DriveWorld.lua"))()
-elseif game.PlaceId == 16582687738 or game.PlaceId == 14819490378 or game.PlaceId == 15695929915 or game.PlaceId == 16928265611 or game.PlaceId == 17206024999 then
+elseif game.PlaceId == 16582687738 or game.PlaceId == 14819490378 or game.PlaceId == 15695929915 or game.PlaceId == 16928265611 or game.PlaceId == 17206024999 or game.PlaceId == 17856910664 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Swordburst3.lua"))()
 elseif game.PlaceId == 15502802094 or game.PlaceId == 12135640403 or game.PlaceId == 15742087191 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/AnimeDungeonFighters.lua"))()

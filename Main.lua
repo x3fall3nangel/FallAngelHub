@@ -10,8 +10,6 @@ elseif game.PlaceId == 15502802094 or game.PlaceId == 12135640403 or game.PlaceI
     loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/AnimeDungeonFighters.lua"))()
 elseif game.PlaceId == 15423741735 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/BeyBlade.lua"))()
-else
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/GSstarGamer/Roblox-Exploits/main/loader.lua"))()
 end
 
 --anti afk kick

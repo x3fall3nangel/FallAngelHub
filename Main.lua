@@ -20,6 +20,6 @@ game:GetService("Players").LocalPlayer.Idled:connect(function()
    vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 
-game:GetService("Players").LocalPlayer.OnTeleport:Connect(function()
+game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(state)
     queue_on_teleport(loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Main.lua"))())
 end)

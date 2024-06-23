@@ -1,3 +1,4 @@
+repeat task.wait() until game:IsLoaded()
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/mercury-lib-edit/master/src.lua"))()
 
 local GUI = Library:Create{
@@ -12,16 +13,13 @@ local Main = GUI:tab{
     Icon = "rbxassetid://8569322835" -- rbxassetid://2174510075 home icon
 }
 
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local VirtualInputManager = game:GetService("VirtualInputManager")
+local Players = cloneref(game:GetService("Players"))
+local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
+local VirtualInputManager = cloneref(game:GetService("VirtualInputManager"))
 
 local lp = Players.LocalPlayer
 local Systems = ReplicatedStorage:WaitForChild("Systems")
 
-local Race = lp.PlayerGui.Score.Frame.Race
-local Timer
-local Laps
 local material
 
 local Driveworld = {}
@@ -33,6 +31,17 @@ for i,v in pairs(getconnections(Players.LocalPlayer.Idled)) do
         v["Disconnect"](v)
     end
 end
+
+local oldnamecall
+oldnamecall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
+    local method = getnamecallmethod() 
+    if not checkcaller() and method == "InvokeServer" and self.Name == "QuitJob" then
+        if (Driveworld["autodeliveryfood"] or Driveworld["autodelivery"]) then
+            return wait(9e9)
+        end
+    end
+    return oldnamecall(self, ...)
+end))
 
 local function getchar()
     return lp.Character or lp.CharacterAdded:Wait()
@@ -145,7 +154,7 @@ task.spawn(function()
                 completepos = CompletionRegion:FindFirstChild("Primary").CFrame * CFrame.new(0,3,0)
             end
             getvehicle():SetPrimaryPartCFrame(completepos)
-            task.wait(.1)
+            task.wait(.5)
             Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
             task.wait(.5)
             if lp.PlayerGui.JobComplete.Enabled == true then
@@ -197,7 +206,7 @@ task.spawn(function()
                     ReplicatedStorage:WaitForChild("Systems"):WaitForChild("Jobs"):WaitForChild("StartJob"):InvokeServer(workspace:WaitForChild("Jobs"):WaitForChild("Trucking"),workspace:WaitForChild("Jobs"):WaitForChild("Trucking"):WaitForChild("StartPoints"):WaitForChild("Logs"))
                 end
             until jobDistance and tonumber(jobDistance) >= 2.1 or Driveworld["autodelivery"] == false
-            for i = 1, 40 do
+            for i = 1, 35 do
                 if not Driveworld["autodelivery"] or not getvehicle() or not getchar() or isvehicle() == false or job.Visible == false then
                     break
                 end
@@ -206,7 +215,7 @@ task.spawn(function()
             if workspace:FindFirstChild("CompletionRegion") and workspace:FindFirstChild("CompletionRegion"):FindFirstChild("Primary") then
                 getvehicle():SetPrimaryPartCFrame(workspace:FindFirstChild("CompletionRegion"):FindFirstChild("Primary").CFrame * CFrame.new(0,3,0))
             end
-            task.wait(.1)
+            task.wait(.5)
             Systems:WaitForChild("Jobs"):WaitForChild("CompleteJob"):InvokeServer()
             task.wait(.5)
             if lp.PlayerGui.JobComplete.Enabled == true then

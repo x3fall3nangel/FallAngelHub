@@ -21,5 +21,5 @@ game:GetService("Players").LocalPlayer.Idled:connect(function()
 end)
 
 game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(state)
-    queue_on_teleport(loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Main.lua"))())
+    queue_on_teleport([[loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Main.lua"))()]])
 end)

@@ -1,5 +1,7 @@
-if game.PlaceId == 7305309231 then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Taxi_Boss.lua"))()
+local games = {
+    [1591]
+}
+
 elseif game.PlaceId == 7655489843 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/x3fall3nangel/FallAngelHub/main/Anime%20Battlegrounds%20X.lua"))()
 elseif game.PlaceId == 10704789056 then
